@@ -73,5 +73,5 @@ export function createNetworkLandscape(scene,sunDirection){
     vertexShader:`attribute float height;uniform float relief;void main(){vec3 e=vec3(0.,-${R},0.);vec3 p=e+normalize(position-e)*(${R}+height*relief+.002);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
     fragmentShader:'void main(){gl_FragColor=vec4(.30,.37,.39,.10);}' });
   scene.add(new THREE.LineSegments(borderGeometry,borderMaterial));
-  return {heightAt,relief,maxHeightKm:terrain.elevationMetres.reduce((max,h)=>Math.max(max,h),0)/1000};
+  return {heightAt,relief,geometry,bounds:{west,north,latSpan,lonSpan},maxHeightKm:terrain.elevationMetres.reduce((max,h)=>Math.max(max,h),0)/1000};
 }

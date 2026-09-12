@@ -45,7 +45,7 @@ export function createContinentalField(scene,landscape){
         vec3 c=colour(vBand);if(inspection>.5)c=mix(vec3(.6,.24,.08),vec3(.13,.72,.85),f.a);
         gl_FragColor=vec4(c,flow*f.r*f.a*gain*viewExposure);
       }`});
-  const mesh=new THREE.Mesh(geometry,material);mesh.frustumCulled=false;scene.add(mesh);
+  const mesh=new THREE.Mesh(geometry,material);mesh.frustumCulled=false;mesh.renderOrder=2;scene.add(mesh);
   let left=-1,right=-1;
   const cache=new Map();
   function frame(index){if(!cache.has(index)){cache.set(index,sampleGrid(grid,network.stations.map(s=>s.frames[index])));if(cache.size>4)cache.delete(cache.keys().next().value);}return cache.get(index);}

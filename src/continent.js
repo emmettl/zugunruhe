@@ -7,6 +7,8 @@ import inventory from '../data/processed/network-stations.json';
 import { sampleFrame } from './interpolation.js';
 import { createContinentScene } from './continent-scene.js';
 import { frameMean } from './network-geo.js';
+import weather from '../data/processed/cloud-night.json';
+import { cloudCoverAt } from './cloud-model.js';
 import { palettes, paletteGradient } from './continent-palettes.js';
 
 const names=new Map(inventory.metadata.map(s=>[s.name,s.location]));
@@ -21,7 +23,7 @@ document.querySelector('#continent-app').innerHTML=`
     <p class="gesture">Drag to orbit · scroll to move closer</p>
     <div id="graphics-error" hidden>The 3D view needs WebGL. Try reloading in a browser with graphics support.</div>
   </main>
-  <footer><div class="playback"><button id="play" aria-label="Play">▶</button><div class="timeline"><div class="timeline-head"><span>4 SEPTEMBER</span><span id="coverage"></span><strong id="time-label">22:00 <small>UTC</small></strong></div><input id="clock" aria-label="Study time" type="range" min="0" max="144" step=".01" value="48"><div class="ticks"><span>18:00</span><span>00:00</span><span>06:00</span></div></div></div>
+  <footer><div class="weather-controls"><label for="clouds">Cloud cover</label><select id="clouds"><option value="off">Off</option><option value="total">Total</option><option value="low">Low</option><option value="mid">Middle</option><option value="high">High</option></select><span id="weather-reading" aria-live="off"></span><a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener noreferrer">ERA5 · Open-Meteo ↗</a></div><div class="playback"><button id="play" aria-label="Play">▶</button><div class="timeline"><div class="timeline-head"><span>4 SEPTEMBER</span><span id="coverage"></span><strong id="time-label">22:00 <small>UTC</small></strong></div><input id="clock" aria-label="Study time" type="range" min="0" max="144" step=".01" value="48"><div class="ticks"><span>18:00</span><span>00:00</span><span>06:00</span></div></div></div>
     <div class="footnote"><span>Spatial estimate from 37 stations · Western Europe · 1–4 km ASL</span><button id="notes-button" aria-expanded="false">About this study ↗</button></div>
   </footer>
   <section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>Giving the spaces a voice.</h2>
@@ -33,6 +35,8 @@ document.querySelector('#continent-app').innerHTML=`
     <p>Show observation support reveals station markers and changes the light to cool cyan near available observations, warm amber toward the faded outer boundary. This shows distance support, not statistical confidence. Selecting a station displays its measured column mean. The field is smoothed and need not match that measurement exactly.</p>
     <p>Terrain relief defaults to ×8 and layer height to ×4. Each field location is lifted by its additional displayed ground elevation. Bands below the actual terrain are omitted. Luminosity changes a common artistic exposure for every location; it does not change the density estimates. Close views gently reduce exposure to retain detail.</p>
     <p>Play advances five minutes per second. Solar dusk follows the shared clock; camera movement remains independent. The camera controls and Back navigation work as in Archipelago.</p>
+    <p>Cloud cover is hourly ERA5 reanalysis from <a href="https://open-meteo.com/en/docs/historical-weather-api">Open-Meteo</a> for the same night, sampled every 0.5° from its 0.25° source grid. Total, low, middle and high are separate cloud-area fractions, not additive layers. A pale veil projects the selected fraction onto the terrain: brighter areas mean more cloud cover. Its height is a display projection, not the actual cloud base or thickness. Bird light is drawn over it for comparison, without simulated occlusion or a claim that the birds flew above the clouds.</p>
+    <p>Cloud cover blends bilinearly in space and linearly between hourly UTC samples; no extra cloud drift or fine texture is invented. Missing data remain unavailable. Station percentages are samples of that interpolated reanalysis, not station measurements. Cloud fields do not affect the bird estimates and do not establish a causal weather response. Generated using Copernicus Climate Change Service information; weather data by Open-Meteo, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Fields are subsetted and interpolated for display.</p>
     <p>Bird profiles: <a href="https://zenodo.org/records/4587338">Nussbaumer and contributors, Zenodo v3</a> · CC BY 4.0. Geography: Natural Earth · public domain. Elevation: Mapzen Terrain Tiles · Copernicus / EU-DEM; USGS SRTM and GMTED2010; © offene Daten Österreichs; © Kartverket; © Environment Agency 2015. Solar position: SunCalc.</p>
   </section>`;
 const $=id=>document.getElementById(id);
@@ -42,6 +46,7 @@ try{scene=createContinentScene($('world'),network.stations,select);}catch(error)
 function setFrames(){frames=network.stations.map(s=>sampleFrame(s.frames,index));scene?.setFrames(frames,index);}
 function updateUI(){
   const frame=frames[0];if(!frame)return;
+  updateWeather(frame.time);
   $('back-to-network').hidden=!scene?.canReturn;$('back-to-network').disabled=scene?.returning??false;
   $('view-title').textContent=selected<0?'The sky between.':stationName(network.stations[selected]);
   $('view-subtitle').textContent=selected<0?'A continuous field. One passing night.':'Within the field. Drag to turn around it.';
@@ -73,6 +78,20 @@ $('palette').value=Object.hasOwn(palettes,requestedPalette)?requestedPalette:'em
 applyPalette(true);
 $('palette').addEventListener('change',()=>{
   applyPalette();const url=new URL(location.href);url.searchParams.set('palette',$('palette').value);history.replaceState(null,'',url);
+});
+function updateWeather(time){
+  const mode=$('clouds').value;
+  if(mode==='off'){$('weather-reading').textContent='';return;}
+  if(selected<0){$('weather-reading').textContent='Hourly · pale = more cover';return;}
+  const station=network.stations[selected],cover=cloudCoverAt(weather,mode,station.lat,station.lon,time);
+  $('weather-reading').textContent=cover===null?'Cover unavailable':`${Math.round(cover)}% near ${stationName(station)}`;
+}
+const requestedClouds=new URL(location.href).searchParams.get('clouds');
+$('clouds').value=['total','low','mid','high'].includes(requestedClouds)?requestedClouds:'off';
+scene?.setClouds($('clouds').value);
+$('clouds').addEventListener('change',()=>{
+  scene?.setClouds($('clouds').value);updateUI();
+  const url=new URL(location.href);url.searchParams.set('clouds',$('clouds').value);history.replaceState(null,'',url);
 });
 $('luminosity').addEventListener('input',()=>scene?.setGain(Number($('luminosity').value)));
 $('height').addEventListener('change',()=>scene?.setExaggeration(Number($('height').value)));

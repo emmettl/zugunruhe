@@ -6,3 +6,7 @@
 @media(max-width:760px){#continent-app main{min-height:620px}.palette-control{margin-top:10px!important}.palette-control select{width:102px}#reading{margin-top:10px}}
 
 .height-controls{padding:12px;background:#080b13ba;border:1px solid #ffffff12;border-radius:5px;backdrop-filter:blur(10px)}.title{text-shadow:0 1px 10px #03050d}.title p{color:#b4b4c2}.title:has(#back-to-network:not([hidden])){padding:14px;background:#080b138a;backdrop-filter:blur(12px);border-radius:5px;left:20px;top:14px}.gesture{color:#a8a4b7;text-shadow:0 1px 6px #03050d}
+
+#continent-app footer{height:198px}#continent-app main{height:calc(100svh - 280px)}
+.weather-controls{display:flex;align-items:center;gap:12px;margin-bottom:13px;font-size:11px;color:#a7adba}.weather-controls select{font-size:11px;min-width:85px;padding:6px 8px}.weather-controls a{margin-left:auto;color:#9aacbb}.weather-controls a:hover{text-decoration:underline}#weather-reading{color:#9da9b6}
+@media(max-width:760px){#continent-app footer{height:auto;min-height:208px}.weather-controls{gap:8px;flex-wrap:wrap}.weather-controls a{font-size:10px}.weather-controls label{font-size:11px}#weather-reading{order:4;width:100%;font-size:10px}.weather-controls select{min-height:36px}}

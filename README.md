@@ -42,7 +42,7 @@ npm run dev
 ```
 
 Open the local URL printed by Vite. `npm run build` creates the static client.
-This is a local exploratory prototype; it has not been deployed.
+The current studies are published on both hosts linked below.
 
 [Data provenance and reproduction](docs/FIRST-STUDY.md) ·
 [3D representation and controls](docs/LAYERS.md)
@@ -61,6 +61,8 @@ Archipelago is now preserved at `/studies/02-archipelago/`, with a frozen build,
 source archive and checksum manifest. **Study 03 — Continent ablaze**, at
 `/continent.html`, joins the observed region into continuous flowing altitude
 layers. [Spatial model, controls and validation](docs/CONTINENT.md).
+
+Sea also has a first [cloud-cover comparison](docs/CLOUDS.md): hourly ERA5 weather on the same 4–5 September 2018 clock, with total, low, middle and high cover.
 
 # Hosting
 

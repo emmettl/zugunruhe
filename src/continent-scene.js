@@ -5,6 +5,7 @@ import { R, globePoint, cameraAltitude } from './network-geo.js';
 import { createContinentalField } from './continent-field.js';
 import { createCameraJourney } from './network-camera.js';
 import { createNetworkLandscape } from './network-landscape.js';
+import { createCloudCover } from './cloud-cover.js';
 import { stationLift } from './network-terrain.js';
 
 const earthCentre = new THREE.Vector3(0,-R,0);
@@ -41,6 +42,7 @@ export function createContinentScene(container, stations, onSelect) {
   const stationPoints=stations.map(s=>point(s.lat,s.lon));
   const liftAtStation=i=>stationLift(groundAtStation[i],landscape.relief.value);
 
+  const clouds=createCloudCover(scene,landscape);
   const field=createContinentalField(scene,landscape),uniforms=field.uniforms;
   const markers=stations.map((s,i)=>{
     const marker=new THREE.Mesh(new THREE.SphereGeometry(.022,8,6),new THREE.MeshBasicMaterial({color:'#e4e2f0',transparent:true,opacity:.85,depthTest:false}));
@@ -51,7 +53,7 @@ export function createContinentScene(container, stations, onSelect) {
   });
   let width=1,height=1,selected=-1;
   function setFrames(frames,index){
-    field.setIndex(index);
+    field.setIndex(index);clouds.setTime(frames[0].time);
     const sun=SunCalc.getPosition(new Date(frames[0].time),48.5,6.5);
     sunUniform.value.set(-Math.sin(sun.azimuth)*Math.cos(sun.altitude),Math.sin(sun.altitude),Math.cos(sun.azimuth)*Math.cos(sun.altitude));
 
@@ -116,7 +118,7 @@ export function createContinentScene(container, stations, onSelect) {
     if(!start||journey.moving||Math.hypot(e.clientX-start[0],e.clientY-start[1])>5)return;
     const i=pickStation(e);if(i>=0)onSelect(i);
   });
-  return {setFrames,draw,preset,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
+  return {setFrames,draw,preset,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
     setRelief:v=>{landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
     get canReturn(){return journey.canReturn;},get returning(){return journey.returning;},renderer};
 }
