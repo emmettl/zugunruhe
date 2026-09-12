@@ -2,13 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createFlyover,flyoverPose } from './currents-flyover.js';
 import { createCameraJourney } from './network-camera.js';
-import { cameraAltitude } from './network-geo.js';
+import { cameraAltitude,R } from './network-geo.js';
 test('flyover travels continuously at 100 km with a forward-looking target',()=>{
   let previous=flyoverPose(0);const start=previous;
   for(let i=1;i<=200;i++){
     const p=flyoverPose(i/200);
     assert.ok(Math.abs(cameraAltitude(p.position.toArray())-100)<1e-8);
     assert.ok(p.position.distanceTo(previous.position)<.15);
+    const up=p.position.clone();up.y+=R;up.normalize();
+    const direction=p.target.clone().sub(p.position).normalize();
+    assert.ok(Math.abs(Math.asin(-direction.dot(up))*180/Math.PI-25)<1e-8);
     assert.ok(p.target.distanceTo(p.position)>1);previous=p;
   }
   assert.ok(previous.position.distanceTo(start.position)>5);

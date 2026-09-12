@@ -67,7 +67,8 @@ the new entry, playback, thread visibility control and retained navigation.
 
 The Flyover button now starts a camera itinerary: a smooth descent followed by
 65 seconds of forward travel at 100 km, from central Germany along the Alpine
-foreland toward eastern France. The camera looks ahead along a curved route and
+foreland toward eastern France. The camera looks ahead at 25° below the local
+horizon along a curved route and
 eases into and out of its pass. This viewing route is authored, not inferred from
 bird migration data. Sea's earlier static camera presets remain unchanged.
 
