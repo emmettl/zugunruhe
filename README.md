@@ -73,3 +73,7 @@ Sea also has a first [cloud-cover comparison](docs/CLOUDS.md): hourly ERA5 weath
 The same verified artifact goes to both hosts, with the three current studies
 and both frozen snapshots included. `npm run preview:hosted` checks the built
 site under its production `/zugunruhe/` prefix.
+
+The fourth study, [Currents](docs/CURRENTS.md), opens at `/currents.html`: persistent
+luminous paths integrated through the radar-derived velocity field, with deterministic
+timeline scrubbing. Sea remains available as the previous continuous-field study.

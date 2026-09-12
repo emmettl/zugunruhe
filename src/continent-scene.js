@@ -10,7 +10,7 @@ import { stationLift } from './network-terrain.js';
 
 const earthCentre = new THREE.Vector3(0,-R,0);
 const point = (lat,lon,h=0)=>new THREE.Vector3(...globePoint(lat,lon,h));
-export function createContinentScene(container, stations, onSelect) {
+export function createContinentScene(container, stations, onSelect, createField=createContinentalField) {
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setClearColor('#050610');
   renderer.domElement.setAttribute('role','img');
@@ -43,7 +43,7 @@ export function createContinentScene(container, stations, onSelect) {
   const liftAtStation=i=>stationLift(groundAtStation[i],landscape.relief.value);
 
   const clouds=createCloudCover(scene,landscape);
-  const field=createContinentalField(scene,landscape),uniforms=field.uniforms;
+  const field=createField(scene,landscape),uniforms=field.uniforms;
   const markers=stations.map((s,i)=>{
     const marker=new THREE.Mesh(new THREE.SphereGeometry(.022,8,6),new THREE.MeshBasicMaterial({color:'#e4e2f0',transparent:true,opacity:.85,depthTest:false}));
     marker.position.copy(point(s.lat,s.lon,groundAtStation[i]*landscape.relief.value+.2));marker.userData.station=i;marker.visible=false;marker.renderOrder=2;scene.add(marker);return marker;
@@ -64,7 +64,7 @@ export function createContinentScene(container, stations, onSelect) {
     const [eye,target]=presets[name];camera.position.copy(point(...eye));controls.target.copy(point(...target));controls.update();
   }
   preset('europe');
-  const observer=new ResizeObserver(()=>{width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();});observer.observe(container);
+  const observer=new ResizeObserver(()=>{width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();field.resize?.(width,height);});observer.observe(container);
   const probe=new THREE.Vector3();
   function focusStation(i,force=false){
     if(i<0){journey.back();selected=-1;uniforms.selected.value=-1;return;}
@@ -118,7 +118,7 @@ export function createContinentScene(container, stations, onSelect) {
     if(!start||journey.moving||Math.hypot(e.clientX-start[0],e.clientY-start[1])>5)return;
     const i=pickStation(e);if(i>=0)onSelect(i);
   });
-  return {setFrames,draw,preset,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
+  return {setFrames,draw,preset,setThreads:field.setThreads,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
     setRelief:v=>{landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
     get canReturn(){return journey.canReturn;},get returning(){return journey.returning;},renderer};
 }

@@ -6,7 +6,7 @@ The same static build is served at:
 - `https://emmettl.github.io/zugunruhe/` through GitHub Pages.
 
 Entries are the cloud at the root, `network.html` for the islands and
-`continent.html` for the sea. Preserved builds are under `studies/01-layers/`
+`continent.html` for the sea, and `currents.html` for directional paths. Preserved builds are under `studies/01-layers/`
 and `studies/02-archipelago/`. Cloudflare may canonicalize `.html` URLs to their
 extensionless equivalents. Links and asset paths work under either host's prefix.
 
@@ -17,11 +17,11 @@ base, verifies both frozen-study manifests, and stages their builds and source
 snapshots into `dist`. Only the hosted copies of frozen HTML gain the small
 hosting adapter; the original snapshots, archives and renderer assets are not
 modified. The adapter repairs old root-relative links and enables the same
-hostname-guarded GitHub Pages analytics beacon as the peer editions. The three
-current entries also receive Cloud / Islands / Sea navigation.
+hostname-guarded GitHub Pages analytics beacon as the peer editions. The four
+current entries receive Cloud / Islands / Sea / Currents navigation.
 
 `pages.yml` calls `checks.yml`: locked installation, unit tests, build and
-Chromium/iPhone-WebKit smoke tests of all five study entries under `/zugunruhe/`.
+Chromium/iPhone-WebKit smoke tests of all six study entries under `/zugunruhe/`.
 The tested artifact is then deployed to GitHub Pages. Pull requests run the same
 checks without deployment.
 

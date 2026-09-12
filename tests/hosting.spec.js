@@ -47,3 +47,20 @@ test('cloud, islands and sea link correctly; station descent returns to the prev
   await expect(page.getByRole('button',{name:'← Back to previous view',exact:true})).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+// Keep the new path shader smoke separate from the lengthy Sea keyboard sequence.
+test('Currents renders and retains playback, comparison and study navigation',async({page})=>{
+  test.setTimeout(300000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  const response=await page.goto('currents.html?palette=aquatic&clouds=total');expect(response.status()).toBe(200);
+  await expect(page).toHaveTitle('Zugunruhe · Currents');
+  await expect(page.locator('#camera-height')).toContainText('km above Earth');
+  await expect(page.locator('#graphics-error')).toBeHidden();
+  await page.locator('canvas').press('Space');await expect(page.locator('#play')).toHaveAttribute('aria-label','Pause');
+  await page.locator('canvas').press('ArrowLeft');await expect(page.locator('#play')).toHaveAttribute('aria-label','Play');
+  await page.getByLabel('Travelling threads',{exact:true}).uncheck();
+  await expect(page.getByLabel('Travelling threads',{exact:true})).not.toBeChecked();
+  await page.getByLabel('Travelling threads',{exact:true}).check();
+  await expect(page.getByRole('navigation',{name:'Studies'}).getByRole('link',{name:'Sea',exact:true})).toHaveAttribute('href',/\/zugunruhe\/continent.html$/);
+  expect(errors).toEqual([]);
+});
