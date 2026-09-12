@@ -6,11 +6,12 @@ import { createContinentalField } from './continent-field.js';
 import { createCameraJourney } from './network-camera.js';
 import { createNetworkLandscape } from './network-landscape.js';
 import { createCloudCover } from './cloud-cover.js';
+import { createFlyover,flyoverPose } from './currents-flyover.js';
 import { stationLift } from './network-terrain.js';
 
 const earthCentre = new THREE.Vector3(0,-R,0);
 const point = (lat,lon,h=0)=>new THREE.Vector3(...globePoint(lat,lon,h));
-export function createContinentScene(container, stations, onSelect, createField=createContinentalField) {
+export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false}={}) {
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setClearColor('#050610');
   renderer.domElement.setAttribute('role','img');
@@ -20,6 +21,9 @@ export function createContinentScene(container, stations, onSelect, createField=
   const controls=new OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;controls.dampingFactor=.08;controls.enablePan=false;
   controls.minDistance=1;controls.maxDistance=40;controls.minPolarAngle=.06;controls.maxPolarAngle=1.50;
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const flyover=createFlyover(pose=>{camera.position.copy(pose.position);controls.target.copy(pose.target);camera.lookAt(controls.target);});
+  function stopFlyover(){if(flyover.active){flyover.stop();journey.cancel();}}
   const journey=createCameraJourney(
     ()=>({position:camera.position,target:controls.target}),
     pose=>{camera.position.copy(pose.position);controls.target.copy(pose.target);camera.lookAt(controls.target);},
@@ -30,7 +34,7 @@ export function createContinentScene(container, stations, onSelect, createField=
       camera.position.copy(position);controls.target.copy(target);camera.lookAt(target);
       controls.enableDamping=true;controls.enabled=!moving;
     },
-    matchMedia('(prefers-reduced-motion: reduce)').matches?0:2.4,
+    reducedMotion?0:2.4,
   );
   const sunUniform={value:new THREE.Vector3(-1,0,0)};
 
@@ -59,7 +63,14 @@ export function createContinentScene(container, stations, onSelect, createField=
 
   }
   function preset(name){
-    journey.reset();selected=-1;uniforms.selected.value=-1;
+    if(name==='flyover'&&travellingFlyover){
+      if(flyover.active){stopFlyover();return;}
+      selected=-1;uniforms.selected.value=-1;
+      journey.reset();journey.focus(flyoverPose(0));
+      // Explicitly requested travel also runs for reduced-motion users, at a gentler pace.
+      flyover.start();return;
+    }
+    flyover.stop();journey.reset();selected=-1;uniforms.selected.value=-1;
     const presets={flyover:[[45.5,6,100],[49.1,8,1]],germany:[[48,11,500],[51,10,0]],europe:[[44,9,1200],[48.5,6.5,0]]};
     const [eye,target]=presets[name];camera.position.copy(point(...eye));controls.target.copy(point(...target));controls.update();
   }
@@ -67,6 +78,7 @@ export function createContinentScene(container, stations, onSelect, createField=
   const observer=new ResizeObserver(()=>{width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();field.resize?.(width,height);});observer.observe(container);
   const probe=new THREE.Vector3();
   function focusStation(i,force=false){
+    stopFlyover();
     if(i<0){journey.back();selected=-1;uniforms.selected.value=-1;return;}
     if(i===selected&&!journey.returning&&!force)return;
     selected=i;uniforms.selected.value=i;
@@ -83,7 +95,9 @@ export function createContinentScene(container, stations, onSelect, createField=
   }
   function draw(dt,playing){
     field.draw(dt,playing);
-    if(journey.moving)journey.step(dt);else controls.update();
+    if(journey.moving){journey.step(dt);if(flyover.active)controls.enabled=false;}
+    else if(flyover.active){flyover.step(reducedMotion?dt*.5:dt);controls.enabled=!flyover.active;}
+    else controls.update();
     // Keep manual orbit above even the most exaggerated peak in this grid.
     const minimumAltitude=Math.max(20,landscape.maxHeightKm*landscape.relief.value+2);
     if(cameraAltitude(camera.position.toArray())<minimumAltitude)camera.position.sub(earthCentre).setLength(R+minimumAltitude/100).add(earthCentre);
@@ -110,6 +124,8 @@ export function createContinentScene(container, stations, onSelect, createField=
       }
     });return picked;
   }
+  // Capture before OrbitControls so the same gesture takes over immediately.
+  if(travellingFlyover)for(const event of ['pointerdown','wheel'])renderer.domElement.addEventListener(event,stopFlyover,{capture:true,passive:true});
   renderer.domElement.addEventListener('pointerdown',e=>{pointerCount++;down=pointerCount===1&&!journey.moving&&e.button===0?[e.clientX,e.clientY]:null;});
   renderer.domElement.addEventListener('pointermove',e=>{if(!down)renderer.domElement.style.cursor=journey.moving?'default':pickStation(e)>=0?'pointer':'grab';});
   renderer.domElement.addEventListener('pointercancel',()=>{down=null;pointerCount=0;});
@@ -118,7 +134,7 @@ export function createContinentScene(container, stations, onSelect, createField=
     if(!start||journey.moving||Math.hypot(e.clientX-start[0],e.clientY-start[1])>5)return;
     const i=pickStation(e);if(i>=0)onSelect(i);
   });
-  return {setFrames,draw,preset,setThreads:field.setThreads,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
+  return {setFrames,draw,preset,stopFlyover,get flying(){return flyover.active;},setThreads:field.setThreads,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
     setRelief:v=>{landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
     get canReturn(){return journey.canReturn;},get returning(){return journey.returning;},renderer};
 }

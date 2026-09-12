@@ -62,3 +62,24 @@ Unit checks verify direction and physical displacement, time-varying velocity,
 missing support, zero velocity, and deterministic timeline clipping. Build checks
 still verify the frozen Cloud and Archipelago snapshots. Browser checks cover
 the new entry, playback, thread visibility control and retained navigation.
+
+## Travelling flyover
+
+The Flyover button now starts a camera itinerary: a smooth descent followed by
+65 seconds of forward travel at 100 km, from central Germany along the Alpine
+foreland toward eastern France. The camera looks ahead along a curved route and
+eases into and out of its pass. This viewing route is authored, not inferred from
+bird migration data. Sea's earlier static camera presets remain unchanged.
+
+Starting a flyover starts data playback. Camera travel is independent of the data
+clock, so pausing or scrubbing the data does not freeze the camera. Stop flyover,
+Escape, dragging or scrolling stops at the current viewpoint and restores manual
+control. Back returns to the saved pre-flight view, including during descent.
+Selecting another preset ends the flight; selecting a station ends the flight and
+retains the original return bookmark. At the route's end the camera settles and
+Back remains available. Reduced-motion settings use immediate entry and half-speed
+cruising for this explicitly requested movement.
+
+Camera tests cover route continuity, 100 km clearance, Stop, exact bookmark
+restoration, completion and restart. The local browser check covers the actual
+travelling scene and its Stop/Back controls.

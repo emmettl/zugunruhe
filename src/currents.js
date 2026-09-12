@@ -38,6 +38,7 @@ document.querySelector('#continent-app').innerHTML=`
     <p>Ember retains the original warm palette; Aquatic moves through blue and cyan; Boreal adds green and violet. Oxygen draws on the <a href="https://science.nasa.gov/earth/earth-observatory/auroras-dancing-in-the-night/">557.7 nm green and 630 nm red oxygen lines</a>. These are artistic palettes across the bird-altitude bands, not auroral emission measurements or a physical aurora altitude scale. Palette changes blend smoothly even while playback is paused.</p>
     <p>Show observation support reveals station markers and changes the light to cool cyan near available observations, warm amber toward the faded outer boundary. This shows distance support, not statistical confidence. Selecting a station displays its measured column mean. The field is smoothed and need not match that measurement exactly.</p>
     <p>Terrain relief defaults to ×8 and layer height to ×4. Each field location is lifted by its additional displayed ground elevation. Bands below the actual terrain are omitted. Luminosity changes a common artistic exposure for every location; it does not change the density estimates. Close views gently reduce exposure to retain detail.</p>
+    <p>Flyover descends to 100 km and takes a 65-second camera pass from Germany along the Alpine foreland toward eastern France, starting playback. Stop flyover, Escape, dragging or scrolling hands you the camera at its current position. Back restores the pre-flight view, even during descent. The route is a viewing itinerary, not an inferred migration corridor. Camera travel continues independently of the data clock; reduced-motion settings halve its cruising speed.</p>
     <p>Play advances five minutes per second. Solar dusk follows the shared clock; camera movement remains independent. The camera controls and Back navigation work as in Archipelago.</p>
     <p>Cloud cover is hourly ERA5 reanalysis from <a href="https://open-meteo.com/en/docs/historical-weather-api">Open-Meteo</a> for the same night, sampled every 0.5° from its 0.25° source grid. Total, low, middle and high are separate cloud-area fractions, not additive layers. A pale veil projects the selected fraction onto the terrain: brighter areas mean more cloud cover. Its height is a display projection, not the actual cloud base or thickness. Bird light is drawn over it for comparison, without simulated occlusion or a claim that the birds flew above the clouds.</p>
     <p>Cloud cover blends bilinearly in space and linearly between hourly UTC samples; no extra cloud drift or fine texture is invented. Missing data remain unavailable. Station percentages are samples of that interpolated reanalysis, not station measurements. Cloud fields do not affect the bird estimates and do not establish a causal weather response. Generated using Copernicus Climate Change Service information; weather data by Open-Meteo, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Fields are subsetted and interpolated for display.</p>
@@ -46,14 +47,18 @@ document.querySelector('#continent-app').innerHTML=`
 const $=id=>document.getElementById(id);
 let index=48,playing=false,selected=-1,frames=[],scene;
 function select(value){selected=Number(value);$('station').value=selected;scene?.select(selected);updateUI();}
-try{scene=createContinentScene($('world'),network.stations,select,createCurrentsField);scene.renderer.domElement.setAttribute('aria-label','Luminous paths carried through radar-derived bird velocities over Western Europe. Drag to orbit and scroll to move closer.');}catch(error){$('graphics-error').hidden=false;console.error(error);}
+try{scene=createContinentScene($('world'),network.stations,select,createCurrentsField,{travellingFlyover:true});scene.renderer.domElement.setAttribute('aria-label','Luminous paths carried through radar-derived bird velocities over Western Europe. Drag to orbit and scroll to move closer.');}catch(error){$('graphics-error').hidden=false;console.error(error);}
 function setFrames(){frames=network.stations.map(s=>sampleFrame(s.frames,index));scene?.setFrames(frames,index);}
 function updateUI(){
   const frame=frames[0];if(!frame)return;
   updateWeather(frame.time);
+  const flyButton=document.querySelector('[data-view="flyover"]');
+  flyButton.textContent=scene?.flying?'Stop flyover':'100 km · Flyover';
+  flyButton.setAttribute('aria-pressed',String(scene?.flying??false));
+  flyButton.classList.toggle('active',scene?.flying??false);
   $('back-to-network').hidden=!scene?.canReturn;$('back-to-network').disabled=scene?.returning??false;
-  $('view-title').textContent=selected<0?'The night has a direction.':stationName(network.stations[selected]);
-  $('view-subtitle').textContent=selected<0?'Follow the light across the landscape.':'Within the field. Drag to turn around it.';
+  $('view-title').textContent=selected<0?(scene?.flying?'Over the currents.':'The night has a direction.'):stationName(network.stations[selected]);
+  $('view-subtitle').textContent=selected<0?(scene?.flying?'Germany · Alpine foreland · eastern France':'Follow the light across the landscape.'):'Within the field. Drag to turn around it.';
   const time=frame.time.slice(11,16);$('time-label').innerHTML=`${time} <small>UTC</small>`;$('clock').value=index;
   $('clock').setAttribute('aria-valuetext',`${time} UTC, ${frame.time.slice(0,10)}`);
   $('play').textContent=playing?'Ⅱ':'▶';$('play').setAttribute('aria-label',playing?'Pause':'Play');
@@ -102,10 +107,15 @@ $('threads').addEventListener('change',()=>scene?.setThreads($('threads').checke
 $('luminosity').addEventListener('input',()=>scene?.setGain(Number($('luminosity').value)));
 $('height').addEventListener('change',()=>scene?.setExaggeration(Number($('height').value)));
 $('relief').addEventListener('change',()=>scene?.setRelief(Number($('relief').value)));
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{selected=-1;$('station').value='-1';scene?.preset(b.dataset.view);updateUI();document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));}));
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{
+  const starting=b.dataset.view==='flyover'&&!scene?.flying;
+  selected=-1;$('station').value='-1';scene?.preset(b.dataset.view);
+  if(starting&&scene){if(index>=144)index=0;playing=true;setFrames();}
+  document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));updateUI();
+}));
 function notes(open){$('notes').hidden=!open;$('notes-button').setAttribute('aria-expanded',String(open));(open?$('close-notes'):$('notes-button')).focus();}
 $('notes-button').addEventListener('click',()=>notes($('notes').hidden));$('close-notes').addEventListener('click',()=>notes(false));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('notes').hidden)notes(false);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('notes').hidden)notes(false);else{scene?.stopFlyover();updateUI();}}});
 let last=performance.now(),lastUI=0;
 installPlaybackKeyboard({timeline:$('clock'),play:$('play'),blocked:()=>!$('notes').hidden});
 document.addEventListener('visibilitychange',()=>{last=performance.now();});
