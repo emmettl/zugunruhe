@@ -61,3 +61,13 @@ Archipelago is now preserved at `/studies/02-archipelago/`, with a frozen build,
 source archive and checksum manifest. **Study 03 — Continent ablaze**, at
 `/continent.html`, joins the observed region into continuous flowing altitude
 layers. [Spatial model, controls and validation](docs/CONTINENT.md).
+
+# Hosting
+
+[Motion Studies host](https://motionstudies.app/zugunruhe/) ·
+[GitHub Pages](https://emmettl.github.io/zugunruhe/) ·
+[Deployment workflow and rollback](docs/HOSTING.md)
+
+The same verified artifact goes to both hosts, with the three current studies
+and both frozen snapshots included. `npm run preview:hosted` checks the built
+site under its production `/zugunruhe/` prefix.
