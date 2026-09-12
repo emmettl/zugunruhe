@@ -1,0 +1,36 @@
+{
+  "saved": "2026-09-12",
+  "title": "Study 01 \u2014 Layers",
+  "sourceArchive": "01-layers-source.zip",
+  "sourceSha256": "2bce1b5657cb72b7e5ecdd8d210cf68650eee3c433a78ed29ba9eb61fffcb610",
+  "files": {
+    "README.md": "3120db213ce4703bce45dd7b17bc96a6bebd59fcebf52bf78b5d9ed541b50137",
+    "index.html": "52d6e9a94c4326e930f3f2135cca2e5e4b9e996b347c3d41cac51bd4fbcf34b1",
+    "package.json": "058cd58d41fc45cc590c0b58203c572c3b27f99d09dcf33cb2d731a4e0e01de9",
+    "package-lock.json": "0735bbdd38cf3242c5c8e69c7b7e9e5456ff88fa283118bb322e536413421278",
+    ".gitignore": "107dbf6d9ae01cbfe2326c3a2149df6df34fb32bdca0646873dc93d574d020c4",
+    "src/daylight.test.js": "9b249b1440d28651362945ba5baffdce496ae4d20b969963e1457c331b4a1030",
+    "src/interpolation.test.js": "b1552e9d61a8466c09751f29051bac78c53d5aab37b79fc010291bdf6f2c8c0d",
+    "src/terrain.js": "8fe297eb129f89212a9644defd20853c6060e82507621aa4fa498fb003ea565c",
+    "src/interpolation.js": "e5657a64d6177a13be8e9b9fb1362fd1673b9676e96cf896b99de2145fbcd44e",
+    "src/main.js": "9076469d0eb7b0bea89b4e087e20c51961da732b401ebbe37204cae035411b7c",
+    "src/layers.js": "88a725f748aaaa968d9f171160990f494b0f27ab06c3dda7f2363bac4a363a65",
+    "src/style.css": "dad4d6554181ad93d9527e549201557b44ae78b0c8361eb2c296a59eb458b76b",
+    "src/atmosphere.js": "03cf3aa3db247cfa02da6b3bdad8b48238215da87a1a012a4465b557b01ceba7",
+    "src/daylight.js": "3a68e18142b70cb29b480a6fc60a88135a3ab57729d2f0d00a0b989728f2db5b",
+    "docs/LAYERS.md": "fee88f8b5a93072ae9750239d7641b49f34571e76b56d5775337ba4cc852e133",
+    "docs/FIRST-STUDY.md": "a812a0d495c119b14d0aec53c9dd17a22eb8188f40dec6430b14c800bad04ac4",
+    "scripts/prepare-first-study.py": "74080a57073efda86bbd14472c16b9c4aa4c29ae51fae42899506d1b70c44c51",
+    "scripts/render-first-study.py": "16392db38204824652fb03a1d26c73ac402991d782062b0662c9ba687169b7aa",
+    "scripts/prepare-terrain.py": "dbcfe67300c9b61b75c92da4561ee245aca8194148cadf297e3c8d70469350a8",
+    "data/processed/memmingen-terrain.json": "bc5e202c7798d49f0edee3c2dc961f4f74a99d3a6e7d688f49ded69d063a3d16",
+    "data/processed/memmingen-three-nights.json": "11ab6f674ff4528aa680ef0b8e8116265fc431d75eb7683f8e02a50bb23879f7",
+    "data/provenance/memmingen-terrain.json": "f44a01a0e0ca4f2cf1040af2054107f654b973a2e7ffd6cb34690eb94ff69735",
+    "data/provenance/zenodo-4587338.json": "26fb64a6635a29ff050c0ebc8227c7c6ad86512ce31de15b490c034ec6a82a33"
+  },
+  "buildFiles": {
+    "studies/01-layers/index.html": "e7747ca0f97de8d442772f16695ecf4993334e96e91c674004660520bb4b1e24",
+    "studies/01-layers/assets/index-BrsqIlu2.css": "06653a06c16623466d1cb474a39265d437a3a51c4a1633579612ff469ceb22fc",
+    "studies/01-layers/assets/index-DnV_Kd91.js": "2cbb91e5f2a34fd96cdf9a26aa7b96c3d1bbead8291a4102785b41543e42c91c"
+  }
+}

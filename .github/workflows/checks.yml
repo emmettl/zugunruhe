@@ -1,0 +1,53 @@
+name: Check Zugunruhe
+on:
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.19.0 --ignore-scripts
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: zugunruhe-site
+          path: dist
+          include-hidden-files: true
+  browser:
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.19.0 --ignore-scripts
+      - run: npm ci
+      - uses: actions/download-artifact@v8
+        with:
+          name: zugunruhe-site
+          path: dist
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: npm run test:browser -- --project=${{ matrix.browser }}
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: browser-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

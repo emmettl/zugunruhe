@@ -1,0 +1,51 @@
+{
+  "source": "Mapzen Terrain Tiles on AWS",
+  "accessed": "2026-09-12",
+  "registry": "https://registry.opendata.aws/terrain-tiles/",
+  "attribution": "Europe terrain produced using Copernicus data and information funded by the European Union \u2014 EU-DEM layers; SRTM and GMTED2010 courtesy of the U.S. Geological Survey; Austria terrain \u00a9 offene Daten \u00d6sterreichs \u2014 Digitales Gel\u00e4ndemodell (DGM) \u00d6sterreich.",
+  "attributionReference": "https://github.com/tilezen/joerd/blob/master/docs/attribution.md",
+  "processing": "Decode R*256+G+B/256-32768 metres before bilinear interpolation; sample at 500 m spacing; round to metres. No invented relief.",
+  "rangeMetres": [
+    409,
+    1425
+  ],
+  "centreElevationMetres": 669,
+  "tiles": [
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/269/176.png",
+      "sha256": "49577d450ef531668d8f60c437a1cb74856d21ced303cf0df645185274b1a419"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/270/176.png",
+      "sha256": "b28a84c6ea61eafc0713497603cb68b82965ead00c0420679b6f43dd39693618"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/271/176.png",
+      "sha256": "218adf5d27f43c0964d36d862c6e436adf7eeff66babbe63515bbfef0315c0b5"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/269/177.png",
+      "sha256": "f88a53ccf1040d8f86a7251a00c891e3da6b0b7a1d032f6e51e3829183c39e5b"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/270/177.png",
+      "sha256": "34ad0b13e0a10e3574007c15436a5b4dd3ca519c34a4db08b57b743b30e5e74b"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/271/177.png",
+      "sha256": "a94a2ef520b6b8041b320263375649033134e360fa0942da27a187dfb7d60e8b"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/269/178.png",
+      "sha256": "80403bc2d3e38ab4a2d10361e60f114797b6ce105bed13046fead552baf5d2a7"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/270/178.png",
+      "sha256": "27822791bd19afa06f413f1e6d7081d3f6a7b507bc26ea5242c34e02f94bae16"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/9/271/178.png",
+      "sha256": "6698baf5f4e3a8727886dfc7e544f528c8f78585c050838696780e184ffa506c"
+    }
+  ]
+}

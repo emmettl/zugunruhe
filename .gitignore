@@ -1,0 +1,13 @@
+data/raw/
+__pycache__/
+.DS_Store
+node_modules/
+dist/
+.sites-runtime/
+.env
+.env.*
+!.env.example
+.wrangler/
+.hosting-assets/
+playwright-report/
+test-results/

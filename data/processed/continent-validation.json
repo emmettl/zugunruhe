@@ -1,0 +1,12 @@
+{
+  "method": "Leave one entire station out; evaluate every 30 minutes over the one-night study, all fifteen bands. The baseline is the contemporaneous mean of the remaining stations for that band. Kernel parameters were selected before this check; no fitting is performed.",
+  "observations": 10680,
+  "unavailable": 405,
+  "missing": 2790,
+  "units": "birds/km³",
+  "meanAbsoluteError": 2.008316451140709,
+  "medianAbsoluteError": 0.4486831562613272,
+  "baselineMeanAbsoluteError": 2.89711689802201,
+  "baselineMedianAbsoluteError": 0.7455882352941174,
+  "limitations": "A single-night check of spatial prediction at radar locations, not independent biological validation, calibrated uncertainty, or proof of accuracy outside this network."
+}

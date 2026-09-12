@@ -1,0 +1,207 @@
+<div id="zugunruhe-memmingen">
+  <div class="text-small">ZUGUNRUHE · FIRST DATA STUDY</div>
+  <h2>Three nights at Memmingen</h2>
+  <div class="text-small">2–5 September 2018 · southern Germany · processed radar estimates</div>
+  <h3>Density through the night</h3>
+  <div class="text-small">Mean density in the 1–2 km altitude band · common linear scale</div>
+  <div class="night-legend viz-row" aria-label="Visible nights"></div>
+  <div class="timeline"></div>
+  <div class="viz-controls">
+    <label class="form-label">Selected night
+      <select class="form-select night-select" aria-label="Selected night">
+        <option value="0">2–3 September</option>
+        <option value="1">3–4 September</option>
+        <option value="2" selected>4–5 September</option>
+      </select>
+    </label>
+    <label class="form-label">Time · <span class="clock tabular-nums">22:00 UTC</span>
+      <input class="form-range time-select" type="range" min="0" max="144" value="48" step="1" aria-label="Time in five-minute steps">
+    </label>
+  </div>
+  <div class="selected-summary text-small tabular-nums" aria-live="polite"></div>
+  <div class="profile-row">
+    <section class="profile-section">
+      <h3>Density by altitude</h3>
+      <div class="profile"></div>
+    </section>
+    <section class="direction-section">
+      <h3>Movement direction</h3>
+      <div class="text-small">Density-weighted · 1–2 km ASL</div>
+      <div class="direction"></div>
+      <div class="direction-value text-small tabular-nums"></div>
+    </section>
+  </div>
+  <div class="text-small">ASL: above sea level · gaps = unavailable · arrows point toward travel</div>
+  <div class="text-small">Nussbaumer et al. · <a href="https://zenodo.org/records/4587338" target="_blank" rel="noopener noreferrer">Source data</a> · CC BY 4.0 · source filtering and interpolation retained</div>
+  <div class="tooltip study-tooltip" role="tooltip" hidden></div>
+  <script type="application/json" class="study-data"><!--STUDY_DATA--></script>
+</div>
+<style>
+  #zugunruhe-memmingen { position:relative; }
+  #zugunruhe-memmingen .night-legend { gap:18px; margin-top:10px; }
+  #zugunruhe-memmingen .legend-button { display:inline-flex; align-items:center; gap:6px; background:transparent; border:0; padding:4px 0; color:var(--foreground); font:inherit; cursor:pointer; }
+  #zugunruhe-memmingen .legend-button[aria-pressed="false"] { opacity:.45; }
+  #zugunruhe-memmingen .legend-swatch { width:22px; height:3px; }
+  #zugunruhe-memmingen .profile-row { display:flex; flex-wrap:wrap; gap:24px; }
+  #zugunruhe-memmingen .profile-section { flex: 2 1 310px; min-width:0; }
+  #zugunruhe-memmingen .direction-section { flex:1 1 190px; min-width:0; }
+  #zugunruhe-memmingen .chart { display:block; width:100%; overflow:visible; }
+  #zugunruhe-memmingen .chart text { fill:var(--foreground); font-size:12px; }
+  #zugunruhe-memmingen .chart .domain, #zugunruhe-memmingen .chart .tick line { stroke:var(--border); }
+  #zugunruhe-memmingen .study-tooltip { position:absolute; pointer-events:none; background:var(--popover); color:var(--popover-foreground); padding:8px; z-index:4; }
+  #zugunruhe-memmingen .selected-summary { min-height:24px; margin:8px 0; }
+  #zugunruhe-memmingen .direction-value { min-height:36px; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+(() => {
+  const root = document.getElementById('zugunruhe-memmingen');
+  const data = JSON.parse(root.querySelector('.study-data').textContent);
+  const nights = data.nights, colours = [1,2,3].map(n=>`var(--viz-series-${n})`);
+  const dash = ['', '7 3', '2 3'], enabled = [true,true,true];
+  const tooltip = root.querySelector('.study-tooltip');
+  const select = root.querySelector('.night-select'), slider = root.querySelector('.time-select');
+  let selectedNight = 2, selectedFrame = 48;
+  const allFrames = nights.flatMap(n=>n.frames);
+  const densityDomain = [0, d3.max(allFrames, d=>d.meanDensity) * 1.08];
+  const profileDomain = [0, d3.max(allFrames.flatMap(f=>f.dens).filter(d=>d!==null)) * 1.04];
+  const maxSpeed = d3.max(allFrames.filter(f=>f.velocity), f=>Math.hypot(...f.velocity)) * 1.08;
+  const clock = minute => `${String((18 + Math.floor(minute/60))%24).padStart(2,'0')}:${String(minute%60).padStart(2,'0')}`;
+  const number = x => x===null ? 'unavailable' : d3.format('.1f')(x);
+  const legend = d3.select(root.querySelector('.night-legend'));
+  nights.forEach((n,i)=>{
+    const b=legend.append('button').attr('type','button').attr('class','legend-button').attr('aria-pressed','true')
+      .attr('aria-label',`Show ${n.label} density`).on('click',()=>{
+        enabled[i]=!enabled[i]; b.attr('aria-pressed',String(enabled[i])); tooltip.hidden=true; drawTimeline();
+      });
+    b.append('span').attr('class','legend-swatch').style('background',colours[i]);
+    b.append('span').text(n.label);
+  });
+  function svgFor(selector,height,label) {
+    const holder=root.querySelector(selector), width=Math.max(1,holder.getBoundingClientRect().width);
+    const svg=d3.select(holder).selectAll('svg').data([null]).join('svg').attr('class','chart')
+      .attr('viewBox',`0 0 ${width} ${height}`).attr('role','img').attr('aria-label',label);
+    svg.selectAll('*').remove(); svg.append('title').text(label);
+    return {svg,width,height};
+  }
+  function frame(svg,left,top,right,bottom) {
+    svg.append('rect').attr('data-chart-frame','').attr('x',left).attr('y',top)
+      .attr('width',right-left).attr('height',bottom-top).attr('fill','none').attr('stroke','var(--border)');
+  }
+  function axisTitles(svg,width,height,xTitle,yTitle) {
+    svg.append('text').attr('class','axis-title').attr('data-axis','x').attr('x',(64+width-16)/2)
+      .attr('y',height-5).attr('text-anchor','middle').text(xTitle);
+    svg.append('text').attr('class','axis-title').attr('data-axis','y').attr('transform',`translate(14 ${(height-45)/2}) rotate(-90)`)
+      .attr('text-anchor','middle').text(yTitle);
+  }
+  function trimTickCollisions(svg) {
+    const ticks=Array.from(svg.node().querySelectorAll('.x-axis .tick text'));
+    if(ticks.length){ ticks[0].setAttribute('text-anchor','start');ticks[ticks.length-1].setAttribute('text-anchor','end'); }
+    let previous=null;
+    for(const el of ticks){const box=el.getBoundingClientRect();if(previous&&box.left<previous.right+4){el.style.visibility='hidden';}else{previous=box;}}
+  }
+  function drawTimeline() {
+    const {svg,width,height}=svgFor('.timeline',235,'Mean radar-estimated density at 1–2 km above sea level for three September nights. Missing samples break each line.');
+    const left=64,right=width-16,top=12,bottom=height-49;
+    const extent=d3.extent(allFrames,d=>d.minute);
+    const x=d3.scaleLinear().domain(extent).range([left+2,right-2]);
+    const y=d3.scaleLinear().domain(densityDomain).nice().range([bottom-2,top+2]);
+    frame(svg,left,top,right,bottom);
+    svg.append('g').attr('transform',`translate(${left},0)`).call(d3.axisLeft(y).ticks(4).tickSize(0).tickPadding(8));
+    svg.append('g').attr('class','x-axis').attr('transform',`translate(0,${bottom})`).call(d3.axisBottom(x).tickValues(width<440?[0,240,480,720]:[0,120,240,360,480,600,720]).tickFormat(clock));
+    axisTitles(svg,width,height,'Time (UTC)','Density (birds/km³)');
+    const line=d3.line().defined(d=>d.meanDensity!==null).x(d=>x(d.minute)).y(d=>y(d.meanDensity));
+    nights.forEach((n,i)=>{
+      if(!enabled[i])return;
+      svg.append('path').datum(n.frames).attr('d',line).attr('fill','none').attr('stroke',colours[i])
+        .attr('stroke-width',i===selectedNight?2.5:1.6).attr('stroke-dasharray',dash[i]);
+    });
+    svg.append('line').attr('x1',x(selectedFrame*5)).attr('x2',x(selectedFrame*5)).attr('y1',top).attr('y2',bottom)
+      .attr('stroke','var(--foreground)').attr('stroke-opacity',.3).attr('stroke-dasharray','3 4');
+    const guide=svg.append('line').attr('data-chart-hover-guide','').attr('y1',top).attr('y2',bottom)
+      .attr('stroke','var(--foreground)').attr('stroke-opacity',.6).style('display','none');
+    const markers=svg.append('g');
+    function sampleAt(event) {
+      const [px]=d3.pointer(event,svg.node());const minute=Math.max(0,Math.min(720,x.invert(px)));
+      const idx=d3.bisector(d=>d.minute).center(nights[0].frames,minute);
+      return {px:Math.max(left,Math.min(right,px)),idx};
+    }
+    svg.append('rect').attr('x',left).attr('y',top).attr('width',right-left).attr('height',bottom-top)
+      .attr('fill','transparent').attr('data-chart-hit','').attr('data-chart-hover-overlay','cross-series')
+      .on('pointermove',function(event){
+        const {px,idx}=sampleAt(event);guide.style('display',null).attr('x1',px).attr('x2',px);
+        markers.selectAll('*').remove();
+        const rows=[`Nearest sample · ${clock(idx*5)} UTC`];
+        nights.forEach((n,i)=>{if(!enabled[i])return; const v=n.frames[idx].meanDensity;rows.push(`${n.label}: ${number(v)}${v===null?'':' birds/km³'}`);
+          if(v!==null)markers.append('circle').attr('data-chart-hover-marker','').attr('cx',x(idx*5)).attr('cy',y(v)).attr('r',3).attr('fill',colours[i]);});
+        tooltip.replaceChildren(...rows.map(text=>{const row=document.createElement('div');row.textContent=text;return row;}));
+        tooltip.hidden=false;const bounds=root.getBoundingClientRect();
+        tooltip.style.left=`${Math.max(0,Math.min(event.clientX-bounds.left+12,bounds.width-tooltip.offsetWidth))}px`;
+        tooltip.style.top=`${event.clientY-bounds.top+18}px`;
+      })
+      .on('pointerleave',()=>{tooltip.hidden=true;guide.style('display','none');markers.selectAll('*').remove();})
+      .on('click',event=>{selectedFrame=sampleAt(event).idx;slider.value=selectedFrame;tooltip.hidden=true;drawSelection();});
+    trimTickCollisions(svg);
+  }
+  function drawProfile() {
+    const f=nights[selectedNight].frames[selectedFrame];
+    const {svg,width,height}=svgFor('.profile',285,'Selected five-minute density profile, 1 to 4 km above sea level. Horizontal marks labelled unavailable are missing estimates.');
+    const left=64,right=width-16,top=12,bottom=height-49;
+    const x=d3.scaleLinear().domain(profileDomain).nice().range([left+2,right-2]);
+    const centres=data.altitudeCentresMAsl;
+    const y=d3.scaleLinear().domain([d3.min(centres)-100,d3.max(centres)+100]).range([bottom,top]);
+    frame(svg,left,top,right,bottom);
+    svg.append('g').attr('transform',`translate(${left},0)`).call(d3.axisLeft(y).tickValues([1000,2000,3000,4000]).tickFormat(d=>d/1000).tickSize(0).tickPadding(8));
+    svg.append('g').attr('class','x-axis').attr('transform',`translate(0,${bottom})`).call(d3.axisBottom(x).ticks(width<370?3:4));
+    axisTitles(svg,width,height,'Density (birds/km³)','Altitude (km ASL)');
+    centres.forEach((alt,i)=>{
+      const value=f.dens[i];
+      if(value===null){
+        svg.append('text').attr('x',left+6).attr('y',y(alt)+4).text('—');
+      }else{
+        svg.append('rect').attr('x',x(0)).attr('y',y(alt+88)).attr('width',Math.max(0,x(value)-x(0)))
+          .attr('height',y(alt-88)-y(alt+88)).attr('fill',colours[selectedNight]).attr('fill-opacity',alt<2000?.85:.45);
+        if(value===0)svg.append('line').attr('x1',x(0)).attr('x2',x(0)+3).attr('y1',y(alt)).attr('y2',y(alt)).attr('stroke',colours[selectedNight]);
+      }
+    });
+    const hit=svg.append('rect').attr('x',left).attr('y',top).attr('width',right-left).attr('height',bottom-top).attr('fill','transparent').attr('data-chart-hit','');
+    hit.on('pointermove',event=>{
+      const [,py]=d3.pointer(event,svg.node());const i=Math.max(0,Math.min(14,Math.floor((y.invert(py)-1000)/200)));
+      tooltip.textContent=`${centres[i]-100}–${centres[i]+100} m ASL: ${number(f.dens[i])}${f.dens[i]===null?'':' birds/km³'}`;
+      tooltip.hidden=false;const b=root.getBoundingClientRect();tooltip.style.left=`${Math.max(0,Math.min(event.clientX-b.left+12,b.width-tooltip.offsetWidth))}px`;tooltip.style.top=`${event.clientY-b.top+18}px`;
+    }).on('pointerleave',()=>{tooltip.hidden=true;});
+    trimTickCollisions(svg);
+  }
+  function drawDirection() {
+    const f=nights[selectedNight].frames[selectedFrame];
+    const {svg,width}=svgFor('.direction',220,'Density-weighted direction of movement in the 1–2 km altitude band. North up, east right; arrow length represents mean vector speed.');
+    const cx=width/2,cy=108,r=Math.min(76,width/2-30);
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',r).attr('fill','none').attr('stroke','var(--border)');
+    [['N',cx,cy-r-12],['S',cx,cy+r+20],['W',cx-r-18,cy+4],['E',cx+r+18,cy+4]].forEach(([text,x,y])=>
+      svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle').text(text));
+    svg.append('line').attr('x1',cx-r).attr('x2',cx+r).attr('y1',cy).attr('y2',cy).attr('stroke','var(--border)');
+    svg.append('line').attr('x1',cx).attr('x2',cx).attr('y1',cy-r).attr('y2',cy+r).attr('stroke','var(--border)');
+    const output=root.querySelector('.direction-value');
+    if(!f.velocity){output.textContent='Direction unavailable';return;}
+    const [u,v]=f.velocity, speed=Math.hypot(u,v), bearing=(Math.atan2(u,v)*180/Math.PI+360)%360;
+    if(speed<1e-6){output.textContent='Mean vector 0 km/h · no direction';return;}
+    const dx=u/maxSpeed*r,dy=-v/maxSpeed*r,ux=dx/Math.hypot(dx,dy),uy=dy/Math.hypot(dx,dy);
+    const ex=cx+dx,ey=cy+dy;
+    svg.append('line').attr('x1',cx).attr('y1',cy).attr('x2',ex).attr('y2',ey).attr('stroke',colours[selectedNight]).attr('stroke-width',3);
+    svg.append('path').attr('d',`M${ex},${ey} L${ex-ux*9-uy*4},${ey-uy*9+ux*4} L${ex-ux*9+uy*4},${ey-uy*9-ux*4} Z`).attr('fill',colours[selectedNight]);
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',3).attr('fill','var(--foreground)');
+    output.textContent=`Toward ${Math.round(bearing)}° · mean vector ${number(speed*3.6)} km/h`;
+  }
+  function drawSelection() {
+    const f=nights[selectedNight].frames[selectedFrame];
+    root.querySelector('.clock').textContent=`${clock(f.minute)} UTC`;
+    slider.setAttribute('aria-valuetext',`${clock(f.minute)} UTC on ${f.time.slice(0,10)}`);
+    root.querySelector('.selected-summary').textContent=`${f.time.slice(0,10)} · ${clock(f.minute)} UTC · 1–2 km mean: ${number(f.meanDensity)}${f.meanDensity===null?'':' birds/km³'}`;
+    drawTimeline();drawProfile();drawDirection();
+  }
+  select.addEventListener('change',()=>{selectedNight=Number(select.value);tooltip.hidden=true;drawSelection();});
+  slider.addEventListener('input',()=>{selectedFrame=Number(slider.value);tooltip.hidden=true;drawSelection();});
+  new ResizeObserver(()=>drawSelection()).observe(root);
+  drawSelection();
+})();
+</script>

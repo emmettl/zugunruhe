@@ -1,0 +1,211 @@
+{
+  "source": "Mapzen Terrain Tiles on AWS",
+  "accessed": "2026-09-12",
+  "registry": "https://registry.opendata.aws/terrain-tiles/",
+  "attribution": "Europe terrain produced using Copernicus data and information funded by the European Union \u2014 EU-DEM layers; SRTM and GMTED2010 courtesy of the U.S. Geological Survey; Austria terrain \u00a9 offene Daten \u00d6sterreichs \u2014 Digitales Gel\u00e4ndemodell (DGM) \u00d6sterreich. Norway terrain \u00a9 Kartverket; UK terrain \u00a9 Environment Agency copyright and/or database right 2015.",
+  "attributionReference": "https://github.com/tilezen/joerd/blob/master/docs/attribution.md",
+  "processing": "Decode R*256+G+B/256-32768 metres before bilinear interpolation; sample at 4.6875 km spacing; round to metres. No invented relief.",
+  "rangeMetres": [
+    -5218,
+    3964
+  ],
+  "centreElevationMetres": 252,
+  "tiles": [
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/18.png",
+      "sha256": "8bc5173124ea60d8babe48bfee2924e237456be53f1b6e5527078205e6bddc4b"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/18.png",
+      "sha256": "1a99ecfc03b77c6abd2b144be9c7a5368ce4eff23d87a05febd565830a763b03"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/18.png",
+      "sha256": "468d7952231479c92db092cc6a71de5ba52e31f6d1a903f9e5bce899db8df95f"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/18.png",
+      "sha256": "100743b0ce8387d6db5e788110d724534b5c2a07b8ae3f28171650bdb95e111a"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/18.png",
+      "sha256": "30a679d6b5e08ae1c6a98e6448e1689a2e23cdff085a9f50e9f89afe7a4bda96"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/18.png",
+      "sha256": "0c7b7d2a98733405d237cd1e1aa6a5adfe4c1158b2cb2a737812663f79335c75"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/18.png",
+      "sha256": "ad2cee58e31fba9bf472e01d5fb5d649ed4559f1485b4d844a0bb0b52e396ec8"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/19.png",
+      "sha256": "e839d5c182eaf2c3630e5700909dbc66b85bcd3d91c85b5f1298007747363f54"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/19.png",
+      "sha256": "dd83aaef7c65edb4a7cf5f99f19af3bff4ef2e9d4d3041a7e0e179e4cfcc44a8"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/19.png",
+      "sha256": "8d032161637ca5e65f6ea9d8de082a0c04bf1acc789485002c8ba50cbd2a12d8"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/19.png",
+      "sha256": "057e4d918bad0d6430e51c6f67eb82c9b958ae43e2103aa965d64ba0c9b236b6"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/19.png",
+      "sha256": "14891de3ef4177b082cf16bdc2005027048ec9409088eb0812917137409abec4"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/19.png",
+      "sha256": "a52f4afb05057d4a7ddbf515deb951cd7ffc8836a8868c0c6bf8438aee058c64"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/19.png",
+      "sha256": "00aa25d41a2a1314f28058261db0770571444b1c2183059beac53ae2d0d5f7ac"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/20.png",
+      "sha256": "42b9debf641d72e0a6bf3a5d24ea72d187ff480e89af057d3e803fd1a4223c97"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/20.png",
+      "sha256": "9317035e9a8c9e5daae9c3487c798bf14d91e1558a211abc1ba44de33e05c087"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/20.png",
+      "sha256": "2b3d7202feaa37601ee7abb2675a9c643c7a3c011e46494f42652c770ba11e24"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/20.png",
+      "sha256": "93c887749fc63801c525ebdf49e2b95bf77d6ba69c4a80e69a3d60c7f8eff8db"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/20.png",
+      "sha256": "bfdc904d655eb42486b522bbf1886cf990bff140587eba1e2ff8bcdfc78f5911"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/20.png",
+      "sha256": "9ff9e8726df56e49ca514b9625481c665f928b9ad0e7f0c1c9e6096672d49ec9"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/20.png",
+      "sha256": "981e46adc7d3241e48e1f6f3ee8ce4ddf881f40852d4c1e80659da3e6bff41fb"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/21.png",
+      "sha256": "d2d0828490f6d9b9719c63418c8a6908fc93ae716d0cbe08fb2b9425d9274b02"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/21.png",
+      "sha256": "078d8582a54bda9b46ce5dab78a3c084a9b9b0dcfd21f3a035253eb51caa4ede"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/21.png",
+      "sha256": "465bffe3f7a21ee3c00e380c8d900a1354b9095bd6f8d460af15017df933211d"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/21.png",
+      "sha256": "1d820e1851887a994ea402851a9219e9e3dfbb3839ffd8066609bef3c4d0a52e"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/21.png",
+      "sha256": "ec03bb4f5289feb2a7e5d8adc102c483f5cbba8511c25c8b7e619f2ce1c7dd4b"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/21.png",
+      "sha256": "f7b256e0a881475437d33d1dfec3b5eb861fa4e2d50c10833a80488fbe42b2c4"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/21.png",
+      "sha256": "232827790cdf30029c9b2b520c70b1a93f5436a2512e5a728b4e18d3bc4a1d64"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/22.png",
+      "sha256": "88043253a1906e11ebd9191b540810d9939f337b026574df62092c791d36f4e3"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/22.png",
+      "sha256": "a116550174e36ce91a45a74f40821b20da64c26212f14389d7b9566bcbc079db"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/22.png",
+      "sha256": "c0730487bb0bda48b44406b60f66e2a8a4eb2157874977cae3d7c1389d2d99c0"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/22.png",
+      "sha256": "16a7fd5a0dff2b0d4d8e4e392c3f18179dcac5be60ec5471e71c9515ab133dc5"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/22.png",
+      "sha256": "18e083640676512371d1bf02e4847f192d2c54846c2b939aee9a2f45955ab658"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/22.png",
+      "sha256": "9e6a0b15fe3424781813aae21c71470307ec57a4cbbeb8fe08a0f3e2bf60a015"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/22.png",
+      "sha256": "f1f6981378332397aef76858bdb36a52a65a82f5adac563c3774ed3a3cc73c85"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/23.png",
+      "sha256": "47dbfc800b6d91c26039452f2815a5ea7a2f2771e0d4f60a35f8686a0ff5aaee"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/23.png",
+      "sha256": "e315d1dc7d638e09dd63f740c42baa25b246bd1875891e29623523f3169690fb"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/23.png",
+      "sha256": "815800d14c65590fac8945308c04900a2cc3017e57d75620e713ae9d02c62ccb"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/23.png",
+      "sha256": "9f0797f605f309030c223efade44e574b43330c26ee9134f3f2ee7998cd74e7d"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/23.png",
+      "sha256": "1fb6e801054bc30e4184efbf7854af48df3a29da5fe471104d1744a485ba3eb9"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/23.png",
+      "sha256": "d0a07ea16f144b5780afc85ef285b0ad7ff51e53d94aa167e47b83f2a0787885"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/23.png",
+      "sha256": "9b440903d49732a6a9642574349dff1eb890e87f5ef2d03f0af0924bc66fb456"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/30/24.png",
+      "sha256": "81c72357cb9ba4d6d5a8cf2db29142571b8da1c458826357ec9d2a803795846c"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/31/24.png",
+      "sha256": "93ceb1fc3a12e42c24447904da357a97266e788c348e6e352bdddbd42b44627b"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/24.png",
+      "sha256": "6a8366c00fb8e6fce247610d0fe698ae48229469d297eea7a54d812ce82c2fff"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/33/24.png",
+      "sha256": "ce08defdfe2cae102fb56467f1c062ec42ef2633e93abab0415ab627ae386c05"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/34/24.png",
+      "sha256": "fad0c2cfa05c768a133d31797cd332fc4cf38eaedd1e21811bc44a68fe6ecf14"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/35/24.png",
+      "sha256": "b7f9cee4f1b53bb3170819c1a2ff168281241d9c7796e2be85e261895c965b2a"
+    },
+    {
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/36/24.png",
+      "sha256": "17171611d67d6fc5710d276aa635c20b7ff058361d8c391ee6f4da3cfaf99fdf"
+    }
+  ]
+}

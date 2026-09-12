@@ -1,0 +1,10 @@
+{
+  "source": "Natural Earth 1:10m countries",
+  "license": "Public domain",
+  "accessed": "2026-09-12",
+  "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_admin_0_countries.geojson",
+  "sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
+  "processing": "Retain complete polygon parts whose bounding boxes intersect 11 W\u201324 E, 37\u201361 N, preserving holes and rounding coordinates to five decimals. Render the same detailed geometry as the regional land mask and boundary lines.",
+  "countriesRetained": 48,
+  "polygonPartsRetained": 333
+}
