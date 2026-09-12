@@ -1,0 +1,73 @@
+/* Shared readable controls; frozen studies do not import this stylesheet. */
+html{color-scheme:dark}summary{cursor:pointer}summary:focus-visible{outline:2px solid #9cdee6;outline-offset:4px}
+body:has(dialog[open]){overflow:hidden}
+dialog#notes,dialog.about-panel{color:#dedfe8;margin:auto;inset:0;width:min(480px,calc(100% - 32px));max-height:calc(100svh - 32px);padding:24px;overscroll-behavior:contain}
+dialog::backdrop{background:#02040bb3}
+#close-notes,#close-about{position:sticky;top:0;float:right;min-width:44px;min-height:44px;margin:-12px -12px 0 8px;padding:4px;background:#101420;border-radius:4px;z-index:1}
+.mobile-settings,.mobile-interaction{display:none}
+@media(max-width:760px), (max-width:1024px) and (max-height:500px){
+  #app{display:flex;flex-direction:column}#app main{display:contents}
+  .header-place{display:none}
+  header:has(.site-navigation){height:auto;min-height:112px;padding:16px 16px 0;flex-wrap:wrap;gap:8px}
+  header .identity{font-size:17px}.identity span{color:#a4a6b5}
+  header .site-navigation{width:100%;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+  header .site-navigation a{font-size:14px;padding:12px 4px;min-height:44px;text-align:center;color:#b5b4c5}
+  .site-navigation a[aria-current=page]{color:#f0e8f8;background:#c6b2ea1c}
+  #app .stage,#network-app main,#continent-app main{height:clamp(340px,50svh,500px);min-height:0}
+  #app .stage{order:1}
+  .title,.scene-heading{top:18px;left:16px;right:16px;max-width:none}
+  .title h1,.scene-heading h1{font-size:26px;max-width:none}
+  .title p,.scene-heading>p:not(.eyebrow){font-size:13px;line-height:1.5;max-width:none}
+  .title:has(#back-to-network:not([hidden])){top:12px;left:12px;right:12px;max-width:none;padding:10px;background:#080b13b8}
+  #back-to-network{margin-top:8px}
+  .camera-controls,.view-controls{left:12px;right:12px;bottom:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
+  .camera-controls button,.view-controls button{font-size:12px;padding:10px 4px;min-height:44px;color:#c0c2d0}
+  .mobile-interaction{position:absolute;display:flex;align-items:center;gap:10px;left:12px;right:12px;bottom:64px;font-size:12px;color:#c5c5d3}
+  .mobile-interaction button{min-height:44px;padding:8px 12px;background:#080b13db;border:1px solid #ffffff30;border-radius:4px;font-size:13px}
+  .mobile-interaction button[aria-pressed=true]{background:#343047}
+  .mobile-interaction span{text-shadow:0 1px 5px #000}
+  .scene-foot,.gesture{display:none}
+  .scene canvas,#world canvas{touch-action:pan-y pinch-zoom!important}
+  .touch-explore canvas{touch-action:none!important}
+  #app>.playback{order:2}
+  #network-app footer,#continent-app footer{height:auto;min-height:0;padding:16px}
+  #app>.playback{padding:16px}
+  .playback{gap:12px}.timeline{min-width:0}
+  #play{width:48px;min-width:48px;height:48px;border:1px solid #d4bfe633;border-radius:5px}
+  #clock[type=range]{height:44px;margin:0;width:100%}
+  #time[type=range]{height:44px;top:23px}
+  #app .timeline{height:80px}#app .time-ticks{top:68px}
+  .timeline-head{gap:6px}.timeline-head strong{font-size:24px}.timeline-head small{font-size:12px}
+  #coverage,.ticks,.time-ticks,#status,.playback-foot,.footnote{font-size:12px;color:#acafbf}
+  .footnote{flex-direction:column;gap:8px;margin-top:12px}.footnote span{max-width:none}
+  #notes-button,#about{min-height:44px;padding:10px 0;text-align:left;font-size:13px;color:#c3c7d6;align-self:flex-start}
+  .playback-heading{flex-wrap:wrap;gap:8px}.nights{flex-wrap:wrap}.nights button{padding:8px;min-height:44px}
+  .time>span{font-size:12px}.playback-foot{flex-direction:column;gap:8px;line-height:1.5}
+  .mobile-settings{display:block;order:3;border-top:1px solid #ffffff20;background:#090c15;padding:0 16px max(16px,env(safe-area-inset-bottom))}
+  .mobile-settings>summary{padding:16px 0;min-height:52px;font-size:15px;color:#dedfe8}
+  .mobile-settings-content{display:grid;gap:20px;padding-bottom:8px}
+  .mobile-settings .inspector,.mobile-settings .height-controls,.mobile-settings .layer-panel{position:static;width:auto;max-width:none;padding:0;background:none;border:0;backdrop-filter:none;margin:0}
+  .mobile-settings .height-controls{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,1fr);justify-content:stretch;gap:12px}
+  .mobile-settings label,.mobile-settings .inspection,.mobile-settings #reading p,.mobile-settings #reading small{font-size:14px!important;color:#b9bdcc}
+  .mobile-settings .height-controls label{text-align:left;align-self:center}
+  .mobile-settings select{font-size:16px;min-height:44px;width:100%}
+  .mobile-settings .palette-control{gap:16px}.mobile-settings .palette-control select{width:50%}
+  .mobile-settings .inspection{min-height:44px;gap:12px;margin:8px 0!important}
+  .inspection input[type=checkbox]{width:22px;height:22px;flex-shrink:0}
+  .mobile-settings #reading{min-height:0;margin:16px 0}
+  .mobile-settings .spectrum-key,.mobile-settings #camera-height{font-size:12px;color:#b4b8c8}
+  .mobile-settings #luminosity{height:44px;width:100%;min-width:0}
+  .mobile-settings .weather-controls{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mobile-settings #weather-reading,.mobile-settings .weather-controls a{grid-column:1/-1;width:auto;font-size:13px;color:#b1becc;margin:0}
+  .mobile-settings .weather-controls a{min-height:44px;display:flex;align-items:center}
+  .mobile-settings #bands{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mobile-settings .band{min-height:48px;gap:8px}.mobile-settings .band-alt{font-size:14px;width:42px}.mobile-settings .band-alt small{display:inline;font-size:11px}
+  .mobile-settings .band-value{font-size:13px;width:34px}.mobile-settings .layer-detail p{font-size:14px;color:#bab3ca}
+  #clear-band{min-height:44px}
+  .return-to-scene{min-height:44px;padding:12px;background:#c6b2ea14;border:1px solid #ffffff26;border-radius:4px;font-size:14px}
+  dialog#notes,dialog.about-panel{padding:20px;max-height:calc(100dvh - 24px);width:calc(100% - 24px)}
+  dialog#notes p,dialog.about-panel p{font-size:15px;line-height:1.7;color:#c3c8d8}
+  dialog h2{font-size:22px!important}
+  #graphics-error{left:16px;right:16px;max-width:none}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}

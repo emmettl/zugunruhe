@@ -1,0 +1,32 @@
+# Mobile usability pass
+
+The four editable studies share `study-ui.js` and `study-ui.css`. Frozen study
+snapshots retain their original presentation.
+
+On screens up to 760 px wide, and landscape phones up to 1024 × 500 px:
+
+- Study navigation occupies a separate row with 44 px targets.
+- The landscape is followed directly by playback. Secondary settings live in a
+  native expandable section; Cloud's altitude bands appear there in two columns.
+- Settings keep their existing controls, event listeners and values. Resizing
+  back to desktop restores each control to its original position.
+- Swiping the scene scrolls the page by default. Move view enables camera gestures;
+  Done moving restores scrolling. Preset buttons work in either mode.
+- Station selection closes settings and returns to the scene with focus on Back.
+  Other adjustments offer a Back to scene button.
+- Controls use at least 44 px heights, 16 px select text, larger labels and readable
+  timelines. The page can reflow without horizontal scrolling at 320 px.
+
+All editable studies use native modal dialogs for notes: a named dialog, modal
+focus containment, Escape, focus restoration and a close button that stays
+reachable while the notes scroll. Opening notes prevents background scrolling.
+Reduced-motion preferences disable cosmetic transitions and the return-to-scene
+scroll animation. Playback still starts paused.
+
+Validation: local browser inspection of all four studies at phone widths,
+320 × 568, 390 × 844 and 844 × 390 layouts, station selection, scrollable notes,
+focus containment, settings and desktop restoration. The WebKit suite checks
+mobile control sizes, horizontal overflow, expansion, modal focus and the camera
+interaction toggle alongside the existing playback tests. Chromium checks the
+existing desktop flows. These are browser-based checks, not a physical-device
+VoiceOver or TalkBack audit and not a claim of full WCAG conformance.

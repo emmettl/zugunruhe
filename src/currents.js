@@ -1,4 +1,5 @@
 import './site-shell.js';
+import { installStudyDialog,installMobileStudy } from './study-ui.js';
 import { installPlaybackKeyboard } from './playback-keyboard.js';
 import '@motionstudies/web/tokens.css';
 import './network.css';
@@ -113,7 +114,7 @@ document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',(
   if(starting&&scene){if(index>=144)index=0;playing=true;setFrames();}
   document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));updateUI();
 }));
-function notes(open){$('notes').hidden=!open;$('notes-button').setAttribute('aria-expanded',String(open));(open?$('close-notes'):$('notes-button')).focus();}
+const notes=installStudyDialog($('notes'),$('notes-button'),$('close-notes'));
 $('notes-button').addEventListener('click',()=>notes($('notes').hidden));$('close-notes').addEventListener('click',()=>notes(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('notes').hidden)notes(false);else{scene?.stopFlyover();updateUI();}}});
 let last=performance.now(),lastUI=0;
@@ -127,3 +128,5 @@ function animate(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     if(now-lastUI>100){updateUI();$('camera-height').textContent=altitude===undefined?'':`${Math.round(altitude).toLocaleString()} km above Earth`;lastUI=now;}
   }requestAnimationFrame(animate);
 }requestAnimationFrame(animate);
+
+installMobileStudy();

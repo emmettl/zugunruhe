@@ -1,4 +1,5 @@
 import './site-shell.js';
+import { installStudyDialog,installMobileStudy } from './study-ui.js';
 import { installPlaybackKeyboard } from './playback-keyboard.js';
 import '@motionstudies/web/tokens.css';
 import './style.css';
@@ -108,7 +109,7 @@ $('clear-band').addEventListener('click',()=>{selected=-1;update();});
 [['orbit','home'],['side','viewSide'],['top','viewTop']].forEach(([id,method])=>$(id).addEventListener('click',()=>{
   layers?.[method]();document.querySelectorAll('.view-controls button').forEach(b=>b.classList.toggle('active',b.id===id));
 }));
-function notes(open){$('source-notes').hidden=!open;$('about').setAttribute('aria-expanded',String(open));if(open)$('close-about').focus();else $('about').focus();}
+const notes=installStudyDialog($('source-notes'),$('about'),$('close-about'));
 $('about').addEventListener('click',()=>notes($('source-notes').hidden));$('close-about').addEventListener('click',()=>notes(false));
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!$('source-notes').hidden)notes(false);
@@ -133,3 +134,5 @@ function animate(now){
 }
 layers?.canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();playing=false;update();$('empty').hidden=false;$('empty').textContent='The 3D view lost its graphics context. Reload to restore it.';});
 update();requestAnimationFrame(animate);
+
+installMobileStudy();

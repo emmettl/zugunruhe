@@ -1,4 +1,5 @@
 import './site-shell.js';
+import { installStudyDialog,installMobileStudy } from './study-ui.js';
 import { installPlaybackKeyboard } from './playback-keyboard.js';
 import '@motionstudies/web/tokens.css';
 import './network.css';
@@ -60,7 +61,7 @@ $('clock').addEventListener('input',()=>{index=Number($('clock').value);playing=
 $('height').addEventListener('change',()=>scene?.setExaggeration(Number($('height').value)));
 $('relief').addEventListener('change',()=>scene?.setRelief(Number($('relief').value)));
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{selected=-1;$('station').value='-1';scene?.preset(b.dataset.view);updateUI();document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));}));
-function notes(open){$('notes').hidden=!open;$('notes-button').setAttribute('aria-expanded',String(open));(open?$('close-notes'):$('notes-button')).focus();}
+const notes=installStudyDialog($('notes'),$('notes-button'),$('close-notes'));
 $('notes-button').addEventListener('click',()=>notes($('notes').hidden));$('close-notes').addEventListener('click',()=>notes(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('notes').hidden)notes(false);});
 let last=performance.now(),lastUI=0;
@@ -74,3 +75,5 @@ function animate(now){const dt=Math.min(.1,(now-last)/1000);last=now;
     if(now-lastUI>100){updateUI();$('camera-height').textContent=altitude===undefined?'':`${Math.round(altitude).toLocaleString()} km above Earth`;lastUI=now;}
   }requestAnimationFrame(animate);
 }requestAnimationFrame(animate);
+
+installMobileStudy();
