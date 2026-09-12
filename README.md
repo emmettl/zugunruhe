@@ -77,3 +77,7 @@ site under its production `/zugunruhe/` prefix.
 The fourth study, [Currents](docs/CURRENTS.md), opens at `/currents.html`: persistent
 luminous paths integrated through the radar-derived velocity field, with deterministic
 timeline scrubbing. Sea remains available as the previous continuous-field study.
+
+The first continuous journey, **A night in passage**, is at `/night.html`: one
+clock carries the view from Memmingen through the archipelago into the estimated
+sea. [Night selection, itinerary and controls](docs/NIGHT.md).

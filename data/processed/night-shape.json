@@ -1,0 +1,241 @@
+{
+  "sparseFrames": [
+    {
+      "index": 81,
+      "time": "2018-09-05T00:45:00Z",
+      "completeStations": 2
+    },
+    {
+      "index": 82,
+      "time": "2018-09-05T00:50:00Z",
+      "completeStations": 2
+    },
+    {
+      "index": 83,
+      "time": "2018-09-05T00:55:00Z",
+      "completeStations": 2
+    }
+  ],
+  "source": {
+    "doi": "10.5281/zenodo.4587338",
+    "license": "CC BY 4.0",
+    "date": "2018-09-04",
+    "bands": "1–4 km ASL"
+  },
+  "method": "Arithmetic mean of all 15 equal-width density bins, only for complete profiles; network median weights stations equally, not land area. Changing coverage limits comparisons. No missing observations are treated as zero.",
+  "localNights": [
+    {
+      "date": "2018-09-02",
+      "completeProfiles": 126,
+      "first": {
+        "index": 0,
+        "time": "2018-09-02T18:00:00Z",
+        "density": 0
+      },
+      "peak": {
+        "index": 64,
+        "time": "2018-09-02T23:20:00Z",
+        "density": 4.214666666666667
+      },
+      "last": {
+        "index": 128,
+        "time": "2018-09-03T04:40:00Z",
+        "density": 0.22266666666666662
+      }
+    },
+    {
+      "date": "2018-09-03",
+      "completeProfiles": 126,
+      "first": {
+        "index": 0,
+        "time": "2018-09-03T18:00:00Z",
+        "density": 0
+      },
+      "peak": {
+        "index": 45,
+        "time": "2018-09-03T21:45:00Z",
+        "density": 12.435333333333329
+      },
+      "last": {
+        "index": 128,
+        "time": "2018-09-04T04:40:00Z",
+        "density": 1.4133333333333333
+      }
+    },
+    {
+      "date": "2018-09-04",
+      "completeProfiles": 126,
+      "first": {
+        "index": 0,
+        "time": "2018-09-04T18:00:00Z",
+        "density": 0.024000000000000004
+      },
+      "peak": {
+        "index": 69,
+        "time": "2018-09-04T23:45:00Z",
+        "density": 24.33866666666667
+      },
+      "last": {
+        "index": 128,
+        "time": "2018-09-05T04:40:00Z",
+        "density": 2.973333333333333
+      }
+    }
+  ],
+  "windows": [
+    {
+      "index": 0,
+      "time": "2018-09-04T18:00:00Z",
+      "completeStations": 9,
+      "networkMedian": 0,
+      "memmingen": 0.024000000000000004
+    },
+    {
+      "index": 6,
+      "time": "2018-09-04T18:30:00Z",
+      "completeStations": 28,
+      "networkMedian": 0.0013333333333333333,
+      "memmingen": 0.0013333333333333333
+    },
+    {
+      "index": 12,
+      "time": "2018-09-04T19:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 0.06466666666666668,
+      "memmingen": 2.2873333333333337
+    },
+    {
+      "index": 18,
+      "time": "2018-09-04T19:30:00Z",
+      "completeStations": 35,
+      "networkMedian": 1.284666666666667,
+      "memmingen": 4.292000000000001
+    },
+    {
+      "index": 24,
+      "time": "2018-09-04T20:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.0200000000000005,
+      "memmingen": 3.51
+    },
+    {
+      "index": 30,
+      "time": "2018-09-04T20:30:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.987333333333334,
+      "memmingen": 5.965999999999998
+    },
+    {
+      "index": 36,
+      "time": "2018-09-04T21:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.6073333333333335,
+      "memmingen": 9.723333333333336
+    },
+    {
+      "index": 42,
+      "time": "2018-09-04T21:30:00Z",
+      "completeStations": 34,
+      "networkMedian": 2.4819999999999998,
+      "memmingen": 18.018666666666668
+    },
+    {
+      "index": 48,
+      "time": "2018-09-04T22:00:00Z",
+      "completeStations": 34,
+      "networkMedian": 2.773666666666667,
+      "memmingen": 21.131999999999998
+    },
+    {
+      "index": 54,
+      "time": "2018-09-04T22:30:00Z",
+      "completeStations": 34,
+      "networkMedian": 3.0396666666666667,
+      "memmingen": 22.402666666666672
+    },
+    {
+      "index": 60,
+      "time": "2018-09-04T23:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.9746666666666663,
+      "memmingen": 22.588666666666672
+    },
+    {
+      "index": 66,
+      "time": "2018-09-04T23:30:00Z",
+      "completeStations": 35,
+      "networkMedian": 3.116,
+      "memmingen": 24.14466666666666
+    },
+    {
+      "index": 72,
+      "time": "2018-09-05T00:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 3.486,
+      "memmingen": 22.93333333333333
+    },
+    {
+      "index": 78,
+      "time": "2018-09-05T00:30:00Z",
+      "completeStations": 35,
+      "networkMedian": 3.397333333333333,
+      "memmingen": 23.60666666666667
+    },
+    {
+      "index": 84,
+      "time": "2018-09-05T01:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.904666666666667,
+      "memmingen": 21.695333333333334
+    },
+    {
+      "index": 90,
+      "time": "2018-09-05T01:30:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.7959999999999994,
+      "memmingen": 18.042666666666666
+    },
+    {
+      "index": 96,
+      "time": "2018-09-05T02:00:00Z",
+      "completeStations": 35,
+      "networkMedian": 2.432666666666667,
+      "memmingen": 14.955333333333336
+    },
+    {
+      "index": 102,
+      "time": "2018-09-05T02:30:00Z",
+      "completeStations": 33,
+      "networkMedian": 2.4733333333333336,
+      "memmingen": 13.180000000000001
+    },
+    {
+      "index": 108,
+      "time": "2018-09-05T03:00:00Z",
+      "completeStations": 32,
+      "networkMedian": 2.5323333333333333,
+      "memmingen": 11.628666666666666
+    },
+    {
+      "index": 114,
+      "time": "2018-09-05T03:30:00Z",
+      "completeStations": 32,
+      "networkMedian": 2.0116666666666667,
+      "memmingen": 8.398000000000001
+    },
+    {
+      "index": 120,
+      "time": "2018-09-05T04:00:00Z",
+      "completeStations": 33,
+      "networkMedian": 1.3286666666666664,
+      "memmingen": 4.472666666666667
+    },
+    {
+      "index": 126,
+      "time": "2018-09-05T04:30:00Z",
+      "completeStations": 30,
+      "networkMedian": 0.911,
+      "memmingen": 1.5619999999999998
+    }
+  ]
+}

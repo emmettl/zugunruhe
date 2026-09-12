@@ -23,12 +23,12 @@ export function createContinentalField(scene,landscape){
   let targetStops=colourStops.map(c=>c.clone());
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const uniforms={colourStops:{value:colourStops},fieldA:{value:makeTexture()},fieldB:{value:makeTexture()},fraction:{value:0},time:{value:0},
-    exaggeration:{value:4},relief:landscape.relief,gain:{value:1.5},viewExposure:{value:1},inspection:{value:0},selected:{value:-1}};
+    exaggeration:{value:4},relief:landscape.relief,gain:{value:1.5},viewExposure:{value:1},inspection:{value:0},selected:{value:-1},fieldOpacity:{value:1}};
   const material=new THREE.ShaderMaterial({uniforms,transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,
     vertexShader:`attribute float ground,band;uniform float exaggeration,relief;varying vec2 vUv,vMap;varying float vBand,vGround;
       void main(){vUv=uv;vBand=band;vGround=ground*100.;vMap=vec2(uv.x*1695.,-uv.y*1556.);vec3 e=vec3(0.,-${R},0.);float altitude=(1.1+band*.2)/100.;
       vec3 p=e+normalize(position-e)*(${R}+altitude*exaggeration+ground*(relief-1.));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
-    fragmentShader:`uniform vec3 colourStops[4];uniform sampler2D fieldA,fieldB;uniform float fraction,time,gain,viewExposure,inspection;varying vec2 vUv,vMap;varying float vBand,vGround;
+    fragmentShader:`uniform vec3 colourStops[4];uniform sampler2D fieldA,fieldB;uniform float fraction,time,gain,viewExposure,inspection,fieldOpacity;varying vec2 vUv,vMap;varying float vBand,vGround;
       float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);}
       float textureAt(vec2 p){float bend=noise(p*.38)*2.4;float broad=noise(vec2(p.x*.55,p.y*1.35+bend));float fine=pow(noise(vec2(p.x*1.1,p.y*7.+bend*2.)),3.);return .11+.25*broad+.8*fine;}
@@ -43,7 +43,7 @@ export function createContinentalField(scene,landscape){
         float flow=mix(textureAt(p-velocity*phase*24./36.),textureAt(p-velocity*other*24./36.),blend);
         if(moving<.5)flow=textureAt(p);
         vec3 c=colour(vBand);if(inspection>.5)c=mix(vec3(.6,.24,.08),vec3(.13,.72,.85),f.a);
-        gl_FragColor=vec4(c,flow*f.r*f.a*gain*viewExposure);
+        gl_FragColor=vec4(c,flow*f.r*f.a*gain*viewExposure*fieldOpacity);
       }`});
   const mesh=new THREE.Mesh(geometry,material);mesh.frustumCulled=false;mesh.renderOrder=2;scene.add(mesh);
   let left=-1,right=-1;

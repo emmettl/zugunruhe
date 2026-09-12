@@ -11,7 +11,7 @@ import { stationLift } from './network-terrain.js';
 
 const earthCentre = new THREE.Vector3(0,-R,0);
 const point = (lat,lon,h=0)=>new THREE.Vector3(...globePoint(lat,lon,h));
-export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false}={}) {
+export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false,onInteract=()=>{}}={}) {
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setClearColor('#050610');
   renderer.domElement.setAttribute('role','img');
@@ -55,7 +55,7 @@ export function createContinentScene(container, stations, onSelect, createField=
   const labels=[['FRANCE',46.5,2],['GERMANY',51,10],['SWITZERLAND',46.6,8.2],['BELGIUM',50.6,4.4],['NETHERLANDS',52.5,5.5],['Memmingen',48.0431,10.2204]].map(([name,lat,lon])=>{
     const el=document.createElement('span');el.className='map-label';el.textContent=name;container.append(el);return{el,point:point(lat,lon,2)};
   });
-  let width=1,height=1,selected=-1;
+  let width=1,height=1,selected=-1,driven=false;
   function setFrames(frames,index){
     field.setIndex(index);clouds.setTime(frames[0].time);
     const sun=SunCalc.getPosition(new Date(frames[0].time),48.5,6.5);
@@ -95,7 +95,8 @@ export function createContinentScene(container, stations, onSelect, createField=
   }
   function draw(dt,playing){
     field.draw(dt,playing);
-    if(journey.moving){journey.step(dt);if(flyover.active)controls.enabled=false;}
+    if(driven){/* The night itinerary owns this pose until a gesture takes over. */}
+    else if(journey.moving){journey.step(dt);if(flyover.active)controls.enabled=false;}
     else if(flyover.active){flyover.step(reducedMotion?dt*.5:dt);controls.enabled=!flyover.active;}
     else controls.update();
     // Keep manual orbit above even the most exaggerated peak in this grid.
@@ -124,6 +125,7 @@ export function createContinentScene(container, stations, onSelect, createField=
       }
     });return picked;
   }
+  for(const event of ['pointerdown','wheel'])renderer.domElement.addEventListener(event,()=>{onInteract();},{capture:true,passive:true});
   // Capture before OrbitControls so the same gesture takes over immediately.
   if(travellingFlyover)for(const event of ['pointerdown','wheel'])renderer.domElement.addEventListener(event,stopFlyover,{capture:true,passive:true});
   renderer.domElement.addEventListener('pointerdown',e=>{pointerCount++;down=pointerCount===1&&!journey.moving&&e.button===0?[e.clientX,e.clientY]:null;});
@@ -137,7 +139,15 @@ export function createContinentScene(container, stations, onSelect, createField=
     if(!start||journey.moving||Math.hypot(e.clientX-start[0],e.clientY-start[1])>5)return;
     const i=pickStation(e);if(i>=0)onSelect(i);
   });
-  return {setFrames,draw,preset,stopFlyover,get flying(){return flyover.active;},setThreads:field.setThreads,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
+  function releaseCamera(){
+    if(!driven)return;driven=false;
+    const position=camera.position.clone(),target=controls.target.clone();
+    controls.enabled=true;controls.enableDamping=false;controls.update();
+    camera.position.copy(position);controls.target.copy(target);camera.lookAt(target);controls.enableDamping=true;
+  }
+  return {setFrames,draw,preset,stopFlyover,releaseCamera,
+    cameraPose:()=>({position:camera.position.clone(),target:controls.target.clone()}),
+    driveCamera(pose){driven=true;controls.enabled=false;camera.position.copy(pose.position);controls.target.copy(pose.target);camera.lookAt(pose.target);},get flying(){return flyover.active;},setThreads:field.setThreads,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
     setRelief:v=>{landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
     get canReturn(){return journey.canReturn;},get returning(){return journey.returning;},renderer};
 }

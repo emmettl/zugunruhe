@@ -1,0 +1,42 @@
+#night-app{height:100svh;min-height:540px;display:flex;flex-direction:column}
+#night-app header{flex-shrink:0}
+#night-app main{flex:1;height:auto;min-height:300px;position:relative}
+#night-app .title{max-width:500px;z-index:3}
+#night-app .title h1{font-size:clamp(28px,4vw,48px);line-height:1.1;font-weight:300;margin:12px 0}
+#night-app .title p{font-size:14px;line-height:1.6;max-width:330px;color:#a9acbd}
+#night-app #world{background:#050610}
+#night-app .map-label{opacity:.65}
+.night-actions{position:absolute;right:24px;bottom:20px;display:flex;gap:8px;z-index:4}
+.night-actions button{min-height:44px;padding:10px 14px;border:1px solid #ffffff29;border-radius:5px;background:#080b13c9;font-size:13px}
+#continue{color:#e3d4f2;background:#302a40db}
+#night-app footer{flex-shrink:0;height:auto;padding:12px 30px 14px}
+#night-app .playback{gap:16px}
+#night-app #play{width:48px;height:48px;border:1px solid #d4bfe633;border-radius:5px;flex-shrink:0}
+#night-app .timeline-head{font-size:11px;letter-spacing:0;gap:8px}
+#night-app #clock{height:44px;margin:0}
+#night-app .timeline-head strong{font-size:24px}
+#night-app .ticks{font-size:10px}
+#night-app .footnote{margin-top:5px;font-size:11px}
+#night-app .footnote button{min-height:44px;padding:6px 0}
+#night-controls{border:1px solid #ffffff26;border-radius:10px;background:#0a0d18;color:#dedfe8;margin:auto;padding:24px;width:min(440px,calc(100% - 24px));max-height:85dvh;overflow:auto}
+#night-controls h2{font-size:24px;font-weight:350;margin:0 0 20px}
+#night-controls p{font-size:14px;line-height:1.6;color:#b6bac9}
+#close-controls{float:right;width:44px;height:44px;font-size:26px;margin:-12px -12px 0 0}
+.night-options{display:grid;gap:14px}.night-options label{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;font-size:14px}
+.night-options select{min-height:44px;font-size:16px;width:55%}
+.night-chapters{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:22px 0}
+.night-chapters button,#restart,#night-notes{min-height:44px;border:1px solid #ffffff25;border-radius:4px;font-size:13px;padding:8px}
+#night-notes{border:0;text-align:left;color:#b7c4d9}
+@media(max-width:760px), (max-width:1024px) and (max-height:500px){
+ #night-app{min-height:480px}
+ #night-app main{min-height:260px}
+ #night-app .title{top:20px;left:16px;right:16px;max-width:none}
+ #night-app .title h1{font-size:30px;max-width:320px}
+ #night-app .title p{font-size:13px;max-width:290px}
+ #night-app .night-actions{right:12px;bottom:12px}
+ #night-app footer{padding:6px 16px max(6px,env(safe-area-inset-bottom))}
+ #night-app .ticks,#night-app .footnote{display:none}
+ #night-app #clock{height:56px}
+ #night-app .timeline-head>span:first-child{display:block;font-size:11px;max-width:135px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #night-controls{position:fixed;inset:auto 0 0;margin:0 auto;width:100%;border-radius:12px 12px 0 0;padding:20px 16px max(16px,env(safe-area-inset-bottom))}
+}

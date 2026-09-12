@@ -10,7 +10,7 @@ dialog::backdrop{background:#02040bb3}
   .header-place{display:none}
   header:has(.site-navigation){height:auto;min-height:112px;padding:16px 16px 0;flex-wrap:wrap;gap:8px}
   header .identity{font-size:17px;min-height:44px}.identity span{color:#a4a6b5}
-  header .site-navigation{width:100%;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+  header .site-navigation{width:100%;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
   header .site-navigation a{font-size:14px;padding:12px 4px;min-height:44px;text-align:center;color:#b5b4c5}
   .site-navigation a[aria-current=page]{color:#f0e8f8;background:#c6b2ea1c}
   #app .stage,#network-app main,#continent-app main{height:max(340px,calc(100svh - 212px));min-height:0}
@@ -83,4 +83,5 @@ dialog::backdrop{background:#02040bb3}
   dialog h2{font-size:22px!important}
   #graphics-error{left:16px;right:16px;max-width:none}
 }
+@media(max-width:360px){header .site-navigation a{font-size:12px;padding:12px 2px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}

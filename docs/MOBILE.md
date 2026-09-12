@@ -1,7 +1,9 @@
 # Mobile usability pass
 
 The four editable studies share `study-ui.js` and `study-ui.css`. Frozen study
-snapshots retain their original presentation.
+snapshots retain their original presentation. The separate Night journey uses
+the same touch targets and modal semantics with its own compact playback layout;
+see `NIGHT.md`.
 
 On screens up to 760 px wide, and landscape phones up to 1024 × 500 px:
 
