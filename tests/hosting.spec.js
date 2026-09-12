@@ -36,6 +36,32 @@ async function checkMobileAccess(page,cloud=false){
   await expect(page.locator('canvas').first()).toHaveCSS('touch-action','none');
 }
 
+// Native touch input exercises OrbitControls and station picking together.
+test('mobile scenes accept touch rotation and pinch without opening Controls',async({page,browserName})=>{
+  test.skip(browserName!=='chromium','Native multi-touch injection uses Chromium CDP.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('network.html');
+  await expect(page.locator('#camera-height')).toHaveText('1,000 km above Earth');
+  const canvas=page.locator('canvas'),box=await canvas.boundingBox();
+  const x=box.x+box.width/2,y=box.y+box.height*.55;
+  const cdp=await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:2});
+  const touch=(type,points)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:points.map(([id,x,y])=>({id,x,y}))});
+  const label=page.locator('.map-label').first(),before=await label.getAttribute('style');
+  await touch('touchStart',[[1,x,y]]);
+  for(let step=1;step<=5;step++)await touch('touchMove',[[1,x+step*12,y]]);
+  await touch('touchEnd',[]);
+  await expect(label).not.toHaveAttribute('style',before);
+  const altitude=await page.locator('#camera-height').textContent();
+  await touch('touchStart',[[1,x-30,y],[2,x+30,y]]);
+  for(let step=1;step<=5;step++)await touch('touchMove',[[1,x-30-step*8,y],[2,x+30+step*8,y]]);
+  await touch('touchEnd',[]);
+  await expect(page.locator('#camera-height')).not.toHaveText(altitude);
+  await expect(page.locator('#back-to-network')).toBeHidden();
+  await expect(page.getByRole('button',{name:'Controls',exact:true})).toBeVisible();
+  await cdp.detach();
+});
+
 for(const [file,title] of [['','Zugunruhe · Layers'],['network.html','Zugunruhe · Archipelago'],['continent.html?clouds=total','Zugunruhe · Continent ablaze'],['studies/01-layers/','Zugunruhe · Layers'],['studies/02-archipelago/','Zugunruhe · Archipelago']]){
   test(`renders ${file||'cloud'} under the edition prefix`,async({page})=>{
     // Software WebGL can take several minutes for the full Sea keyboard sequence.
@@ -107,28 +133,3 @@ test('Currents renders and retains playback, comparison and study navigation',as
   expect(errors).toEqual([]);
 });
 
-// Native touch input exercises OrbitControls and station picking together.
-test('mobile scenes accept touch rotation and pinch without opening Controls',async({page,browserName})=>{
-  test.skip(browserName!=='chromium','Native multi-touch injection uses Chromium CDP.');
-  await page.setViewportSize({width:390,height:844});
-  await page.goto('network.html');
-  await expect(page.locator('#camera-height')).toHaveText('1,200 km above Earth');
-  const canvas=page.locator('canvas'),box=await canvas.boundingBox();
-  const x=box.x+box.width/2,y=box.y+box.height*.55;
-  const cdp=await page.context().newCDPSession(page);
-  await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:2});
-  const touch=(type,points)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:points.map(([id,x,y])=>({id,x,y}))});
-  const label=page.locator('.map-label').first(),before=await label.getAttribute('style');
-  await touch('touchStart',[[1,x,y]]);
-  for(let step=1;step<=5;step++)await touch('touchMove',[[1,x+step*12,y]]);
-  await touch('touchEnd',[]);
-  await expect(label).not.toHaveAttribute('style',before);
-  const altitude=await page.locator('#camera-height').textContent();
-  await touch('touchStart',[[1,x-30,y],[2,x+30,y]]);
-  for(let step=1;step<=5;step++)await touch('touchMove',[[1,x-30-step*8,y],[2,x+30+step*8,y]]);
-  await touch('touchEnd',[]);
-  await expect(page.locator('#camera-height')).not.toHaveText(altitude);
-  await expect(page.locator('#back-to-network')).toBeHidden();
-  await expect(page.getByRole('button',{name:'Controls',exact:true})).toBeVisible();
-  await cdp.detach();
-});
