@@ -6,12 +6,15 @@ snapshots retain their original presentation.
 On screens up to 760 px wide, and landscape phones up to 1024 × 500 px:
 
 - Study navigation occupies a separate row with 44 px targets.
-- The landscape is followed directly by playback. Secondary settings live in a
-  native expandable section; Cloud's altitude bands appear there in two columns.
+- The landscape fills the space between navigation and a slim playback strip. A
+  single Controls button opens a modal bottom panel containing camera presets,
+  settings, night selection and explanatory text. Cloud's altitude bands appear
+  there in two columns. Playback stays visible when the panel is closed.
 - Settings keep their existing controls, event listeners and values. Resizing
   back to desktop restores each control to its original position.
 - Swiping the scene scrolls the page by default. Move view enables camera gestures;
-  Done moving restores scrolling. Preset buttons work in either mode.
+  Done moving restores scrolling. Choosing a camera preset closes the panel and
+  returns to the scene. All primary touch targets retain their 44 px minimum.
 - Station selection closes settings and returns to the scene with focus on Back.
   Other adjustments offer a Back to scene button.
 - Controls use at least 44 px heights, 16 px select text, larger labels and readable
@@ -26,7 +29,7 @@ scroll animation. Playback still starts paused.
 Validation: local browser inspection of all four studies at phone widths,
 320 × 568, 390 × 844 and 844 × 390 layouts, station selection, scrollable notes,
 focus containment, settings and desktop restoration. The WebKit suite checks
-mobile control sizes, horizontal overflow, expansion, modal focus and the camera
+mobile control sizes, horizontal overflow, panel opening, modal focus and the camera
 interaction toggle alongside the existing playback tests. Chromium checks the
 existing desktop flows. These are browser-based checks, not a physical-device
 VoiceOver or TalkBack audit and not a claim of full WCAG conformance.

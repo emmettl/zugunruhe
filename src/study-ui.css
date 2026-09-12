@@ -13,7 +13,7 @@ dialog::backdrop{background:#02040bb3}
   header .site-navigation{width:100%;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
   header .site-navigation a{font-size:14px;padding:12px 4px;min-height:44px;text-align:center;color:#b5b4c5}
   .site-navigation a[aria-current=page]{color:#f0e8f8;background:#c6b2ea1c}
-  #app .stage,#network-app main,#continent-app main{height:clamp(340px,50svh,500px);min-height:0}
+  #app .stage,#network-app main,#continent-app main{height:max(340px,calc(100svh - 212px));min-height:0}
   #app .stage{order:1}
   .title,.scene-heading{top:18px;left:16px;right:16px;max-width:none}
   .title h1,.scene-heading h1{font-size:26px;max-width:none}
@@ -22,7 +22,7 @@ dialog::backdrop{background:#02040bb3}
   #back-to-network{margin-top:8px}
   .camera-controls,.view-controls{left:12px;right:12px;bottom:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
   .camera-controls button,.view-controls button{font-size:12px;padding:10px 4px;min-height:44px;color:#c0c2d0}
-  .mobile-interaction{position:absolute;display:flex;align-items:center;gap:10px;left:12px;right:12px;bottom:64px;font-size:12px;color:#c5c5d3}
+  .mobile-interaction{position:absolute;display:flex;align-items:center;gap:10px;right:12px;bottom:12px;font-size:12px;color:#c5c5d3}
   .mobile-interaction button{min-height:44px;padding:8px 12px;background:#080b13db;border:1px solid #ffffff30;border-radius:4px;font-size:13px}
   .mobile-interaction button[aria-pressed=true]{background:#343047}
   .mobile-interaction span{text-shadow:0 1px 5px #000}
@@ -36,15 +36,26 @@ dialog::backdrop{background:#02040bb3}
   #play{width:48px;min-width:48px;height:48px;border:1px solid #d4bfe633;border-radius:5px}
   #clock[type=range]{height:44px;margin:0;width:100%}
   #time[type=range]{height:44px;top:23px}
-  #app .timeline{height:80px}#app .time-ticks{top:68px}
+  #app .timeline{height:44px}
+  #app .playback-heading{padding-left:60px;justify-content:flex-end}
+  #app .timeline-row{margin-top:-4px;gap:12px}
+  #app #time{position:static;height:44px}
+  #spark,.time-ticks,.ticks,.timeline-head>span:first-child{display:none}
+  #network-app footer,#continent-app footer,#app>.playback{padding:12px 16px}
+  .mobile-settings #coverage{display:block}
   .timeline-head{gap:6px}.timeline-head strong{font-size:24px}.timeline-head small{font-size:12px}
   #coverage,.ticks,.time-ticks,#status,.playback-foot,.footnote{font-size:12px;color:#acafbf}
   .footnote{flex-direction:column;gap:8px;margin-top:12px}.footnote span{max-width:none}
   #notes-button,#about{min-height:44px;padding:10px 0;text-align:left;font-size:13px;color:#c3c7d6;align-self:flex-start}
   .playback-heading{flex-wrap:wrap;gap:8px}.nights{flex-wrap:wrap}.nights button{padding:8px;min-height:44px}
   .time>span{font-size:12px}.playback-foot{flex-direction:column;gap:8px;line-height:1.5}
-  .mobile-settings{display:block;order:3;border-top:1px solid #ffffff20;background:#090c15;padding:0 16px max(16px,env(safe-area-inset-bottom))}
-  .mobile-settings>summary{padding:16px 0;min-height:52px;font-size:15px;color:#dedfe8}
+  .mobile-settings[open]{display:block;position:fixed;inset:auto 0 0;margin:0 auto;width:100%;max-width:560px;max-height:85dvh;overflow:auto;overscroll-behavior:contain;border:1px solid #ffffff26;border-radius:12px 12px 0 0;background:#090c15;color:#dedfe8;padding:20px 16px max(16px,env(safe-area-inset-bottom))}
+  .mobile-settings:not([open]){display:none}
+  .mobile-settings h2{font-size:22px;margin:0 50px 20px 0}
+  .close-controls{position:sticky;top:0;float:right;min-width:44px;min-height:44px;margin:-10px 0 0 8px;border-radius:4px;background:#090c15;font-size:26px}
+  .mobile-settings .camera-controls,.mobile-settings .view-controls{position:static;display:grid;width:100%;margin:0}
+  .mobile-settings .move-view{min-height:44px;border:1px solid #ffffff30;border-radius:4px;background:#c6b2ea14;font-size:14px}
+  #touch-help{font-size:13px;color:#b9bdcc;margin:0;line-height:1.5}
   .mobile-settings-content{display:grid;gap:20px;padding-bottom:8px}
   .mobile-settings .inspector,.mobile-settings .height-controls,.mobile-settings .layer-panel{position:static;width:auto;max-width:none;padding:0;background:none;border:0;backdrop-filter:none;margin:0}
   .mobile-settings .height-controls{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,1fr);justify-content:stretch;gap:12px}

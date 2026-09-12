@@ -3,7 +3,7 @@ import { test,expect } from '@playwright/test';
 async function mobileSettings(page){
   if(page.viewportSize().width<=760){
     const settings=page.locator('.mobile-settings');
-    if(!await settings.evaluate(e=>e.open))await settings.locator('summary').click();
+    if(!await settings.evaluate(e=>e.open))await page.getByRole('button',{name:'Controls',exact:true}).click();
   }
 }
 async function checkMobileAccess(page,cloud=false){
@@ -15,6 +15,8 @@ async function checkMobileAccess(page,cloud=false){
       .filter(e=>e.getBoundingClientRect().height>0&&e.getBoundingClientRect().height<44).map(e=>e.id||e.textContent.trim()),
   }));
   expect(await measure()).toEqual({overflow:false,small:[]});
+  expect(await page.locator(cloud?'.stage':'main').evaluate(e=>e.getBoundingClientRect().height)).toBeGreaterThan(page.viewportSize().height*.6);
+  expect(await page.locator(cloud?'#app > .playback':'footer').evaluate(e=>e.getBoundingClientRect().height)).toBeLessThanOrEqual(105);
   await mobileSettings(page);
   expect(await measure()).toEqual({overflow:false,small:[]});
   const original=page.viewportSize();await page.setViewportSize({width:320,height:568});
@@ -22,7 +24,7 @@ async function checkMobileAccess(page,cloud=false){
   await page.setViewportSize({width:844,height:390});
   expect(await measure()).toEqual({overflow:false,small:[]});
   await page.setViewportSize(original);
-  const opener=page.locator(cloud?'#about':'#notes-button'),dialog=page.getByRole('dialog');
+  const opener=page.locator(cloud?'#about':'#notes-button'),dialog=page.locator(cloud?'#source-notes':'#notes');
   await opener.click();await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('aria-labelledby',/.+-title/);
   await page.keyboard.press('Tab');
@@ -31,7 +33,7 @@ async function checkMobileAccess(page,cloud=false){
   const move=page.getByRole('button',{name:'Move view',exact:true});
   await move.click();await expect(page.getByRole('button',{name:'Done moving',exact:true})).toHaveAttribute('aria-pressed','true');
   await page.getByRole('button',{name:'Done moving',exact:true}).click();
-  await expect(move).toHaveAttribute('aria-pressed','false');
+  await expect(page.getByRole('button',{name:'Controls',exact:true})).toBeVisible();
 }
 
 for(const [file,title] of [['','Zugunruhe · Layers'],['network.html','Zugunruhe · Archipelago'],['continent.html?clouds=total','Zugunruhe · Continent ablaze'],['studies/01-layers/','Zugunruhe · Layers'],['studies/02-archipelago/','Zugunruhe · Archipelago']]){
@@ -59,6 +61,7 @@ for(const [file,title] of [['','Zugunruhe · Layers'],['network.html','Zugunruhe
       await expect(page.locator('#play')).toHaveAttribute('aria-label',/^Pause/);
       await canvas.press('p');await expect(page.locator('#play')).toHaveAttribute('aria-label','Play');
       if(file.includes('continent')){
+        await mobileSettings(page);
         const position=await timeline.inputValue();
         await page.locator('#luminosity').press('ArrowRight');
         await expect(timeline).toHaveValue(position);

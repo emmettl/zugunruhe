@@ -6,7 +6,7 @@ export function installPlaybackKeyboard({timeline,play,blocked=()=>false}){
   const canvas=document.querySelector('canvas');
   if(canvas){canvas.tabIndex=0;canvas.title=help;}
   document.addEventListener('keydown',event=>{
-    if(event.defaultPrevented||event.isComposing||event.ctrlKey||event.metaKey||event.altKey||blocked())return;
+    if(event.defaultPrevented||event.isComposing||event.ctrlKey||event.metaKey||event.altKey||blocked()||document.querySelector('dialog[open]'))return;
     const target=event.target;
     // Native form controls, links and buttons must keep their own key actions.
     // The play button and the timeline are intentionally part of these shortcuts.
