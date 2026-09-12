@@ -1,4 +1,5 @@
 import './site-shell.js';
+import { installPlaybackKeyboard } from './playback-keyboard.js';
 import '@motionstudies/web/tokens.css';
 import './style.css';
 import study from '../data/processed/memmingen-three-nights.json';
@@ -32,6 +33,7 @@ app.innerHTML=`
   </section>
   <section class="about-panel" id="source-notes" hidden>
     <h2>One radar. Three nights.</h2><button id="close-about" aria-label="Close data notes">×</button>
+    <p>Keyboard: Space or P plays and pauses. Left and Right scrub five minutes; hold Shift for thirty minutes. Home and End jump to the night’s endpoints. Scrubbing pauses playback. Selectors and other controls retain their normal keys.</p>
     <p>Each coloured layer represents a 200-metre altitude band around Memmingen. Brightness is proportional to the source density estimate; texture moves toward the estimated direction at a relative visual speed.</p>
     <p>The horizontal footprint and flowing texture are schematic. They do not show individual birds, paths, measured cloud shapes or spatial differences within a band. Missing density removes a layer; missing velocity leaves its texture still.</p>
     <p>The ground is real elevation data for a 96 × 96 km area centred on the radar at 48.0431° N, 10.2204° E. Contours are 100 metres apart. Terrain and air share the same sea-level altitude scale, exaggerated 12 times relative to horizontal distance. The coloured footprint remains illustrative; it is not a map of bird locations or radar coverage.</p>
@@ -110,8 +112,8 @@ function notes(open){$('source-notes').hidden=!open;$('about').setAttribute('ari
 $('about').addEventListener('click',()=>notes($('source-notes').hidden));$('close-about').addEventListener('click',()=>notes(false));
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!$('source-notes').hidden)notes(false);
-  if(event.code==='Space'&&event.target===document.body){event.preventDefault();$('play').click();}
 });
+installPlaybackKeyboard({timeline:$('time'),play:$('play'),blocked:()=>!$('source-notes').hidden});
 document.addEventListener('visibilitychange',()=>{last=performance.now();});
 let last=performance.now(),lastUi=0;
 function animate(now){

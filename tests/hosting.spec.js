@@ -9,6 +9,23 @@ for(const [file,title] of [['','Zugunruhe · Layers'],['network.html','Zugunruhe
       await expect(page.locator('#graphics-error')).toBeHidden();
     }else await expect(page.locator('#clock')).not.toBeEmpty();
     for(const href of await page.locator('a[href]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('href')).filter(h=>h.startsWith('/'))))expect(href).toMatch(/^\/zugunruhe\//);
+    if(!file.startsWith('studies/')){
+      const timeline=page.locator(file?'#clock':'#time'),canvas=page.locator('canvas').first();
+      await canvas.press('Home');await expect(timeline).toHaveValue('0');
+      await canvas.press('ArrowRight');await expect(timeline).toHaveValue('1');
+      await timeline.press('Shift+ArrowRight');await expect(timeline).toHaveValue('7');
+      await timeline.press('End');await expect(timeline).toHaveValue('144');
+      await timeline.press('ArrowRight');await expect(timeline).toHaveValue('144');
+      await timeline.press('Home');await canvas.press('Space');
+      await expect(page.locator('#play')).toHaveAttribute('aria-label',/^Pause/);
+      await canvas.press('p');await expect(page.locator('#play')).toHaveAttribute('aria-label','Play');
+      if(file.includes('continent')){
+        const position=await timeline.inputValue();
+        await page.locator('#luminosity').press('ArrowRight');
+        await expect(timeline).toHaveValue(position);
+        await expect(page.locator('#luminosity')).toHaveValue('1.6');
+      }
+    }
     expect(errors).toEqual([]);
   });
 }

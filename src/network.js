@@ -1,4 +1,5 @@
 import './site-shell.js';
+import { installPlaybackKeyboard } from './playback-keyboard.js';
 import '@motionstudies/web/tokens.css';
 import './network.css';
 import network from '../data/processed/network-night.json';
@@ -16,13 +17,14 @@ document.querySelector('#network-app').innerHTML=`
     <div class="inspector"><label for="station">Look at a station</label><select id="station"><option value="-1">All 37 stations</option>${network.stations.map((s,i)=>`<option value="${i}">${stationName(s)} · ${s.name}</option>`).join('')}</select><div id="reading"></div><div class="spectrum"></div><div class="spectrum-key"><span>1 km</span><span>Altitude</span><span>4 km</span></div></div>
     <div class="camera-controls" aria-label="Viewpoint"><button data-view="flyover">100 km · Flyover</button><button data-view="germany">Germany</button><button data-view="europe" class="active">Western Europe</button></div>
     <div class="height-controls"><label for="relief">Terrain relief</label><select id="relief"><option value="1">True scale</option><option value="4">×4</option><option value="8" selected>×8</option></select><label for="height">Layer height</label><select id="height"><option value="1">True scale</option><option value="8">Exaggerated ×8</option></select><span id="camera-height"></span></div>
-    <p class="gesture">Drag to orbit · scroll to move closer</p>
+    <p class="gesture">Drag to orbit · scroll to zoom · Space play/pause · ← → time</p>
     <div id="graphics-error" hidden>The 3D view needs WebGL. Try reloading in a browser with graphics support.</div>
   </main>
   <footer><div class="playback"><button id="play" aria-label="Play">▶</button><div class="timeline"><div class="timeline-head"><span>4 SEPTEMBER</span><span id="coverage"></span><strong id="time-label">22:00 <small>UTC</small></strong></div><input id="clock" aria-label="Study time" type="range" min="0" max="144" step=".01" value="48"><div class="ticks"><span>18:00</span><span>00:00</span><span>06:00</span></div></div></div>
     <div class="footnote"><span>Each glow is a station’s profile. Space between stations is unsampled.</span><button id="notes-button" aria-expanded="false">About this study ↗</button></div>
   </footer>
   <section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>One night, many islands.</h2>
+    <p>Keyboard: Space or P plays and pauses. Left and Right scrub five minutes; hold Shift for thirty minutes. Home and End jump to the night’s endpoints. Scrubbing pauses playback. Selectors and other controls retain their normal keys.</p>
     <p>These are the 37 stations in our existing 2018 archive: 19 in France, 15 in Germany, two in the Netherlands and one in Belgium. They are a subset of the physical radar network. Median nearest-neighbour spacing in this subset is 133 km.</p>
     <p>Every island uses that station’s density and east/north velocity in fifteen 200 m bands, 1–4 km above sea level. Colour follows altitude. All stations share a fixed density scale of 0–100 birds/km³. Composite glow is not a calibrated pixel reading. Direction and relative speed guide the illustrative streaks.</p>
     <p>The soft island footprint is an artistic choice, approximately 80 km across, not measured bird-cloud shape, radar coverage or a spatial interpolation. Darkness between stations means unsampled space. Missing altitude values are omitted; missing velocity leaves the texture still. Zero remains zero.</p>
@@ -62,6 +64,7 @@ function notes(open){$('notes').hidden=!open;$('notes-button').setAttribute('ari
 $('notes-button').addEventListener('click',()=>notes($('notes').hidden));$('close-notes').addEventListener('click',()=>notes(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('notes').hidden)notes(false);});
 let last=performance.now(),lastUI=0;
+installPlaybackKeyboard({timeline:$('clock'),play:$('play'),blocked:()=>!$('notes').hidden});
 document.addEventListener('visibilitychange',()=>{last=performance.now();});
 scene?.renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();playing=false;$('graphics-error').hidden=false;updateUI();});
 setFrames();updateUI();

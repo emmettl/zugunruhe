@@ -1,4 +1,5 @@
 import './site-shell.js';
+import { installPlaybackKeyboard } from './playback-keyboard.js';
 import '@motionstudies/web/tokens.css';
 import './network.css';
 import './continent.css';
@@ -20,13 +21,14 @@ document.querySelector('#continent-app').innerHTML=`
     <div class="inspector"><label for="station">Visit a station</label><select id="station"><option value="-1">Whole field</option>${network.stations.map((s,i)=>`<option value="${i}">${stationName(s)} · ${s.name}</option>`).join('')}</select><div class="palette-control"><label for="palette">Palette</label><select id="palette">${Object.entries(palettes).map(([id,p])=>`<option value="${id}">${p.label}</option>`).join('')}</select></div><div id="reading"></div><label class="inspection"><input id="inspection" type="checkbox"> Show observation support</label><div class="spectrum" id="spectrum"></div><div class="spectrum-key"><span id="legend-low">1 km</span><span id="legend-title">Altitude</span><span id="legend-high">4 km</span></div></div>
     <div class="camera-controls" aria-label="Viewpoint"><button data-view="flyover">100 km · Flyover</button><button data-view="germany">Germany</button><button data-view="europe" class="active">Western Europe</button></div>
     <div class="height-controls"><label for="relief">Terrain relief</label><select id="relief"><option value="1">True scale</option><option value="4">×4</option><option value="8" selected>×8</option></select><label for="height">Layer height</label><select id="height"><option value="1">True scale</option><option value="4" selected>×4</option><option value="8">×8</option></select><label for="luminosity">Luminosity</label><input id="luminosity" type="range" min=".5" max="4" step=".1" value="1.5"><span id="camera-height"></span></div>
-    <p class="gesture">Drag to orbit · scroll to move closer</p>
+    <p class="gesture">Drag to orbit · scroll to zoom · Space play/pause · ← → time</p>
     <div id="graphics-error" hidden>The 3D view needs WebGL. Try reloading in a browser with graphics support.</div>
   </main>
   <footer><div class="weather-controls"><label for="clouds">Cloud cover</label><select id="clouds"><option value="off">Off</option><option value="total">Total</option><option value="low">Low</option><option value="mid">Middle</option><option value="high">High</option></select><span id="weather-reading" aria-live="off"></span><a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener noreferrer">ERA5 · Open-Meteo ↗</a></div><div class="playback"><button id="play" aria-label="Play">▶</button><div class="timeline"><div class="timeline-head"><span>4 SEPTEMBER</span><span id="coverage"></span><strong id="time-label">22:00 <small>UTC</small></strong></div><input id="clock" aria-label="Study time" type="range" min="0" max="144" step=".01" value="48"><div class="ticks"><span>18:00</span><span>00:00</span><span>06:00</span></div></div></div>
     <div class="footnote"><span>Spatial estimate from 37 stations · Western Europe · 1–4 km ASL</span><button id="notes-button" aria-expanded="false">About this study ↗</button></div>
   </footer>
   <section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>Giving the spaces a voice.</h2>
+    <p>Keyboard: Space or P plays and pauses. Left and Right scrub five minutes; hold Shift for thirty minutes. Home and End jump to the night’s endpoints. Scrubbing pauses playback. Selectors and other controls retain their normal keys.</p>
     <p>This third study joins the 37 profiles from Archipelago into a continuous estimate of the night sky over Western Europe. The preserved <a href="/studies/02-archipelago/">Archipelago study</a> retains the individual islands.</p>
     <p>At each altitude, nearby valid density observations are combined with distance weights on a 0.25° geographic grid. The weights favour nearby stations and taper to zero at 240 km. Brightness also fades as the nearest available observation recedes beyond 120 km. Missing values are excluded; zero remains zero. This smooth local estimate is not a validated continental migration forecast.</p>
     <p>East and north velocity components are estimated separately from complete pairs. They guide a continuous flowing texture. The texture is illustrative: it does not track individual birds or conserve the number of birds in flight. Adjacent five-minute estimated fields blend in time; this spatial method can fill a missing station observation using its neighbours.</p>
@@ -101,6 +103,7 @@ function notes(open){$('notes').hidden=!open;$('notes-button').setAttribute('ari
 $('notes-button').addEventListener('click',()=>notes($('notes').hidden));$('close-notes').addEventListener('click',()=>notes(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('notes').hidden)notes(false);});
 let last=performance.now(),lastUI=0;
+installPlaybackKeyboard({timeline:$('clock'),play:$('play'),blocked:()=>!$('notes').hidden});
 document.addEventListener('visibilitychange',()=>{last=performance.now();});
 scene?.renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();playing=false;$('graphics-error').hidden=false;updateUI();});
 setFrames();updateUI();
