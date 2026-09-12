@@ -96,7 +96,9 @@ setFrames();updateUI();
 let previous=performance.now();
 function draw(now){
   const dt=Math.min(.1,(now-previous)/1000);previous=now;
-  if(scene){
+  // Controls pause the journey. Keep that backdrop still while a dialog is open,
+  // avoiding expensive WebGL frames competing with form and keyboard interaction.
+  if(scene&&!document.querySelector('dialog[open]')){
     if(returning){
       returning.elapsed+=dt;const t=ease(returning.elapsed/2.4);
       scene.driveCamera({position:arcPoint(returning.from.position,returning.to.position,t),target:arcPoint(returning.from.target,returning.to.target,t)});
