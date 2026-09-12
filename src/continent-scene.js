@@ -75,7 +75,8 @@ export function createContinentScene(container, stations, onSelect, createField=
     const [eye,target]=presets[name];camera.position.copy(point(...eye));controls.target.copy(point(...target));controls.update();
   }
   preset('europe');
-  const observer=new ResizeObserver(()=>{width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();field.resize?.(width,height);});observer.observe(container);
+  function resize(){width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();field.resize?.(width,height);}
+  const observer=new ResizeObserver(resize);observer.observe(container);resize();
   const probe=new THREE.Vector3();
   function focusStation(i,force=false){
     stopFlyover();

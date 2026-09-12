@@ -44,7 +44,8 @@ test.describe('reduced motion',()=>{
     await page.goto('night.html');
     await expect(page.locator('#play')).toBeEnabled();
     const label=page.locator('.map-label').last();
-    await expect(label).toHaveAttribute('style',/left:/);
+    // Wait for a projected, full-size frame rather than the initial 1×1 placeholder.
+    await expect.poll(()=>label.evaluate(e=>parseFloat(e.style.left))).toBeGreaterThan(20);
     const pose=await label.getAttribute('style');
     await page.locator('#play').click();
     await expect.poll(async()=>Number(await page.locator('#clock').inputValue())).toBeGreaterThan(.3);
