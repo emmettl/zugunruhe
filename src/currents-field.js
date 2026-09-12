@@ -4,8 +4,8 @@ import { createContinentalField } from './continent-field.js';
 import { visibleSegments } from './currents-model.js';
 import { globePoint,R } from './network-geo.js';
 
-export function createCurrentsField(scene,landscape){
-  const field=createContinentalField(scene,landscape),shared=field.uniforms;
+export function createCurrentsField(scene,landscape,{stations,tracks=paths.tracks}={}){
+  const field=createContinentalField(scene,landscape,{stations}),shared=field.uniforms;
   const geometry=new THREE.InstancedBufferGeometry();
   geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,-1,0,1,-1,0,0,1,0,0,1,0,1,-1,0,1,1,0],3));
   const capacity=20000,attributes={};
@@ -31,7 +31,7 @@ export function createCurrentsField(scene,landscape){
   function update(){
     if(!enabled||uniforms.threadOpacity.value===0){mesh.visible=false;return;}mesh.visible=true;
     if(index===drawn)return;drawn=index;let count=0;
-    for(const track of paths.tracks)for(const s of visibleSegments(track,index)){
+    for(const track of tracks)for(const s of visibleSegments(track,index)){
       if(count===capacity)break;
       const d=(s.a[2]+s.b[2])/2,support=Math.min(s.a[3],s.b[3]);
       const alpha=Math.sqrt(Math.max(0,Math.min(1,d/30)))*support*s.fade*Math.pow(s.tail,1.8);

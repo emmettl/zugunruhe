@@ -4,8 +4,8 @@ import { palettes } from './continent-palettes.js';
 import { createFieldGrid,sampleGrid } from './continent-model.js';
 import { globePoint,R } from './network-geo.js';
 
-export function createContinentalField(scene,landscape){
-  const grid=createFieldGrid(network.stations),geometry=new THREE.InstancedBufferGeometry();
+export function createContinentalField(scene,landscape,{stations=network.stations}={}){
+  const grid=createFieldGrid(stations),geometry=new THREE.InstancedBufferGeometry();
   const positions=[],grounds=[],uv=[],indices=[];
   // The display mesh is finer than the estimated field, so it follows the ground
   // without implying additional spatial information in the observations.
@@ -48,7 +48,7 @@ export function createContinentalField(scene,landscape){
   const mesh=new THREE.Mesh(geometry,material);mesh.frustumCulled=false;mesh.renderOrder=2;scene.add(mesh);
   let left=-1,right=-1;
   const cache=new Map();
-  function frame(index){if(!cache.has(index)){cache.set(index,sampleGrid(grid,network.stations.map(s=>s.frames[index])));if(cache.size>4)cache.delete(cache.keys().next().value);}return cache.get(index);}
+  function frame(index){if(!cache.has(index)){cache.set(index,sampleGrid(grid,stations.map(s=>s.frames[index])));if(cache.size>4)cache.delete(cache.keys().next().value);}return cache.get(index);}
   return {uniforms,setPalette(id,immediate=false){
       if(!palettes[id])return;
       targetStops=palettes[id].stops.map(rgb=>new THREE.Vector3(...rgb));

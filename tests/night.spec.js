@@ -6,9 +6,9 @@ test('Night joins the chapters and hands the camera back after exploration',asyn
   const response=await page.goto('night.html');expect(response.status()).toBe(200);
   await expect(page).toHaveTitle('Zugunruhe · A night in passage');
   const clock=page.locator('#clock'),play=page.locator('#play'),canvas=page.locator('canvas');
-  await expect(play).toBeEnabled();await expect(play).toHaveAttribute('aria-label','Play');await expect(clock).toHaveValue('0');
+  await expect(play).toBeEnabled();await expect(play).toHaveAttribute('aria-label','Play');await expect(clock).toHaveValue('12');
   await expect(page.getByRole('link',{name:'Night',exact:true})).toHaveAttribute('aria-current','page');
-  await play.click();await expect.poll(async()=>Number(await clock.inputValue())).toBeGreaterThan(0);
+  await play.click();await expect.poll(async()=>Number(await clock.inputValue())).toBeGreaterThan(12);
   const box=await canvas.boundingBox();
   await page.mouse.move(box.x+box.width*.45,box.y+box.height*.6);await page.mouse.down();
   await page.mouse.move(box.x+box.width*.6,box.y+box.height*.6,{steps:5});await page.mouse.up();
@@ -24,6 +24,11 @@ test('Night joins the chapters and hands the camera back after exploration',asyn
   await expect(clock).toHaveValue('42');await expect(page.locator('#chapter')).toHaveText('AN ARCHIPELAGO');
   await page.getByRole('button',{name:'Controls',exact:true}).click();await page.getByRole('button',{name:'A sea',exact:true}).click();
   await expect(clock).toHaveValue('72');await expect(page.locator('#chapter')).toHaveText('A SEA');
+  await clock.press('Shift+ArrowRight');
+  for(let i=0;i<4;i++)await clock.press('ArrowRight');
+  await expect(clock).toHaveValue('82');
+  await expect(page.locator('#view-subtitle')).toHaveText('An estimated field across Western Europe.');
+  await expect(page.locator('#evidence')).toHaveText('Estimated field · temporal interpolation');
   if(page.viewportSize().width<=760){
     await expect(clock).toHaveCSS('height','56px');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -48,7 +53,7 @@ test.describe('reduced motion',()=>{
     await expect.poll(()=>label.evaluate(e=>parseFloat(e.style.left))).toBeGreaterThan(20);
     const pose=await label.getAttribute('style');
     await page.locator('#play').click();
-    await expect.poll(async()=>Number(await page.locator('#clock').inputValue())).toBeGreaterThan(.3);
+    await expect.poll(async()=>Number(await page.locator('#clock').inputValue())).toBeGreaterThan(12.3);
     await expect(label).toHaveAttribute('style',pose);
   });
 });

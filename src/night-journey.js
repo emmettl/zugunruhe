@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { globePoint } from './network-geo.js';
 import { arcPoint } from './network-camera.js';
-export const NIGHT_END=126,NIGHT_DURATION=150;
+export const NIGHT_START=12,NIGHT_END=126,NIGHT_DURATION=135;
 export const ease=t=>{t=Math.max(0,Math.min(1,t));return t*t*t*(10+t*(-15+6*t));};
 export const between=(index,a,b)=>ease((index-a)/(b-a));
 // Authored viewing positions, not an inferred migration route.

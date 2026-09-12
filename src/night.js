@@ -8,7 +8,8 @@ import { sampleFrame } from './interpolation.js';
 import { frameMean } from './network-geo.js';
 import { createContinentScene } from './continent-scene.js';
 import { createNightField } from './night-field.js';
-import { nightPose,nightChapter,NIGHT_END,NIGHT_DURATION,ease } from './night-journey.js';
+import { nightPose,nightChapter,NIGHT_START,NIGHT_END,NIGHT_DURATION,ease } from './night-journey.js';
+import { withinNightGap } from './night-data.js';
 import { arcPoint } from './network-camera.js';
 import { installPlaybackKeyboard } from './playback-keyboard.js';
 import { installStudyDialog } from './study-ui.js';
@@ -19,23 +20,23 @@ $('night-app').innerHTML=`
 <main><div id="world"></div><div class="title"><span class="eyebrow" id="chapter">A CLOUD</span><h1 id="view-title">A night in passage.</h1><p id="view-subtitle">From one cloud to a sea of light.<br>Press play to begin.</p></div>
 <div class="night-actions"><button id="continue" hidden>Continue journey</button><button id="controls-button">Controls</button></div>
 <div id="graphics-error" hidden>The 3D view needs WebGL. Try reloading in a browser with graphics support.</div></main>
-<footer><div class="playback"><button id="play" aria-label="Play" disabled>▶</button><div class="timeline"><div class="timeline-head"><span id="status">Ready · 2½ minutes</span><strong id="time-label">18:00 <small>UTC</small></strong></div><input type="range" id="clock" aria-label="Study time" min="0" max="126" step=".01" value="0" disabled><div class="ticks"><span>4 Sep · 18:00</span><span>00:00</span><span>5 Sep · 04:30</span></div></div></div><div class="footnote"><span id="evidence">One station · processed radar estimates</span><span>Drag to explore · pinch to zoom · Space to pause</span></div></footer>
+<footer><div class="playback"><button id="play" aria-label="Play" disabled>▶</button><div class="timeline"><div class="timeline-head"><span id="status">Ready · 2¼ minutes</span><strong id="time-label">19:00 <small>UTC</small></strong></div><input type="range" id="clock" aria-label="Study time" min="${NIGHT_START}" max="${NIGHT_END}" step=".01" value="${NIGHT_START}" disabled><div class="ticks"><span>4 Sep · 19:00</span><span>00:00</span><span>5 Sep · 04:30</span></div></div></div><div class="footnote"><span id="evidence">One station · processed radar estimates</span><span>Drag to explore · pinch to zoom · Space to pause</span></div></footer>
 <section id="night-controls" hidden><button id="close-controls" aria-label="Close controls">×</button><h2>The passage of a night.</h2><p>Drag to turn the scene. Pinch to move closer. Exploring pauses the journey; Continue journey brings you back.</p>
 <div class="night-options"><div><label for="palette">Light</label><select id="palette"><option value="boreal">Boreal</option><option value="aquatic">Aquatic</option><option value="oxygen">Oxygen</option><option value="ember">Ember</option></select></div><div><label for="clouds">Cloud cover</label><select id="clouds"><option value="off">Off</option><option value="low">Low cloud</option><option value="total">Total cloud</option></select></div></div>
 <div class="night-chapters" aria-label="Visit a chapter"><button data-time="12">A cloud</button><button data-time="42">Islands</button><button data-time="72">A sea</button></div>
 <button id="restart">Begin again</button><p id="coverage"></p><button id="night-notes">About this night ↗</button></section>
 <section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>One night, several ways of seeing.</h2>
-<p>This first journey follows 4 September 2018 at 18:00 UTC to 5 September at 04:30 UTC. Ten and a half hours pass in about two and a half minutes. Playback starts only when you ask. The camera itinerary and the moments when the representation changes are artistic choices, not bird routes or changes in measurement coverage.</p>
+<p>This first journey follows 4 September 2018 at 19:00 UTC to 5 September at 04:30 UTC. Nine and a half hours pass in about two and a quarter minutes. The journey opens after the nearly empty early-evening profiles, with light already visible. Playback starts only when you ask. The camera itinerary and the moments when the representation changes are artistic choices, not bird routes or changes in measurement coverage.</p>
 <p>It begins with the fifteen 1–4 km altitude bins at Memmingen, then reveals the same night at 37 stations in France, Germany, Belgium and the Netherlands. The islands are processed radar estimates with illustrative 80 km footprints, not coverage boundaries. Revealing other stations is a change of view; it is not evidence of departure spreading across Europe.</p>
 <p>The sea then replaces those separate profiles with the existing spatial estimate between stations. Its luminous threads are tracers integrated through estimated horizontal velocities, not tracked individual birds. The estimate has no weather or habitat constraints, and does not cover the entire continent.</p>
 <p>At Memmingen, the complete 1–4 km column mean peaks at 24.34 birds/km³ at 23:45 UTC. It falls to 1.56 at 04:30. Of the three local nights already extracted, this one has the highest column peak and is the only one currently prepared across the full network. It is a bounded first choice, not a search result across all migration seasons.</p>
-<p>The journey ends at 04:30, when 30 of the 37 stations still have complete fifteen-band profiles. Most stations are unavailable at 00:45, 00:50 and 00:55 UTC. The view marks this observation gap; it does not fill it or interpret it as a lull in migration. Missing values remain unavailable; neither the opening darkness nor the ending should be read as no birds. The complete-station count appears in Controls. Brightness uses the existing common density scales; it is not a network-wide bird count.</p>
+<p>The journey ends at 04:30, when 30 of the 37 stations still have complete fifteen-band profiles. Most stations are unavailable at 00:45, 00:50 and 00:55 UTC. For this continuous journey, missing density and velocity bands during that short gap are linearly interpolated between valid observations at 00:40 and 01:00. The moving trails are integrated through the same interpolated field, so they continue across the gap. This is a presentation estimate, not a recovered observation. Real values remain unchanged, and bands without valid observations on both sides remain unavailable. Controls identifies the interval and shows the original complete-station count. The four individual studies retain their original gap handling; the ending should not be read as no birds. Brightness uses the existing common density scales; it is not a network-wide bird count.</p>
 <p>Layer height gradually changes from ×12 to ×4 as the camera rises. Terrain relief is ×8. Colour and fine texture are artistic. Both representations use the same interpolated five-minute clock. Space/P plays or pauses; arrows move five minutes; Shift + arrows thirty minutes; Home/End visit the endpoints. Touch or mouse gestures pause the clock and release the camera. Continue journey returns smoothly without skipping time. With reduced motion enabled, playback advances the data while the camera stays still; chapter controls let you choose a view.</p>
 <p>The optional cloud veil is hourly ERA5 cloud-area fraction for the same night, interpolated from the retained Open-Meteo data. Its height is a display projection. It does not affect the bird field or establish a causal response to weather. Generated using Copernicus Climate Change Service information; weather data by <a href="https://open-meteo.com/en/docs/historical-weather-api">Open-Meteo</a>, CC BY 4.0.</p>
 <p>Bird profiles: Nussbaumer et al., <a href="https://doi.org/10.5281/zenodo.4587338">Vertical profiles time series of bird density and flight speed vector</a>, version 3, CC BY 4.0. Terrain: <a href="https://registry.opendata.aws/terrain-tiles/">Mapzen Terrain Tiles</a>. Europe terrain produced using Copernicus data and information funded by the European Union — EU-DEM layers; SRTM and GMTED2010 courtesy of the U.S. Geological Survey; Austria terrain © offene Daten Österreichs; Norway terrain © Kartverket; UK terrain © Environment Agency copyright and/or database right 2015. coastlines and water: Natural Earth. The four individual studies remain available above.</p></section>`;
-let scene,index=0,playing=false,guided=true,started=false,returning=null,lastFrame=-1,sparse=false;
+let scene,index=NIGHT_START,playing=false,guided=true,started=false,returning=null,lastFrame=-1;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let heldPose=nightPose(0);
+let heldPose=nightPose(NIGHT_START);
 function interrupt(){
   if(!scene)return;playing=false;guided=false;returning=null;scene.releaseCamera();updateUI();
 }
@@ -55,22 +56,21 @@ function setFrames(){
   if(index===lastFrame)return;lastFrame=index;
   const frames=network.stations.map(s=>sampleFrame(s.frames,index));scene?.setFrames(frames,index);
   const count=frames.filter(f=>frameMean(f)!==null).length;
-  sparse=index>=12&&count<18;
-  $('coverage').textContent=`${count}/37 complete station profiles · 1–4 km above sea level. Gaps remain unavailable.`;
+  $('coverage').textContent=`${count}/37 complete observed station profiles · 1–4 km above sea level. ${withinNightGap(index)?'This interval blends missing bands between the 00:40 and 01:00 observations.':'The short 00:45–00:55 observation gap is interpolated for this journey.'}`;
   $('time-label').innerHTML=`${frames[0].time.slice(11,16)} <small>UTC</small>`;
   const chapter=nightChapter(index);$('chapter').textContent=chapter.name.toUpperCase();
-  if(started){$('view-title').textContent=chapter.line;$('view-subtitle').textContent=sparse?'Most station profiles are unavailable at this time.':chapter.detail;}
-  $('evidence').textContent=index<24?'Memmingen · processed radar estimates':index<54?`${count}/37 complete profiles · separate observations`:`${count}/37 complete profiles · estimated field`;
+  if(started){$('view-title').textContent=chapter.line;$('view-subtitle').textContent=chapter.detail;}
+  $('evidence').textContent=index<24?'Memmingen · processed radar estimates':index<54?`${count}/37 complete profiles · separate observations`:withinNightGap(index)?'Estimated field · temporal interpolation':`${count}/37 complete profiles · estimated field`;
 }
 function updateUI(){
   $('play').textContent=playing?'Ⅱ':'▶';$('play').setAttribute('aria-label',playing?'Pause':'Play');
   $('clock').value=index;
   $('continue').hidden=guided||index===NIGHT_END;
-  $('status').textContent=returning?'Returning to the journey':!guided?'Exploring · time paused':index===NIGHT_END?'End · play to begin again':sparse?'Observation gap':playing?nightChapter(index).name:started?'Paused':'Ready · 2½ minutes';
+  $('status').textContent=returning?'Returning to the journey':!guided?'Exploring · time paused':index===NIGHT_END?'End · play to begin again':playing?nightChapter(index).name:started?'Paused':'Ready · 2¼ minutes';
 }
 function resume(){
   if(!scene)return;started=true;
-  if(index>=NIGHT_END){seek(0);started=true;}
+  if(index>=NIGHT_END){seek(NIGHT_START);started=true;}
   if(!guided){
     const to=reducedMotion?scene.cameraPose():nightPose(index);
     if(reducedMotion){heldPose=to;guided=true;playing=true;}
@@ -79,13 +79,13 @@ function resume(){
   lastFrame=-1;setFrames();updateUI();
 }
 function seek(value){
-  if(!scene)return;index=Math.max(0,Math.min(NIGHT_END,value));playing=false;started=true;guided=true;returning=null;
+  if(!scene)return;index=Math.max(NIGHT_START,Math.min(NIGHT_END,value));playing=false;started=true;guided=true;returning=null;
   heldPose=nightPose(index);scene.driveCamera(heldPose);lastFrame=-1;setFrames();updateUI();
 }
 $('play').addEventListener('click',()=>{if(playing||returning)pause();else resume();});
 $('continue').addEventListener('click',resume);
 $('clock').addEventListener('input',event=>seek(Number(event.target.value)));
-$('restart').addEventListener('click',()=>{controls(false);seek(0);resume();});
+$('restart').addEventListener('click',()=>{controls(false);seek(NIGHT_START);resume();});
 for(const button of document.querySelectorAll('[data-time]'))button.addEventListener('click',()=>{controls(false);seek(Number(button.dataset.time));});
 $('palette').addEventListener('change',event=>scene?.setPalette(event.target.value));
 $('clouds').addEventListener('change',event=>scene?.setClouds(event.target.value));
@@ -102,7 +102,7 @@ function draw(now){
       scene.driveCamera({position:arcPoint(returning.from.position,returning.to.position,t),target:arcPoint(returning.from.target,returning.to.target,t)});
       if(t>=1){returning=null;playing=true;}
     }else{
-      if(playing){index=Math.min(NIGHT_END,index+dt*NIGHT_END/NIGHT_DURATION);if(index===NIGHT_END)playing=false;setFrames();}
+      if(playing){index=Math.min(NIGHT_END,index+dt*(NIGHT_END-NIGHT_START)/NIGHT_DURATION);if(index===NIGHT_END)playing=false;setFrames();}
       if(guided)scene.driveCamera(reducedMotion?heldPose:nightPose(index));
     }
     scene.draw(dt,playing);updateUI();

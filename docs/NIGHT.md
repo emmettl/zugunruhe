@@ -22,19 +22,29 @@ network statistic weights stations equally, not area, and its contributing
 stations change with availability. It is not a migration total or a causal weather
 analysis. The first frame has nine complete profiles, 19:00 has 35, and 04:30 has
 30. Missing values remain missing. The full five-minute inspection also records a widespread interior dropout at
-00:45, 00:50 and 00:55: only two complete profiles remain. The journey explicitly
-labels the observation gap (including adjacent times that cannot be interpolated)
-and retains the missing values rather than interpreting the darkening as a lull.
+00:45, 00:50 and 00:55: only two complete profiles remain. For Night only, missing density and velocity bands in that interval are linearly
+interpolated between valid observations at 00:40 and 01:00. Existing observations
+are retained, and values without valid endpoints remain missing. This presentation
+estimate feeds both the sea and the tracer integration, avoiding a temporary
+collapse of the field or the trails. The understated footer and Controls identify
+temporal interpolation; the original observed profile count remains in Controls.
+The other four studies retain their original missing-data handling.
+
+Run `node scripts/prepare-currents.mjs --night` to regenerate the separate
+`night-currents.json` from these presentation profiles. The default command still
+prepares the original Currents dataset without filling the gap.
 The journey stops at 04:30 before the more
 extensive morning gaps; it does not depict a measured disappearance at sunrise.
 
 ## Viewing itinerary
 
-An explicit Play starts 150 seconds of guided viewing over 18:00–04:30 UTC.
+An explicit Play starts 135 seconds of guided viewing over 19:00–04:30 UTC.
+The opening skips the nearly empty early-evening profiles, so light is present
+before playback begins.
 Camera movement and changes of representation are authored against this shared
 clock. They do not infer a departure front, bird route, or a growth of coverage.
 
-- 18:00–20:00: one local cloud at Memmingen, over the regional elevation mesh.
+- 19:00–20:00: one local cloud at Memmingen, over the regional elevation mesh.
 - 20:00–22:30: pull back, reveal the other station profiles, and begin blending.
 - 22:30 onward: the existing continuous estimate, with velocity tracers gradually
   appearing between 23:30 and 01:00.

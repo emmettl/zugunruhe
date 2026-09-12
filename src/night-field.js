@@ -1,13 +1,15 @@
 import * as THREE from 'three';
 import network from '../data/processed/network-night.json';
+import paths from '../data/processed/night-currents.json';
+import { bridgeNightGap } from './night-data.js';
 import { createCurrentsField } from './currents-field.js';
 import { sampleFrame } from './interpolation.js';
 import { globePoint,R } from './network-geo.js';
 import { nightPresentation } from './night-journey.js';
 
 export function createNightField(scene,landscape){
-  const field=createCurrentsField(scene,landscape),shared=field.uniforms;
-  const stations=network.stations,count=stations.length*45;
+  const stations=bridgeNightGap(network.stations),count=stations.length*45;
+  const field=createCurrentsField(scene,landscape,{stations,tracks:paths.tracks}),shared=field.uniforms;
   const geometry=new THREE.InstancedBufferGeometry();
   geometry.setAttribute('position',new THREE.Float32BufferAttribute([-.4,-.4,0,.4,-.4,0,.4,.4,0,-.4,.4,0],3));
   geometry.setIndex([0,1,2,0,2,3]);geometry.instanceCount=count;

@@ -2,7 +2,10 @@ import fs from 'node:fs';
 import { createFieldGrid } from '../src/continent-model.js';
 import { movementGrid,sampleMovement,mixMovement,advancePath } from '../src/currents-model.js';
 import { terrainSampler } from '../src/network-terrain.js';
+import { bridgeNightGap } from '../src/night-data.js';
+const night=process.argv.includes('--night');
 const network=JSON.parse(fs.readFileSync(new URL('../data/processed/network-night.json',import.meta.url)));
+if(night)network.stations=bridgeNightGap(network.stations);
 const terrain=JSON.parse(fs.readFileSync(new URL('../data/processed/network-terrain.json',import.meta.url)));
 const {heightAt}=terrainSampler(terrain),grid=createFieldGrid(network.stations),fields=[];
 for(let i=0;i<145;i++)fields.push(movementGrid(grid,network.stations.map(s=>s.frames[i])));
@@ -34,5 +37,6 @@ for(let start=0;start<144;start++){
   }
 }
 const output={source:'Zenodo 4587338 v3; network-night.json',start:network.stations[0].frames[0].time,stepSeconds:300,method:'RK2, 60-second integration; bilinear space and linear time; fixed altitude; seeded density-weighted tracers, not individual birds',seed:20180904,tracks};
-fs.writeFileSync(new URL('../data/processed/currents-night.json',import.meta.url),JSON.stringify(output));
+if(night)output.presentationEstimate='Night only: missing bands at 00:45–00:55 linearly interpolated between 00:40 and 01:00 before integrating tracers. Retained observations are unchanged.';
+fs.writeFileSync(new URL(night?'../data/processed/night-currents.json':'../data/processed/currents-night.json',import.meta.url),JSON.stringify(output));
 console.log(`Prepared ${tracks.length} paths from ${candidates} seeds; ${tracks.reduce((n,t)=>n+t.points.length,0)} points.`);
