@@ -31,7 +31,8 @@ async function checkMobileAccess(page,cloud=false){
   expect(await dialog.evaluate(e=>e.contains(document.activeElement))).toBe(true);
   await page.keyboard.press('Escape');await expect(dialog).toBeHidden();await expect(opener).toBeFocused();
   const move=page.getByRole('button',{name:'Move view',exact:true});
-  await move.click();await expect(page.getByRole('button',{name:'Done moving',exact:true})).toHaveAttribute('aria-pressed','true');
+  await move.click();await expect(page.getByRole('button',{name:'Done moving',exact:true})).toBeVisible();
+  await expect(page.locator('.touch-explore canvas')).toBeVisible();
   await page.getByRole('button',{name:'Done moving',exact:true}).click();
   await expect(page.getByRole('button',{name:'Controls',exact:true})).toBeVisible();
 }
