@@ -3,6 +3,7 @@ export default defineConfig({
   testDir:'./tests',timeout:180000,expect:{timeout:60000},workers:1,
   reporter:[['list'],['html',{open:'never'}]],
   use:{baseURL:'http://127.0.0.1:4187/zugunruhe/',trace:'retain-on-failure',screenshot:'only-on-failure'},
-  projects:[{name:'chromium',use:{...devices['Desktop Chrome']}},{name:'webkit',use:{...devices['iPhone 13']}}],
+  projects:[// Keep desktop layout while reducing software WebGL pixel cost for interaction tests.
+  {name:'chromium',use:{...devices['Desktop Chrome'],deviceScaleFactor:.5}},{name:'webkit',use:{...devices['iPhone 13']}}],
   webServer:{command:'node scripts/serve-hosted.mjs',url:'http://127.0.0.1:4187/zugunruhe/',reuseExistingServer:!process.env.CI},
 });
