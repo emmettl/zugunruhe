@@ -8,13 +8,11 @@ import { daylightAt } from './daylight.js';
 
 const app=document.querySelector('#app');
 app.innerHTML=`
-  <header><div class="identity"><span class="series">MOTION STUDIES</span><h1>ZUGUNRUHE</h1></div>
-    <div class="place">Memmingen <span>Southern Germany · September 2018</span></div>
-    <button class="source-button" id="about" aria-expanded="false">About the data <span>↗</span></button></header>
+  <header><a class="identity" href="/">ZUGUNRUHE<span>MOTION STUDIES / 01</span></a><span class="header-place">Memmingen · Southern Germany · September 2018</span></header>
   <main>
     <section class="stage" aria-label="3D density study">
       <div class="scene" id="scene"></div>
-      <div class="scene-heading"><p class="eyebrow">01 / LAYERS</p><h2>The air has depth.</h2><p>Colour follows altitude. Light follows density.</p><p class="sky-state" id="sky-state"></p></div>
+      <div class="scene-heading"><p class="eyebrow">LAYERS</p><h1>The air has depth.</h1><p>Colour follows altitude. Light follows density.</p><p class="sky-state" id="sky-state"></p></div>
       <div class="view-controls" aria-label="Camera view"><button id="orbit" class="active">Perspective</button><button id="side">Side</button><button id="top">Above</button></div>
       <div class="scene-foot"><span>Drag to turn · scroll to move closer</span><span>96 km terrain · vertical scale ×12</span></div>
       <div id="empty" hidden>No density estimates at this time</div>
@@ -30,7 +28,7 @@ app.innerHTML=`
   <section class="playback" aria-label="Study playback">
     <div class="playback-heading"><div class="nights" aria-label="Select a night"></div><div class="time"><strong id="clock"></strong><span>UTC</span></div></div>
     <div class="timeline-row"><button id="play" aria-label="Pause playback">Ⅱ</button><div class="timeline"><svg id="spark" viewBox="0 0 720 48" preserveAspectRatio="none" aria-hidden="true"></svg><input id="time" type="range" min="0" max="144" step="0.01" value="48" aria-label="Study time"><div class="time-ticks"><span>18:00</span><span>00:00</span><span>06:00</span></div></div></div>
-    <div class="playback-foot"><span id="status"></span><span>Texture motion is illustrative · estimated velocities guide the flow</span></div>
+    <div class="playback-foot"><span id="status"></span><span>Texture motion is illustrative · estimated velocities guide the flow</span><button class="source-button" id="about" aria-expanded="false">About this study ↗</button></div>
   </section>
   <section class="about-panel" id="source-notes" hidden>
     <h2>One radar. Three nights.</h2><button id="close-about" aria-label="Close data notes">×</button>
