@@ -34,14 +34,20 @@ dialog::backdrop{background:#02040bb3}
   #app>.playback{padding:16px}
   .playback{gap:12px}.timeline{min-width:0}
   #play{width:48px;min-width:48px;height:48px;border:1px solid #d4bfe633;border-radius:5px}
-  #clock[type=range]{height:44px;margin:0;width:100%}
-  #time[type=range]{height:44px;top:23px}
-  #app .timeline{height:44px}
+  #clock[type=range]{height:56px;margin:0;width:100%}
+  #time[type=range]{height:56px;top:23px}
+  /* A 44 px thumb hitbox surrounds the visible 28 px handle. */
+  :is(#time,#clock)[type=range]{appearance:none;-webkit-appearance:none;background:transparent;padding:0;touch-action:none}
+  :is(#time,#clock)[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#b6a3d466}
+  :is(#time,#clock)[type=range]::-webkit-slider-thumb{-webkit-appearance:none;box-sizing:border-box;width:44px;height:44px;margin-top:-20px;border:8px solid transparent;border-radius:50%;background:#dfc9ef;background-clip:padding-box}
+  :is(#time,#clock)[type=range]::-moz-range-track{height:4px;border-radius:2px;background:#b6a3d466}
+  :is(#time,#clock)[type=range]::-moz-range-thumb{box-sizing:border-box;width:44px;height:44px;border:8px solid transparent;border-radius:50%;background:#dfc9ef;background-clip:padding-box}
+  #app .timeline{height:56px}
   #app .playback-heading{padding-left:60px;justify-content:flex-end}
   #app .timeline-row{margin-top:-4px;gap:12px}
-  #app #time{position:static;height:44px}
+  #app #time{position:static;height:56px}
   #spark,.time-ticks,.ticks,.timeline-head>span:first-child{display:none}
-  #network-app footer,#continent-app footer,#app>.playback{padding:12px 16px}
+  #network-app footer,#continent-app footer,#app>.playback{padding:6px 16px}
   .mobile-settings #coverage{display:block}
   .timeline-head{gap:6px}.timeline-head strong{font-size:24px}.timeline-head small{font-size:12px}
   #coverage,.ticks,.time-ticks,#status,.playback-foot,.footnote{font-size:12px;color:#acafbf}

@@ -17,6 +17,8 @@ On screens up to 760 px wide, and landscape phones up to 1024 × 500 px:
   returns to the scene. All primary touch targets retain their 44 px minimum.
 - Station selection closes settings and returns to the scene with focus on Back.
   Other adjustments offer a Back to scene button.
+- Timeline scrubbing has a 56 px touch area and a 44 px thumb hitbox around a
+  visible 28 px handle, while the playback strip retains its compact height.
 - Controls use at least 44 px heights, 16 px select text, larger labels and readable
   timelines. The page can reflow without horizontal scrolling at 320 px.
 

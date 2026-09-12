@@ -9,6 +9,7 @@ async function mobileSettings(page){
 async function checkMobileAccess(page,cloud=false){
   if(page.viewportSize().width>760)return;
   await expect(page.locator('.mobile-settings')).not.toHaveAttribute('open','');
+  await expect(page.locator(cloud?'#time':'#clock')).toHaveCSS('height','56px');
   const measure=()=>page.evaluate(()=>({
     overflow:document.documentElement.scrollWidth>innerWidth,
     small:[...document.querySelectorAll('button,select,summary,input[type=range],header a')]
