@@ -7,6 +7,7 @@ import inventory from '../data/processed/network-stations.json';
 import { sampleFrame } from './interpolation.js';
 import { createContinentScene } from './continent-scene.js';
 import { frameMean } from './network-geo.js';
+import { palettes, paletteGradient } from './continent-palettes.js';
 
 const names=new Map(inventory.metadata.map(s=>[s.name,s.location]));
 const stationName=s=>names.get(s.name)??s.name;
@@ -14,7 +15,7 @@ document.querySelector('#continent-app').innerHTML=`
   <header><a class="identity" href="/">ZUGUNRUHE<span>MOTION STUDIES / 03</span></a><span class="header-place">Western Europe · 4–5 September 2018</span><a class="previous" href="/studies/02-archipelago/">Archipelago ↗</a></header>
   <main><div id="world"></div>
     <div class="title"><span class="eyebrow">CONTINENT ABLAZE</span><h1 id="view-title">The sky between.</h1><p id="view-subtitle">A continuous field. One passing night.</p><button id="back-to-network" hidden>← Back to previous view</button></div>
-    <div class="inspector"><label for="station">Visit a station</label><select id="station"><option value="-1">Whole field</option>${network.stations.map((s,i)=>`<option value="${i}">${stationName(s)} · ${s.name}</option>`).join('')}</select><div id="reading"></div><label class="inspection"><input id="inspection" type="checkbox"> Show observation support</label><div class="spectrum" id="spectrum"></div><div class="spectrum-key"><span id="legend-low">1 km</span><span id="legend-title">Altitude</span><span id="legend-high">4 km</span></div></div>
+    <div class="inspector"><label for="station">Visit a station</label><select id="station"><option value="-1">Whole field</option>${network.stations.map((s,i)=>`<option value="${i}">${stationName(s)} · ${s.name}</option>`).join('')}</select><div class="palette-control"><label for="palette">Palette</label><select id="palette">${Object.entries(palettes).map(([id,p])=>`<option value="${id}">${p.label}</option>`).join('')}</select></div><div id="reading"></div><label class="inspection"><input id="inspection" type="checkbox"> Show observation support</label><div class="spectrum" id="spectrum"></div><div class="spectrum-key"><span id="legend-low">1 km</span><span id="legend-title">Altitude</span><span id="legend-high">4 km</span></div></div>
     <div class="camera-controls" aria-label="Viewpoint"><button data-view="flyover">100 km · Flyover</button><button data-view="germany">Germany</button><button data-view="europe" class="active">Western Europe</button></div>
     <div class="height-controls"><label for="relief">Terrain relief</label><select id="relief"><option value="1">True scale</option><option value="4">×4</option><option value="8" selected>×8</option></select><label for="height">Layer height</label><select id="height"><option value="1">True scale</option><option value="4" selected>×4</option><option value="8">×8</option></select><label for="luminosity">Luminosity</label><input id="luminosity" type="range" min=".5" max="4" step=".1" value="1.5"><span id="camera-height"></span></div>
     <p class="gesture">Drag to orbit · scroll to move closer</p>
@@ -28,6 +29,7 @@ document.querySelector('#continent-app').innerHTML=`
     <p>At each altitude, nearby valid density observations are combined with distance weights on a 0.25° geographic grid. The weights favour nearby stations and taper to zero at 240 km. Brightness also fades as the nearest available observation recedes beyond 120 km. Missing values are excluded; zero remains zero. This smooth local estimate is not a validated continental migration forecast.</p>
     <p>East and north velocity components are estimated separately from complete pairs. They guide a continuous flowing texture. The texture is illustrative: it does not track individual birds or conserve the number of birds in flight. Adjacent five-minute estimated fields blend in time; this spatial method can fill a missing station observation using its neighbours.</p>
     <p>Colour follows the original fifteen 200 m altitude bands. The estimate covers the neighbourhood of this network, not all of Europe. It has no habitat, wind-weather or migration-route constraints; water is not treated as a barrier. The layer shapes and fine texture are artistic. No narrow flyways can be inferred from their appearance.</p>
+    <p>Ember retains the original warm palette; Aquatic moves through blue and cyan; Boreal adds green and violet. Oxygen draws on the <a href="https://science.nasa.gov/earth/earth-observatory/auroras-dancing-in-the-night/">557.7 nm green and 630 nm red oxygen lines</a>. These are artistic palettes across the bird-altitude bands, not auroral emission measurements or a physical aurora altitude scale. Palette changes blend smoothly even while playback is paused.</p>
     <p>Show observation support reveals station markers and changes the light to cool cyan near available observations, warm amber toward the faded outer boundary. This shows distance support, not statistical confidence. Selecting a station displays its measured column mean. The field is smoothed and need not match that measurement exactly.</p>
     <p>Terrain relief defaults to ×8 and layer height to ×4. Each field location is lifted by its additional displayed ground elevation. Bands below the actual terrain are omitted. Luminosity changes a common artistic exposure for every location; it does not change the density estimates. Close views gently reduce exposure to retain detail.</p>
     <p>Play advances five minutes per second. Solar dusk follows the shared clock; camera movement remains independent. The camera controls and Back navigation work as in Archipelago.</p>
@@ -58,8 +60,19 @@ $('play').addEventListener('click',()=>{if(!scene)return;if(index>=144)index=0;p
 $('clock').addEventListener('input',()=>{index=Number($('clock').value);playing=false;setFrames();updateUI();});
 $('inspection').addEventListener('change',()=>{
   const inspect=$('inspection').checked;scene?.setInspection(inspect);
-  $('spectrum').classList.toggle('support-spectrum',inspect);
+  $('palette').disabled=inspect;
+  $('spectrum').style.background=inspect?'linear-gradient(90deg,#9a3d14,#21b8d9)':paletteGradient($('palette').value);
   $('legend-low').textContent=inspect?'Further':'1 km';$('legend-title').textContent=inspect?'Observation support':'Altitude';$('legend-high').textContent=inspect?'Near':'4 km';
+});
+function applyPalette(immediate=false){
+  const id=$('palette').value;
+  scene?.setPalette(id,immediate);$('spectrum').style.background=paletteGradient(id);
+}
+const requestedPalette=new URL(location.href).searchParams.get('palette');
+$('palette').value=Object.hasOwn(palettes,requestedPalette)?requestedPalette:'ember';
+applyPalette(true);
+$('palette').addEventListener('change',()=>{
+  applyPalette();const url=new URL(location.href);url.searchParams.set('palette',$('palette').value);history.replaceState(null,'',url);
 });
 $('luminosity').addEventListener('input',()=>scene?.setGain(Number($('luminosity').value)));
 $('height').addEventListener('change',()=>scene?.setExaggeration(Number($('height').value)));

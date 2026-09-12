@@ -116,7 +116,7 @@ export function createContinentScene(container, stations, onSelect) {
     if(!start||journey.moving||Math.hypot(e.clientX-start[0],e.clientY-start[1])>5)return;
     const i=pickStation(e);if(i>=0)onSelect(i);
   });
-  return {setFrames,draw,preset,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
+  return {setFrames,draw,preset,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
     setRelief:v=>{landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
     get canReturn(){return journey.canReturn;},get returning(){return journey.returning;},renderer};
 }
