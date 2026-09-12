@@ -11,7 +11,7 @@ async function checkMobileAccess(page,cloud=false){
   await expect(page.locator('.mobile-settings')).not.toHaveAttribute('open','');
   const measure=()=>page.evaluate(()=>({
     overflow:document.documentElement.scrollWidth>innerWidth,
-    small:[...document.querySelectorAll('button,select,summary,input[type=range],.site-navigation a')]
+    small:[...document.querySelectorAll('button,select,summary,input[type=range],header a')]
       .filter(e=>e.getBoundingClientRect().height>0&&e.getBoundingClientRect().height<44).map(e=>e.id||e.textContent.trim()),
   }));
   expect(await measure()).toEqual({overflow:false,small:[]});
