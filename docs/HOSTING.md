@@ -6,7 +6,7 @@ The same static build is served at:
 - `https://emmettl.github.io/zugunruhe/` through GitHub Pages.
 
 Entries are the cloud at the root, `network.html` for the islands and
-`continent.html` for the sea, `currents.html` for directional paths, and `night.html` for the continuous journey. Preserved builds are under `studies/01-layers/`
+`continent.html` for the sea, `currents.html` for directional paths, `night.html` for the continuous journey, and `air.html` for birds and wind. Preserved builds are under `studies/01-layers/`
 and `studies/02-archipelago/`. Cloudflare may canonicalize `.html` URLs to their
 extensionless equivalents. Links and asset paths work under either host's prefix.
 

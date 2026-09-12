@@ -81,3 +81,7 @@ timeline scrubbing. Sea remains available as the previous continuous-field study
 The first continuous journey, **A night in passage**, is at `/night.html`: one
 clock carries the view from Memmingen through the archipelago into the estimated
 sea. [Night selection, itinerary and controls](docs/NIGHT.md).
+
+**Birds and air**, at `/air.html`, compares bird movement with the archive’s
+matching ERA5 wind across three nights at Memmingen.
+[Data, interpretation and controls](docs/AIR.md).

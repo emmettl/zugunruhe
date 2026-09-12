@@ -13,7 +13,7 @@ function update(){
   if(!frozen&&header&&!header.querySelector('.site-navigation')){
     header.querySelector('.previous')?.remove();
     const nav=document.createElement('nav');nav.className='site-navigation';nav.setAttribute('aria-label','Studies');
-    for(const [file,label] of [['','Cloud'],['network.html','Islands'],['continent.html','Sea'],['currents.html','Currents'],['night.html','Night']]){
+    for(const [file,label] of [['','Cloud'],['network.html','Islands'],['continent.html','Sea'],['currents.html','Currents'],['night.html','Night'],['air.html','Air']]){
       const a=document.createElement('a');a.href=new URL(file,base).href;a.textContent=label;
       const path=location.pathname.replace(/\.html$/,'').replace(/\/$/,'');
       const target=new URL(file,base).pathname.replace(/\.html$/,'').replace(/\/$/,'');

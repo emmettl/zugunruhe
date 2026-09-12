@@ -34,6 +34,7 @@ const fragmentShader = `
   uniform vec3 colours[15];
   uniform float selected;
   uniform float densityMax;
+  uniform float exposure;
   varying vec2 vPosition;
   varying float vBand;
   varying float vFeather;
@@ -61,13 +62,13 @@ const fragmentShader = `
     edge*=1.-smoothstep(2.6,3.2,max(abs(vPosition.x),abs(vPosition.y)));
     float strength=clamp(density/densityMax,0.,1.);
     float focus=selected<0. || abs(vBand-selected)<.1 ? 1. : .08;
-    float alpha=(.24*body+.43*strands)*strength*edge*vFeather*focus;
+    float alpha=(.24*body+.43*strands)*strength*edge*vFeather*focus*exposure;
     vec3 colour=colours[b] + vec3(strands*.17*strength);
     gl_FragColor=vec4(colour,alpha);
   }
 `;
 
-export function createLayers(container, maxDensity) {
+export function createLayers(container, maxDensity, {colours=layerColours,createOverlay,exposure=1,focusExposure=1,fitWidth=1.32}={}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.setClearColor('#050410');
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.7));
@@ -89,7 +90,7 @@ export function createLayers(container, maxDensity) {
   controls.maxDistance = 30;
   controls.minPolarAngle = .13;
   controls.maxPolarAngle = Math.PI / 2 - .025;
-  function fitFactor(){return Math.max(1,1.32/camera.aspect);}
+  function fitFactor(){return Math.max(1,fitWidth/camera.aspect);}
   function home() { const f=fitFactor();camera.position.set(7.2*f, 1.65+4.1*f, 8.6*f); controls.target.set(0, 1.65, 0); controls.update(); }
   home();
 
@@ -108,12 +109,13 @@ export function createLayers(container, maxDensity) {
   geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(0,2,0),6);
   const uniforms = {
     densities:{value:Array(15).fill(-1)}, textureAxes:{value:Array.from({length:15},()=>new THREE.Vector2(1,0))},
-    offsets:{value:Array.from({length:15},()=>new THREE.Vector2())}, colours:{value:layerColours},
-    densityMax:{value:maxDensity}, selected:{value:-1}
+    offsets:{value:Array.from({length:15},()=>new THREE.Vector2())}, colours:{value:colours},
+    densityMax:{value:maxDensity}, selected:{value:-1},exposure:{value:exposure}
   };
   const material = new THREE.ShaderMaterial({ vertexShader,fragmentShader,uniforms,
     transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending });
   const cloud=new THREE.Mesh(geometry,material);cloud.frustumCulled=false;scene.add(cloud);
+  const overlay=createOverlay?.(scene);
 
   const lineMaterial=new THREE.LineBasicMaterial({color:'#a6bacd',transparent:true,opacity:.19});
   function line(points) { const g=new THREE.BufferGeometry().setFromPoints(points.map(p=>new THREE.Vector3(...p)));const l=new THREE.Line(g,lineMaterial);scene.add(l);return l; }
@@ -144,6 +146,7 @@ export function createLayers(container, maxDensity) {
   const angles=Array(15).fill(null);
   function setFrame(next) {
     frame=next;
+    overlay?.setFrame(next);
     const sun = daylightAt(next.time);
     lighting.sunDirection.value.fromArray(sun.direction);
     lighting.twilight.value = sun.twilight;
@@ -161,6 +164,7 @@ export function createLayers(container, maxDensity) {
     }
   }
   function draw(dt,playing) {
+    overlay?.draw(dt,playing);
     if(playing&&frame){
       for(let i=0;i<15;i++){
         const flow=directions[i];
@@ -174,6 +178,7 @@ export function createLayers(container, maxDensity) {
   }
   function viewTop(){camera.position.set(0,1.65+13*fitFactor(),.01);controls.target.set(0,1.65,0);controls.update();}
   function viewSide(){const f=fitFactor();camera.position.set(8*f,1.65+1.6*f,8*f);controls.target.set(0,1.65,0);controls.update();}
-  return {setFrame,draw,home,viewTop,viewSide,selectBand:i=>{uniforms.selected.value=i;},
+  return {setFrame,draw,home,viewTop,viewSide,selectBand:i=>{uniforms.selected.value=i;uniforms.exposure.value=exposure*(i>=0?focusExposure:1);overlay?.selectBand(i);},
+    setFlows:(birds,wind)=>{cloud.visible=birds;overlay?.setVisible(wind);},
     canvas:renderer.domElement,renderer};
 }
