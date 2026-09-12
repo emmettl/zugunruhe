@@ -18,7 +18,12 @@ export function createCloudCover(scene,landscape){
         vec2 left=texture2D(a,uv).rg,right=texture2D(b,uv).rg;
         if((fraction<1.&&left.g<.9999)||(fraction>0.&&right.g<.9999))discard;
         float cover=mix(left.r,right.r,fraction);
-        float edge=smoothstep(0.,.018,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));
+        // A broad geographic feather, with both axes fading at corners.
+        float latitude=radians(${south}.+vUv.y*${(height-1)*step}.);
+        vec2 spanKm=vec2(${(width-1)*step}.*111.195*cos(latitude),${(height-1)*step}.*111.195);
+        vec2 feather=clamp(min(vUv,1.-vUv)*spanKm/240.,0.,1.);
+        feather=feather*feather*feather*(feather*(feather*6.-15.)+10.);
+        float edge=feather.x*feather.y;
         gl_FragColor=vec4(vec3(.48,.55,.60),cover*.65*edge);
       }`});
   const mesh=new THREE.Mesh(geometry,material);mesh.visible=false;mesh.frustumCulled=false;mesh.renderOrder=1;scene.add(mesh);

@@ -37,8 +37,9 @@ Service information. ERA5 source DOI: [10.24381/cds.adbb2d47](https://doi.org/10
 ## Display and interpretation
 
 A neutral pale veil projects cloud-area fraction onto the same terrain mesh.
-Its opacity increases linearly with cover, with a short fade at the dataset
-boundary. It is a coverage map, not cloud geometry: do not read the displayed
+Its opacity increases linearly with cover, with a smooth 240 km inward feather at the dataset
+boundary. The two edge fades multiply at corners to soften the rectangular
+footprint. This display-only fade does not change cloud percentages. It is a coverage map, not cloud geometry: do not read the displayed
 height as a cloud base, or conclude that the luminous birds flew above it.
 Bird light is composited over the veil to keep both fields legible. No cloud
 shadows, physical attenuation, fine cloud texture or wind-driven drift are added.
