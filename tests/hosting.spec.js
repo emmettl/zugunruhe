@@ -132,4 +132,3 @@ test('Currents renders and retains playback, comparison and study navigation',as
   await expect(page.getByRole('navigation',{name:'Studies'}).getByRole('link',{name:'Sea',exact:true})).toHaveAttribute('href',/\/zugunruhe\/continent.html$/);
   expect(errors).toEqual([]);
 });
-
