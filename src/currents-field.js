@@ -29,7 +29,7 @@ export function createCurrentsField(scene,landscape){
   const mesh=new THREE.Mesh(geometry,material);mesh.frustumCulled=false;mesh.renderOrder=3;scene.add(mesh);
   let index=48,drawn=-1,enabled=true;
   function update(){
-    if(!enabled){mesh.visible=false;return;}mesh.visible=true;
+    if(!enabled||uniforms.threadOpacity.value===0){mesh.visible=false;return;}mesh.visible=true;
     if(index===drawn)return;drawn=index;let count=0;
     for(const track of paths.tracks)for(const s of visibleSegments(track,index)){
       if(count===capacity)break;

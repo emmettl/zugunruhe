@@ -22,7 +22,7 @@
 #night-controls h2{font-size:24px;font-weight:350;margin:0 0 20px}
 #night-controls p{font-size:14px;line-height:1.6;color:#b6bac9}
 #close-controls{float:right;width:44px;height:44px;font-size:26px;margin:-12px -12px 0 0}
-.night-options{display:grid;gap:14px}.night-options label{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;font-size:14px}
+.night-options{display:grid;gap:14px}.night-options>div{display:flex;align-items:center;justify-content:space-between;gap:16px}.night-options label{display:flex;align-items:center;min-height:44px;font-size:14px}
 .night-options select{min-height:44px;font-size:16px;width:55%}
 .night-chapters{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:22px 0}
 .night-chapters button,#restart,#night-notes{min-height:44px;border:1px solid #ffffff25;border-radius:4px;font-size:13px;padding:8px}

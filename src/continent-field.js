@@ -54,5 +54,5 @@ export function createContinentalField(scene,landscape){
       targetStops=palettes[id].stops.map(rgb=>new THREE.Vector3(...rgb));
       if(immediate||reducedMotion)colourStops.forEach((c,i)=>c.copy(targetStops[i]));
     },setIndex(index){const a=Math.floor(index),b=Math.min(144,a+1);if(left!==a){uniforms.fieldA.value.image.data=frame(a);uniforms.fieldA.value.needsUpdate=true;left=a;}if(right!==b){uniforms.fieldB.value.image.data=frame(b);uniforms.fieldB.value.needsUpdate=true;right=b;}uniforms.fraction.value=index-a;},
-    draw(dt,playing){colourStops.forEach((c,i)=>c.lerp(targetStops[i],1-Math.exp(-dt*5)));if(playing)uniforms.time.value+=dt;}};
+    draw(dt,playing){mesh.visible=uniforms.fieldOpacity.value>0;colourStops.forEach((c,i)=>c.lerp(targetStops[i],1-Math.exp(-dt*5)));if(playing)uniforms.time.value+=dt;}};
 }
