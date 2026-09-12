@@ -37,26 +37,14 @@ export function installMobileStudy(){
   });
   const interaction=document.createElement('div');interaction.className='mobile-interaction';
   const controlsButton=document.createElement('button');controlsButton.type='button';controlsButton.textContent='Controls';interaction.append(controlsButton);stage.append(interaction);
-  const button=document.createElement('button');button.type='button';button.className='move-view';button.textContent='Move view';button.setAttribute('aria-pressed','false');
-  const hint=document.createElement('p');hint.id='touch-help';hint.textContent='Swipe the scene to scroll. Choose Move view to orbit and pinch to zoom.';button.setAttribute('aria-describedby',hint.id);
-  content.append(button,hint);
+  const hint=document.createElement('p');hint.id='touch-help';hint.textContent='Drag with one finger to turn the scene. Pinch with two fingers to zoom. Scroll the page outside the scene.';
+  content.append(hint);
   const setSettingsOpen=installStudyDialog(settings,controlsButton,closeButton);settings=document.getElementById('mobile-settings');
   closeButton.addEventListener('click',()=>setSettingsOpen(false));
+  controlsButton.addEventListener('click',()=>setSettingsOpen(true));
   const canvas=stage.querySelector('canvas');
-  let moving=false;
-  function setMoving(value){
-    moving=value;stage.classList.toggle('touch-explore',value);button.setAttribute('aria-pressed',String(value));
-    button.textContent=value?'Done moving':'Move view';controlsButton.textContent=value?'Done moving':'Controls';controlsButton.setAttribute('aria-haspopup',value?'false':'dialog');
-  }
-  button.addEventListener('click',()=>{setMoving(true);returnToScene();});
-  controlsButton.addEventListener('click',()=>{if(moving)setMoving(false);else setSettingsOpen(true);});
-  // Capture above the canvas, before OrbitControls and station picking. Browsing
-  // the page must not unexpectedly move the camera or interrupt a flyover.
-  for(const type of ['pointerdown','pointermove','pointerup','wheel'])stage.addEventListener(type,event=>{
-    if(mobile.matches&&!moving&&event.target===canvas)event.stopImmediatePropagation();
-  },{capture:true,passive:true});
   function layout(){
-    setMoving(false);if(!mobile.matches&&settings.open)setSettingsOpen(false);settings.hidden=!mobile.matches;interaction.hidden=!mobile.matches;
+    if(!mobile.matches&&settings.open)setSettingsOpen(false);settings.hidden=!mobile.matches;interaction.hidden=!mobile.matches;
     if(canvas){if(mobile.matches)canvas.setAttribute('aria-describedby',hint.id);else canvas.removeAttribute('aria-describedby');}
     for(const {node,marker} of panels){if(mobile.matches)content.append(node);else marker.after(node);}
     content.append(returnButton);

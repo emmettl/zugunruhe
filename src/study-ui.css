@@ -24,11 +24,8 @@ dialog::backdrop{background:#02040bb3}
   .camera-controls button,.view-controls button{font-size:12px;padding:10px 4px;min-height:44px;color:#c0c2d0}
   .mobile-interaction{position:absolute;display:flex;align-items:center;gap:10px;right:12px;bottom:12px;font-size:12px;color:#c5c5d3}
   .mobile-interaction button{min-height:44px;padding:8px 12px;background:#080b13db;border:1px solid #ffffff30;border-radius:4px;font-size:13px}
-  .mobile-interaction button[aria-pressed=true]{background:#343047}
-  .mobile-interaction span{text-shadow:0 1px 5px #000}
   .scene-foot,.gesture{display:none}
-  .scene canvas,#world canvas{touch-action:pan-y pinch-zoom!important}
-  .touch-explore canvas{touch-action:none!important}
+  .scene canvas,#world canvas{touch-action:none}
   #app>.playback{order:2}
   #network-app footer,#continent-app footer{height:auto;min-height:0;padding:16px}
   #app>.playback{padding:16px}
@@ -60,7 +57,6 @@ dialog::backdrop{background:#02040bb3}
   .mobile-settings h2{font-size:22px;margin:0 50px 20px 0}
   .close-controls{position:sticky;top:0;float:right;min-width:44px;min-height:44px;margin:-10px 0 0 8px;border-radius:4px;background:#090c15;font-size:26px}
   .mobile-settings .camera-controls,.mobile-settings .view-controls{position:static;display:grid;width:100%;margin:0}
-  .mobile-settings .move-view{min-height:44px;border:1px solid #ffffff30;border-radius:4px;background:#c6b2ea14;font-size:14px}
   #touch-help{font-size:13px;color:#b9bdcc;margin:0;line-height:1.5}
   .mobile-settings-content{display:grid;gap:20px;padding-bottom:8px}
   .mobile-settings .inspector,.mobile-settings .height-controls,.mobile-settings .layer-panel{position:static;width:auto;max-width:none;padding:0;background:none;border:0;backdrop-filter:none;margin:0}

@@ -48,7 +48,7 @@ document.querySelector('#continent-app').innerHTML=`
 const $=id=>document.getElementById(id);
 let index=48,playing=false,selected=-1,frames=[],scene;
 function select(value){selected=Number(value);$('station').value=selected;scene?.select(selected);updateUI();}
-try{scene=createContinentScene($('world'),network.stations,select,createCurrentsField,{travellingFlyover:true});scene.renderer.domElement.setAttribute('aria-label','Luminous paths carried through radar-derived bird velocities over Western Europe. Drag to orbit and scroll to move closer.');}catch(error){$('graphics-error').hidden=false;console.error(error);}
+try{scene=createContinentScene($('world'),network.stations,select,createCurrentsField,{travellingFlyover:true});scene.renderer.domElement.setAttribute('aria-label','Luminous paths carried through radar-derived bird velocities over Western Europe. Drag to orbit; scroll or pinch to zoom. Tap a station to visit it.');}catch(error){$('graphics-error').hidden=false;console.error(error);}
 function setFrames(){frames=network.stations.map(s=>sampleFrame(s.frames,index));scene?.setFrames(frames,index);}
 function updateUI(){
   const frame=frames[0];if(!frame)return;

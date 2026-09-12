@@ -12,9 +12,11 @@ On screens up to 760 px wide, and landscape phones up to 1024 × 500 px:
   there in two columns. Playback stays visible when the panel is closed.
 - Settings keep their existing controls, event listeners and values. Resizing
   back to desktop restores each control to its original position.
-- Swiping the scene scrolls the page by default. Move view enables camera gestures;
-  Done moving restores scrolling. Choosing a camera preset closes the panel and
-  returns to the scene. All primary touch targets retain their 44 px minimum.
+- Scenes respond directly to touch: one finger orbits and two fingers pinch to
+  zoom. Page scrolling remains available outside the scene and within settings.
+  Choosing a camera preset closes the panel and returns to the scene. All primary
+  touch targets retain their 44 px minimum. Station markers have a 44 px touch
+  target; dragging or pinching does not count as a station tap.
 - Station selection closes settings and returns to the scene with focus on Back.
   Other adjustments offer a Back to scene button.
 - Timeline scrubbing has a 56 px touch area and a 44 px thumb hitbox around a
@@ -32,6 +34,7 @@ Validation: local browser inspection of all four studies at phone widths,
 320 × 568, 390 × 844 and 844 × 390 layouts, station selection, scrollable notes,
 focus containment, settings and desktop restoration. The WebKit suite checks
 mobile control sizes, horizontal overflow, panel opening, modal focus and the camera
-interaction toggle alongside the existing playback tests. Chromium checks the
-existing desktop flows. These are browser-based checks, not a physical-device
+gesture availability alongside the existing playback tests. Chromium checks the
+existing desktop flows and injects native touch input at phone size to check
+camera rotation, pinch zoom and suppression of station selection during gestures. These are browser-based checks, not a physical-device
 VoiceOver or TalkBack audit and not a claim of full WCAG conformance.

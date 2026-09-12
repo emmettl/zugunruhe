@@ -13,7 +13,7 @@ export function createNetworkScene(container, stations, onSelect) {
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setClearColor('#050610');
   renderer.domElement.setAttribute('role','img');
-  renderer.domElement.setAttribute('aria-label','Thirty-seven radar profiles as luminous altitude layers over a curved map of Western Europe. Drag to orbit and scroll to move closer.');
+  renderer.domElement.setAttribute('aria-label','Thirty-seven radar profiles as luminous altitude layers over a curved map of Western Europe. Drag to orbit; scroll or pinch to zoom. Tap a station to visit it.');
   container.append(renderer.domElement);
   const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(52,1,.01,300);
   const controls=new OrbitControls(camera,renderer.domElement);
@@ -140,13 +140,16 @@ export function createNetworkScene(container, stations, onSelect) {
       const hit=raycaster.ray.intersectPlane(new THREE.Plane().setFromNormalAndCoplanarPoint(up,centre),new THREE.Vector3());
       const projected=markers[i].position.clone().project(camera);
       const markerPixels=Math.hypot((projected.x*.5+.5)*width-(e.clientX-rect.left),(-projected.y*.5+.5)*height-(e.clientY-rect.top));
-      if((hit&&hit.distanceTo(centre)<.4)||(projected.z>0&&projected.z<1&&markerPixels<12)){
+      if((hit&&hit.distanceTo(centre)<.4)||(projected.z>0&&projected.z<1&&markerPixels<(e.pointerType==='touch'?22:12))){
         const distance=centre.distanceTo(camera.position);if(distance<closest){closest=distance;picked=i;}
       }
     });return picked;
   }
   renderer.domElement.addEventListener('pointerdown',e=>{pointerCount++;down=pointerCount===1&&!journey.moving&&e.button===0?[e.clientX,e.clientY]:null;});
-  renderer.domElement.addEventListener('pointermove',e=>{if(!down)renderer.domElement.style.cursor=journey.moving?'default':pickStation(e)>=0?'pointer':'grab';});
+  renderer.domElement.addEventListener('pointermove',e=>{
+    // Once a finger has dragged, returning to its starting point is still a drag.
+    if(down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])>5)down=null;
+    if(!down)renderer.domElement.style.cursor=journey.moving?'default':pickStation(e)>=0?'pointer':'grab';});
   renderer.domElement.addEventListener('pointercancel',()=>{down=null;pointerCount=0;});
   renderer.domElement.addEventListener('pointerup',e=>{
     pointerCount=Math.max(0,pointerCount-1);const start=down;down=null;
