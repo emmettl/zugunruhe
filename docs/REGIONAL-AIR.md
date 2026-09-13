@@ -48,7 +48,11 @@ collapse, but missing bird bands at individual stations are retained.
 
 Both flows use the existing explicit-midpoint path integration at one-minute
 steps. Their horizontal travel distance follows the same data clock: five real
-minutes per playback second. Altitude stays fixed. Paths terminate at terrain,
+minutes per playback second at normal (1×) speed. Controls offers ¼×, ½×, 1×,
+2× and 4× playback. Both flows share the selected multiplier; the camera keeps
+its own pace. Speed changes preserve the current time and pause state, and the
+`speed` URL parameter retains the selection on reload or sharing. Invalid speeds
+fall back to 1×. Keyboard scrubbing still moves by fixed five-minute steps. Altitude stays fixed. Paths terminate at terrain,
 missing support, the domain edge, or their chosen lifespan; no wrapping or
 simulated turbulence is added. Seeds and lifetimes are deterministic display
 choices. Bird seeds favour higher density; wind seeds favour available support,

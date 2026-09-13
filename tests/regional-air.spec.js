@@ -4,6 +4,9 @@ test('regional Air changes height, visits stations, returns, and preserves the o
  expect((await page.goto('air.html')).status()).toBe(200);
  await expect(page.locator('#play')).toBeEnabled();await expect(page.locator('#clock')).toHaveValue('36');await expect(page.locator('#reading')).toContainText('1–4 km');
  await page.getByRole('button',{name:'Controls',exact:true}).click();
+ await page.getByLabel('Playback speed',{exact:true}).selectOption('0.5');
+ await expect(page.locator('#clock')).toHaveValue('36');await expect(page.locator('#play')).toHaveAttribute('aria-label','Play');
+ await expect(page).toHaveURL(/speed=0.5/);await expect(page.locator('#status')).toContainText('½×');
  await page.getByLabel('Height',{exact:true}).selectOption('5');
  await page.getByLabel('Visit a station',{exact:true}).selectOption({label:'Montancy'});
  await expect(page.locator('#view-title')).toHaveText('Montancy');await expect(page.locator('#reading')).toContainText('245°');
@@ -14,7 +17,10 @@ test('regional Air changes height, visits stations, returns, and preserves the o
  await page.getByRole('button',{name:'Controls',exact:true}).click();await expect(page.locator('#play')).toHaveAttribute('aria-label','Play');
  await expect(page.getByRole('link',{name:'Original Memmingen comparison ↗'})).toHaveAttribute('href','air-station.html');
  await page.getByRole('button',{name:'About this study ↗',exact:true}).click();await expect(page.locator('#notes')).toBeVisible();
- await page.keyboard.press('Escape');await expect(page.locator('#air-controls')).toBeVisible();await page.keyboard.press('Escape');
+ await page.keyboard.press('Escape');await expect(page.locator('#air-controls')).toBeVisible();
+ await expect(page.getByLabel('Playback speed',{exact:true})).toHaveValue('0.5');
+ await page.keyboard.press('Escape');
+ await page.reload();await expect(page.locator('#play')).toBeEnabled();await expect(page.locator('#status')).toContainText('½×');
  if(page.viewportSize().width<=760){await expect(page.locator('#clock')).toHaveCSS('height','56px');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
  expect(errors).toEqual([]);
 });

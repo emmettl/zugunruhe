@@ -22,6 +22,7 @@ $('air-app').innerHTML=`
 <div id="graphics-error" hidden>The 3D view needs WebGL. Reload in a browser with graphics support.</div></main>
 <footer><div class="playback"><button id="play" aria-label="Play" disabled>▶</button><div class="timeline"><div class="timeline-head"><span id="status">24–25 September</span><strong id="time-label"></strong></div><input type="range" id="clock" aria-label="Study time" min="12" max="108" step=".01" value="36" disabled><div class="ticks"><span>20:00</span><span>00:00</span><span>04:00</span></div></div></div><div class="footnote"><span>Interpolated regional fields · radar birds + ERA5 wind</span><span>Drag to turn · pinch to zoom · Space to pause</span></div></footer>
 <section id="air-controls" hidden><button id="close-controls" aria-label="Close controls">×</button><h2>Through moving air.</h2>
+<div class="control-row"><label for="playback-speed">Playback speed</label><select id="playback-speed"><option value="0.25">¼× · very slow</option><option value="0.5">½× · slow</option><option value="1" selected>1× · normal</option><option value="2">2× · fast</option><option value="4">4× · very fast</option></select></div>
 <div class="control-row"><label for="altitude">Height</label><select id="altitude"><option value="-1" selected>All heights · 1–4 km</option>${study.altitudeCentresMAsl.map((h,i)=>`<option value="${i}" >${(h/1000).toFixed(1)} km ASL</option>`).join('')}</select></div>
 <div class="control-row"><label for="station">Visit a station</label><select id="station"><option value="-1">Across the region</option>${stations.map((s,i)=>`<option value="${i}">${stationName(s)}</option>`).join('')}</select></div>
 <div class="view-buttons"><button id="overlook">Regional view</button><button id="flyover" aria-pressed="false">Flyover · 100 km</button></div>
@@ -32,10 +33,14 @@ $('air-app').innerHTML=`
 <p>The archive provides 37 locations across France, Germany, Belgium and the Netherlands, with no Swiss radar observations. Wind is ERA5 pressure-level reanalysis sampled upstream at those locations, at hourly 0.25° native resolution. It also informed the upstream bird/insect separation, so the two fields are not independent measurements. Native ERA5 does not resolve valley-scale wind. The original pressure-to-height conversion used a standard atmosphere.</p>
 <p>For this regional experiment, each 0.25° field-grid point combines available station profiles within 240 km using a 90 km Gaussian distance kernel, tapered beyond 180 km. Support fades from 120 to 240 km from the nearest available paired observation. The display boundary also feathers over 0.5° latitude and 0.75° longitude. The fields interpolate between grid points and adjacent five-minute frames. Wind availability is independent of missing bird values. Unavailable pairs are never replaced with zero, and no temporal gaps are filled.</p>
 <p>Paths use midpoint integration in one-minute steps, retain a fixed altitude, stop at terrain or absent support, and are prepared deterministically. Scrubbing restores the same paths. Wind tails show up to 60 minutes, bird tails 45 minutes. Trail birth and death fade smoothly. Seeds, lifetimes, widths and exposure are display choices; small differences between paths do not establish small-scale measured structure. All heights reduces common exposure to keep overlapping layers legible.</p>
-<p>The visible clock runs from 20:00 to 04:00 UTC, opening at 22:00 with all heights visible. Retained data from 19:00 to 04:30 provide warm-up and ending room for trails. Five real minutes pass per playback second. Height centres run from 1.1 to 3.9 km above sea level; terrain relief is exaggerated ×8 and layer height ×4. Layers lift with the displayed terrain and omit physically underground bands. No cloud-cover data from another night are shown.</p>
+<p>The visible clock runs from 20:00 to 04:00 UTC, opening at 22:00 with all heights visible. Retained data from 19:00 to 04:30 provide warm-up and ending room for trails. At normal speed (1×), five real minutes pass per playback second. Playback speed in Controls ranges from ¼× to 4× and changes both flows together. The chosen speed is retained in the page URL. Camera travel keeps its own pace. Height centres run from 1.1 to 3.9 km above sea level; terrain relief is exaggerated ×8 and layer height ×4. Layers lift with the displayed terrain and omit physically underground bands. No cloud-cover data from another night are shown.</p>
 <p>Tap a station, or choose it in Controls, to descend. Back returns to your previous camera position. Flyover is an authored 65-second viewing route across Germany, the Alpine foreland and eastern France, not a migration route. Dragging, pinching or Escape stops it. Controls pauses playback and camera travel; closing it keeps the scene paused. Reduced motion starts paused and uses immediate camera visits; explicit playback and Flyover remain available.</p>
 <p>Space or P toggles playback; arrows scrub five minutes, Shift + arrows thirty minutes, Home/End reach the endpoints. Touch rotates and pinches directly. The original single-station <a href="air-station.html">Memmingen comparison</a> remains available.</p>
 <p>Profiles: <a href="https://zenodo.org/records/4587338">Nussbaumer and contributors, Zenodo v3</a>, CC BY 4.0. Wind: <a href="https://doi.org/10.24381/cds.bd0915c6">ERA5 pressure-level reanalysis</a>, Copernicus Climate Change Service. Geography: Natural Earth, public domain. Terrain: Mapzen Terrain Tiles, Copernicus / EU-DEM, USGS SRTM and GMTED2010, © offene Daten Österreichs, © Kartverket, © Environment Agency 2015. Solar position: SunCalc. No prior-art visualisations were consulted.</p></section>`;
+const speedLabels=new Map([[.25,"¼×"],[.5,"½×"],[1,"1×"],[2,"2×"],[4,"4×"]]);
+const requestedSpeed=Number(new URL(location.href).searchParams.get("speed"));
+let playbackSpeed=speedLabels.has(requestedSpeed)?requestedSpeed:1;
+$("playback-speed").value=String(playbackSpeed);
 let index=36,band=-1,selected=-1,playing=false,showBirds=true,showWind=true,scene,field;
 function select(value){selected=Number(value);$('station').value=selected;scene?.select(selected);update();}
 try{
@@ -49,6 +54,7 @@ function setFrame(){scene?.setFrames([sampleAirFrame(study.stations[0].frames,in
 function update(){
  const time=sampleAirFrame(study.stations[0].frames,index).time;
  $('clock').value=index;$('clock').setAttribute('aria-valuetext',`${time.slice(11,16)} UTC, ${time.slice(0,10)}`);$('time-label').innerHTML=`${time.slice(11,16)} <small>UTC</small>`;
+ $('status').textContent=`24–25 September${playbackSpeed===1?'':` · ${speedLabels.get(playbackSpeed)}`}`;
  $('play').textContent=playing?'Ⅱ':'▶';$('play').setAttribute('aria-label',playing?'Pause':'Play');
  $('view-title').textContent=selected<0?'Across a changing sky.':stationName(stations[selected]);
  $('view-subtitle').textContent=selected<0?'Blue air. Green passage.':'Within the flow. Drag to turn.';
@@ -67,6 +73,12 @@ function pause(){playing=false;scene?.stopFlyover();update();}
 $('controls-button').addEventListener('click',()=>{pause();controls(true);});$('close-controls').addEventListener('click',()=>controls(false));
 $('about').addEventListener('click',()=>notes(true));$('close-notes').addEventListener('click',()=>notes(false));
 $('station').addEventListener('change',()=>{controls(false);select($('station').value);});$('back-to-network').addEventListener('click',()=>select(-1));
+$('playback-speed').addEventListener('change',()=>{
+ const value=Number($('playback-speed').value);if(!speedLabels.has(value))return;
+ playbackSpeed=value;const url=new URL(location.href);
+ if(value===1)url.searchParams.delete('speed');else url.searchParams.set('speed',String(value));
+ history.replaceState(null,'',url);update();
+});
 $('altitude').addEventListener('change',()=>{band=Number($('altitude').value);field?.setBand(band);update();});
 for(const id of ['birds','wind'])$(id).addEventListener('click',()=>{if(id==='birds')showBirds=!showBirds;else showWind=!showWind;$(id).setAttribute('aria-pressed',String(id==='birds'?showBirds:showWind));field?.setFlows(showBirds,showWind);});
 $('play').addEventListener('click',()=>{if(!scene)return;if(index>=108)index=12;playing=!playing;setFrame();update();});
@@ -80,7 +92,7 @@ setFrame();update();
 let last=performance.now(),lastUI=0;
 function draw(now){const dt=Math.min(.1,(now-last)/1000);last=now;
  if(!document.hidden&&!document.querySelector('dialog[open]')){
-  if(playing){index=Math.min(108,index+dt);if(index===108)playing=false;setFrame();}
+  if(playing){index=Math.min(108,index+dt*playbackSpeed);if(index===108)playing=false;setFrame();}
   scene?.draw(dt,playing);if(now-lastUI>150){update();lastUI=now;}
  }requestAnimationFrame(draw);}
 requestAnimationFrame(draw);
