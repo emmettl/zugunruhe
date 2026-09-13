@@ -1,0 +1,563 @@
+{
+  "description": "Cloud veil: authored slow open intervals, first listening experiment.",
+  "seconds": 180,
+  "sampleRate": 24000,
+  "score": [
+    {
+      "lane": 0,
+      "note": 50,
+      "start": -7,
+      "duration": 24,
+      "attack": 4.5,
+      "release": 14,
+      "pan": -0.25
+    },
+    {
+      "lane": 1,
+      "note": 57,
+      "start": -2.7,
+      "duration": 26,
+      "attack": 5.5,
+      "release": 14,
+      "pan": 0.2
+    },
+    {
+      "lane": 2,
+      "note": 64,
+      "start": 2.0999999999999996,
+      "duration": 28,
+      "attack": 6.5,
+      "release": 14,
+      "pan": -0.08
+    },
+    {
+      "lane": 0,
+      "note": 52,
+      "start": 26,
+      "duration": 24,
+      "attack": 4.5,
+      "release": 14,
+      "pan": 0.25
+    },
+    {
+      "lane": 1,
+      "note": 59,
+      "start": 30.3,
+      "duration": 26,
+      "attack": 5.5,
+      "release": 14,
+      "pan": -0.2
+    },
+    {
+      "lane": 2,
+      "note": 66,
+      "start": 35.1,
+      "duration": 28,
+      "attack": 6.5,
+      "release": 14,
+      "pan": 0.08
+    },
+    {
+      "lane": 0,
+      "note": 50,
+      "start": 61,
+      "duration": 24,
+      "attack": 4.5,
+      "release": 14,
+      "pan": -0.25
+    },
+    {
+      "lane": 1,
+      "note": 57,
+      "start": 65.3,
+      "duration": 26,
+      "attack": 5.5,
+      "release": 14,
+      "pan": 0.2
+    },
+    {
+      "lane": 2,
+      "note": 64,
+      "start": 70.1,
+      "duration": 28,
+      "attack": 6.5,
+      "release": 14,
+      "pan": -0.08
+    },
+    {
+      "lane": 0,
+      "note": 47,
+      "start": 97,
+      "duration": 24,
+      "attack": 4.5,
+      "release": 14,
+      "pan": 0.25
+    },
+    {
+      "lane": 1,
+      "note": 54,
+      "start": 101.3,
+      "duration": 26,
+      "attack": 5.5,
+      "release": 14,
+      "pan": -0.2
+    },
+    {
+      "lane": 2,
+      "note": 62,
+      "start": 106.1,
+      "duration": 28,
+      "attack": 6.5,
+      "release": 14,
+      "pan": 0.08
+    },
+    {
+      "lane": 0,
+      "note": 45,
+      "start": 132,
+      "duration": 24,
+      "attack": 4.5,
+      "release": 14,
+      "pan": -0.25
+    },
+    {
+      "lane": 1,
+      "note": 52,
+      "start": 136.3,
+      "duration": 26,
+      "attack": 5.5,
+      "release": 14,
+      "pan": 0.2
+    },
+    {
+      "lane": 2,
+      "note": 59,
+      "start": 141.1,
+      "duration": 28,
+      "attack": 6.5,
+      "release": 14,
+      "pan": -0.08
+    }
+  ],
+  "patch": {
+    "modules": [
+      {
+        "id": "send",
+        "type": "mixer",
+        "params": {}
+      },
+      {
+        "id": "room",
+        "type": "reverb",
+        "params": {
+          "algorithm": 1,
+          "size": 0.93,
+          "decay": 0.94,
+          "damp": 0.7,
+          "mix": 1,
+          "lowCut": 160,
+          "highCut": 2400,
+          "gate": 0
+        }
+      },
+      {
+        "id": "space",
+        "type": "out",
+        "params": {
+          "level": 0.7,
+          "pan": 0
+        }
+      },
+      {
+        "id": "c0pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "c0a",
+        "type": "wavetable",
+        "params": {
+          "tune": 23.96,
+          "position": 0.2,
+          "index": 0
+        }
+      },
+      {
+        "id": "c0b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24.025,
+          "position": 0.14,
+          "index": 0
+        }
+      },
+      {
+        "id": "c0pair",
+        "type": "mixer",
+        "params": {}
+      },
+      {
+        "id": "c0gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "c0dry",
+        "type": "out",
+        "params": {
+          "level": 0.3,
+          "pan": 0
+        }
+      },
+      {
+        "id": "c1pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "c1a",
+        "type": "wavetable",
+        "params": {
+          "tune": 23.96,
+          "position": 0.2,
+          "index": 0
+        }
+      },
+      {
+        "id": "c1b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24.025,
+          "position": 0.14,
+          "index": 0
+        }
+      },
+      {
+        "id": "c1pair",
+        "type": "mixer",
+        "params": {}
+      },
+      {
+        "id": "c1gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "c1dry",
+        "type": "out",
+        "params": {
+          "level": 0.3,
+          "pan": 0
+        }
+      },
+      {
+        "id": "c2pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "c2a",
+        "type": "wavetable",
+        "params": {
+          "tune": 23.96,
+          "position": 0.2,
+          "index": 0
+        }
+      },
+      {
+        "id": "c2b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24.025,
+          "position": 0.14,
+          "index": 0
+        }
+      },
+      {
+        "id": "c2pair",
+        "type": "mixer",
+        "params": {}
+      },
+      {
+        "id": "c2gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "c2dry",
+        "type": "out",
+        "params": {
+          "level": 0.3,
+          "pan": 0
+        }
+      }
+    ],
+    "cables": [
+      {
+        "from": [
+          "send",
+          "out"
+        ],
+        "to": [
+          "room",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "room",
+          "out"
+        ],
+        "to": [
+          "space",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c0pitch",
+          "out"
+        ],
+        "to": [
+          "c0a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "c0a",
+          "out"
+        ],
+        "to": [
+          "c0pair",
+          "in1"
+        ]
+      },
+      {
+        "from": [
+          "c0pitch",
+          "out"
+        ],
+        "to": [
+          "c0b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "c0b",
+          "out"
+        ],
+        "to": [
+          "c0pair",
+          "in2"
+        ]
+      },
+      {
+        "from": [
+          "c0pair",
+          "out"
+        ],
+        "to": [
+          "c0gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c0gain",
+          "out"
+        ],
+        "to": [
+          "c0dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c0gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in1"
+        ]
+      },
+      {
+        "from": [
+          "c1pitch",
+          "out"
+        ],
+        "to": [
+          "c1a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "c1a",
+          "out"
+        ],
+        "to": [
+          "c1pair",
+          "in1"
+        ]
+      },
+      {
+        "from": [
+          "c1pitch",
+          "out"
+        ],
+        "to": [
+          "c1b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "c1b",
+          "out"
+        ],
+        "to": [
+          "c1pair",
+          "in2"
+        ]
+      },
+      {
+        "from": [
+          "c1pair",
+          "out"
+        ],
+        "to": [
+          "c1gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c1gain",
+          "out"
+        ],
+        "to": [
+          "c1dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c1gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in2"
+        ]
+      },
+      {
+        "from": [
+          "c2pitch",
+          "out"
+        ],
+        "to": [
+          "c2a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "c2a",
+          "out"
+        ],
+        "to": [
+          "c2pair",
+          "in1"
+        ]
+      },
+      {
+        "from": [
+          "c2pitch",
+          "out"
+        ],
+        "to": [
+          "c2b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "c2b",
+          "out"
+        ],
+        "to": [
+          "c2pair",
+          "in2"
+        ]
+      },
+      {
+        "from": [
+          "c2pair",
+          "out"
+        ],
+        "to": [
+          "c2gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c2gain",
+          "out"
+        ],
+        "to": [
+          "c2dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "c2gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in3"
+        ]
+      }
+    ]
+  },
+  "targetRmsDb": -42,
+  "peakDb": -27.136100201090997,
+  "gain": 0.33844750295054965,
+  "rackFiles": {
+    "headless.js": "7a0232736c7d473d8464aeab684edd8340d3dbe095ca0d5a1c08e8b68909d210",
+    "modules/wavetable.js": "d7c4145b1552d7a23a27f9c8b720cae6c46f0311ec10d0abf2e3fc1149ccfb01",
+    "modules/offset.js": "9e89f46f9f40d744a82a0235ceb0a758e6243afe3f4f88291eb14b1b3964d0b7",
+    "modules/vca.js": "a222b05914155b7196719876c08a395a72fd21cf5ae5f6aed62f294d396f3ac1",
+    "modules/mixer.js": "9088c17a97cde8ab1a37ae63857f87f3a4cf876b78fa9f50fbe342af567231a8",
+    "modules/reverb.js": "c366877780ad2383f80c888e6328eab70bf102e1e85f032ac971af56ac90a534",
+    "modules/out.js": "bcf0ded1403ce65381a904a9f2c9681f4d1a489b6b29802b2c1df222255bb465"
+  },
+  "scriptSha256": "3eea83c2a76da6d40cef6984932d35ed683e74a713bb6c372a77988e520ca3d9",
+  "encoded": {
+    "bytes": 1737068,
+    "sha256": "c8770af972eed522a65ad8718fb1093757714f18f75e914091fa74d35f12a446"
+  }
+}

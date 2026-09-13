@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import weather from '../data/processed/cloud-night.json';
-import {cloudBracket,cloudVariables} from './cloud-model.js';
+import {cloudBracket,cloudVariables,cloudCoverMean} from './cloud-model.js';
+import {publishCloudSound} from './sound-scene.js';
 import {R} from './network-geo.js';
 
 // Cloud-area fraction projected onto the landscape, not fabricated cloud volumes.
@@ -32,7 +33,9 @@ export function createCloudCover(scene,landscape){
     values.forEach((value,i)=>{pixels[i*4]=value===null?0:value/100;pixels[i*4+1]=value===null?0:1;});texture.needsUpdate=true;
   }
   function setTime(value){
-    time=value;if(mode==='off')return;
+    time=value;
+    publishCloudSound({mode,fraction:mode==='off'?null:cloudCoverMean(weather,mode,time)});
+    if(mode==='off')return;
     const bracket=cloudBracket(weather.times,time);mesh.visible=!!bracket;if(!bracket)return;
     if(left!==bracket.a){fill(uniforms.a.value,bracket.a);left=bracket.a;}
     if(right!==bracket.b){fill(uniforms.b.value,bracket.b);right=bracket.b;}

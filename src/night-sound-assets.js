@@ -1,6 +1,7 @@
 import sustained from '../audio-studies/04-responsive/sustained.mp3?url';
 import passing from '../audio-studies/04-responsive/passing.mp3?url';
 import twinkles from '../audio-studies/04-responsive/twinkles.mp3?url';
+import { loadCloudMotif } from './cloud-sound-assets.js';
 
 export async function loadNightStems() {
   // Decode at the stored rate, avoiding three full 48 kHz copies on phones.
@@ -13,5 +14,6 @@ export async function loadNightStems() {
     if (!response.ok) throw new Error('Soundtrack stem unavailable');
     buffers[name] = await decoder.decodeAudioData(await response.arrayBuffer());
   }
+  buffers.cloud = await loadCloudMotif(decoder);
   return buffers;
 }

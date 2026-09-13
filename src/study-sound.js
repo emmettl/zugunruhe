@@ -1,7 +1,7 @@
 import { createSoundtrack } from './soundtrack.js';
 import soundUrl from '../audio-studies/03-soft-twinkles/05-confluence-soft-twinkles.mp3?url';
 import styles from './study-sound.css?inline';
-import { subscribeSoundScene } from './sound-scene.js';
+import { subscribeSoundScene, subscribeCloudSound, cloudMotifGain } from './sound-scene.js';
 import { soundColours } from './sound-colour.js';
 
 let installed = false;
@@ -19,6 +19,7 @@ export function installStudySound() {
   row.append(widget);
   const button = widget.querySelector('button'), slider = widget.querySelector('input'), feedback = widget.querySelector('#sound-feedback');
   const responsive = Boolean(document.getElementById('night-app'));
+  const hasClouds = Boolean(document.getElementById('clouds'));
   let volume = 65;
   try { const saved = localStorage.getItem('zugunruhe-sound-volume'); if (saved !== null && Number.isFinite(Number(saved))) volume = Math.max(0, Math.min(100, Number(saved))); } catch {}
   slider.value = volume;
@@ -33,7 +34,10 @@ export function installStudySound() {
       if (responsive) return (await import('./night-sound-assets.js')).loadNightStems();
       const response = await fetch(soundUrl);
       if (!response.ok) throw new Error('Soundtrack unavailable');
-      return context.decodeAudioData(await response.arrayBuffer());
+      const recording = await context.decodeAudioData(await response.arrayBuffer());
+      if (!hasClouds) return recording;
+      const cloud = await (await import('./cloud-sound-assets.js')).loadCloudMotif();
+      return { recording, cloud };
     },
     isHidden: () => document.hidden,
     initialVolume: volume / 100,
@@ -49,10 +53,10 @@ export function installStudySound() {
   });
   const palette = document.getElementById('palette');
   const description = widget.querySelector('.sound-volume p');
-  let scoreName;
+  let scoreName, cloudPhrase;
   function describeSound() {
     const colour = soundColours[widget.dataset.palette]?.label;
-    description.textContent = [scoreName || 'Confluence · soft twinkles', colour,
+    description.textContent = [scoreName || 'Confluence · soft twinkles', colour, cloudPhrase,
       responsive ? 'Layers follow the scene; phrases keep their pace.' : 'Sound keeps its own pace.'].filter(Boolean).join('. ');
   }
   function applySoundPalette() {
@@ -72,6 +76,14 @@ export function installStudySound() {
       describeSound();
     }
   }) : () => {};
+  const unsubscribeClouds = hasClouds ? subscribeCloudSound(scene => {
+    const gain = cloudMotifGain(scene);
+    soundtrack.setMix({ cloud: gain });
+    widget.dataset.cloudMode = scene.mode;
+    widget.dataset.cloudMix = gain.toFixed(3);
+    const phrase = gain > 0 ? 'Cloud veil' : undefined;
+    if (phrase !== cloudPhrase) { cloudPhrase = phrase; describeSound(); }
+  }) : () => {};
   button.addEventListener('click', () => {
     widget.querySelector('.sound-motes')?.remove();
     delete widget.dataset.dismissed;
@@ -88,7 +100,12 @@ export function installStudySound() {
   });
   widget.addEventListener('pointerenter', () => { delete widget.dataset.dismissed; });
   widget.addEventListener('focusin', () => { delete widget.dataset.dismissed; });
+  // Moving to the timeline or another control should dismiss the volume panel,
+  // even when the pointer is still resting over the speaker after a keyboard scrub.
+  const dismissOutside = event => { if (!widget.contains(event.target)) widget.dataset.dismissed = 'true'; };
+  document.addEventListener('focusin', dismissOutside);
+  document.addEventListener('pointerdown', dismissOutside);
   document.addEventListener('visibilitychange', () => { if (document.hidden) soundtrack.pause(true); });
   // Page changes stop sound. Returning from bfcache keeps a paused, resumable score.
-  window.addEventListener('pagehide', (event) => { if (event.persisted) soundtrack.pause(true); else { unsubscribe(); palette?.removeEventListener('change', applySoundPalette); soundtrack.dispose(); } });
+  window.addEventListener('pagehide', (event) => { if (event.persisted) soundtrack.pause(true); else { unsubscribe(); unsubscribeClouds(); palette?.removeEventListener('change', applySoundPalette); document.removeEventListener('focusin', dismissOutside); document.removeEventListener('pointerdown', dismissOutside); soundtrack.dispose(); } });
 }

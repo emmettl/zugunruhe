@@ -14,7 +14,7 @@ test('sound is opt-in, cancellable while loading, and independent of the visual 
   await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false');
   release();
   await toggle.click(); await expect(widget).toHaveAttribute('data-state', 'playing');
-  expect(requests).toBe(3);
+  expect(requests).toBe(4);
   const volume = page.getByRole('slider', { name: 'Sound volume', exact: true });
   await expect(volume).toBeVisible(); await volume.press('ArrowLeft');
   await expect(volume).toHaveValue('64');
@@ -31,7 +31,7 @@ test('sound is opt-in, cancellable while loading, and independent of the visual 
   const box = await toggle.boundingBox(); expect(box.width).toBeGreaterThanOrEqual(44); expect(box.height).toBeGreaterThanOrEqual(44);
   await page.getByRole('link', { name: 'Cloud', exact: true }).click();
   await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.locator('#sound-volume')).toHaveValue('64'); expect(requests).toBe(3);
+  await expect(page.locator('#sound-volume')).toHaveValue('64'); expect(requests).toBe(4);
   expect(errors).toEqual([]);
 });
 
@@ -43,20 +43,27 @@ test('Night scrubbing changes the orchestration without reloading or pausing sou
   const widget = page.locator('.study-sound');
   await expect(widget).toHaveAttribute('data-score', 'Cloud · sustained');
   await expect(widget).toHaveAttribute('data-palette', 'boreal');
+  await expect(widget).toHaveAttribute('data-cloud-mode', 'off');
+  await expect(widget).toHaveAttribute('data-cloud-mix', '0.000');
   await page.locator('#controls-button').click();
   await page.locator('#palette').selectOption('aquatic');
+  await page.locator('#clouds').selectOption('low');
+  await expect(widget).toHaveAttribute('data-cloud-mode', 'low');
+  expect(Number(await widget.getAttribute('data-cloud-mix'))).toBeGreaterThan(0);
   await expect(widget).toHaveAttribute('data-palette', 'aquatic');
   expect(requests).toBe(0);
   await page.locator('#close-controls').click();
   await page.locator('#sound-toggle').click();
   await expect(widget).toHaveAttribute('data-state', 'playing');
-  await page.locator('#sound-toggle').press('Escape');
   await page.locator('#clock').press('End');
+  await expect(page.locator('.sound-volume')).toBeHidden();
   await expect(widget).toHaveAttribute('data-score', 'Morning · receding');
   await expect(widget).toHaveAttribute('data-state', 'playing');
   await page.locator('#controls-button').click();
   await page.locator('#palette').selectOption('oxygen');
   await page.locator('#palette').selectOption('ember');
+  await page.locator('#clouds').selectOption('total');
+  await expect(widget).toHaveAttribute('data-cloud-mode', 'total');
   await expect(widget).toHaveAttribute('data-palette', 'ember');
   await expect(widget).toHaveAttribute('data-state', 'playing');
   await page.getByRole('button', { name: 'A sea', exact: true }).click();
@@ -68,7 +75,13 @@ test('Night scrubbing changes the orchestration without reloading or pausing sou
   await expect(widget).toHaveAttribute('data-palette', 'ember');
   expect(JSON.parse(await widget.getAttribute('data-mix')).twinkles).toBe(0);
   await expect(widget).toHaveAttribute('data-state', 'playing');
-  expect(requests).toBe(3);
+  expect(Number(await widget.getAttribute('data-cloud-mix'))).toBeGreaterThan(0);
+  await page.locator('#controls-button').click();
+  await page.locator('#clouds').selectOption('off');
+  await expect(widget).toHaveAttribute('data-cloud-mix', '0.000');
+  await expect(widget).toHaveAttribute('data-state', 'playing');
+  await page.locator('#close-controls').click();
+  expect(requests).toBe(4);
   await page.locator('#sound-toggle').click();
 });
 

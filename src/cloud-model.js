@@ -31,3 +31,27 @@ export function cloudCoverAt(data,mode,lat,lon,time){
   }
   return value;
 }
+
+// Area-weighted mean of the retained weather grid, not camera-visible coverage.
+// Keep missing weighted endpoints unavailable instead of treating them as clear.
+export function cloudCoverMean(data,mode,time){
+  const key=cloudVariables[mode],bracket=cloudBracket(data.times,time);
+  if(!key||!bracket)return null;
+  const {south,step,width,height}=data.grid;
+  let sum=0,weight=0;
+  for(let y=0;y<height;y++){
+    const area=Math.cos((south+y*step)*Math.PI/180);
+    for(let x=0;x<width;x++){
+      const index=y*width+x;
+      let cover=0;
+      for(const [frame,w] of [[bracket.a,1-bracket.fraction],[bracket.b,bracket.fraction]]){
+        if(w===0)continue;
+        const value=data.frames[frame]?.[key]?.[index];
+        if(!Number.isFinite(value)||value<0||value>100)return null;
+        cover+=value*w;
+      }
+      sum+=cover*area;weight+=area;
+    }
+  }
+  return weight?sum/weight/100:null;
+}
