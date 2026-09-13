@@ -14,7 +14,7 @@ test('sound is opt-in, cancellable while loading, and independent of the visual 
   await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false');
   release();
   await toggle.click(); await expect(widget).toHaveAttribute('data-state', 'playing');
-  expect(requests).toBe(1);
+  expect(requests).toBe(3);
   const volume = page.getByRole('slider', { name: 'Sound volume', exact: true });
   await expect(volume).toBeVisible(); await volume.press('ArrowLeft');
   await expect(volume).toHaveValue('64');
@@ -31,8 +31,33 @@ test('sound is opt-in, cancellable while loading, and independent of the visual 
   const box = await toggle.boundingBox(); expect(box.width).toBeGreaterThanOrEqual(44); expect(box.height).toBeGreaterThanOrEqual(44);
   await page.getByRole('link', { name: 'Cloud', exact: true }).click();
   await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.locator('#sound-volume')).toHaveValue('64'); expect(requests).toBe(1);
+  await expect(page.locator('#sound-volume')).toHaveValue('64'); expect(requests).toBe(3);
   expect(errors).toEqual([]);
+});
+
+test('Night scrubbing changes the orchestration without reloading or pausing sound', async ({ page }) => {
+  test.setTimeout(240000);
+  let requests = 0;
+  page.on('request', request => { if (request.url().endsWith('.mp3')) requests++; });
+  await page.goto('night.html');
+  const widget = page.locator('.study-sound');
+  await expect(widget).toHaveAttribute('data-score', 'Cloud · sustained');
+  await page.locator('#sound-toggle').click();
+  await expect(widget).toHaveAttribute('data-state', 'playing');
+  await page.locator('#clock').press('End');
+  await expect(widget).toHaveAttribute('data-score', 'Morning · receding');
+  await expect(widget).toHaveAttribute('data-state', 'playing');
+  await page.locator('#controls-button').click();
+  await page.getByRole('button', { name: 'A sea', exact: true }).click();
+  await expect(widget).toHaveAttribute('data-score', 'Flow · soft twinkles');
+  const sea = JSON.parse(await widget.getAttribute('data-mix'));
+  expect(sea.passing).toBe(1); expect(sea.twinkles).toBeGreaterThan(0);
+  await page.locator('#clock').press('Home');
+  await expect(widget).toHaveAttribute('data-score', 'Cloud · sustained');
+  expect(JSON.parse(await widget.getAttribute('data-mix')).twinkles).toBe(0);
+  await expect(widget).toHaveAttribute('data-state', 'playing');
+  expect(requests).toBe(3);
+  await page.locator('#sound-toggle').click();
 });
 
 test('a failed soundtrack fetch leaves a working retry control', async ({ page }) => {

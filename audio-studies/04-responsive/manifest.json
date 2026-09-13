@@ -1,0 +1,50 @@
+{
+  "description": "Synchronized Confluence stems at the approved soft-twinkle balance. MP3 VBR, 24 kHz stereo.",
+  "sources": [
+    {
+      "file": "audio-studies/01-flowing/masters/01-sustained.wav",
+      "sha256": "21f953aeab0565297cb8cd051619850cb4bdd6a6ab7edccaf9f7747aa2975f5b"
+    },
+    {
+      "file": "audio-studies/01-flowing/masters/02-passing.wav",
+      "sha256": "cd0a337d5c9c66dc4cb95fc369fb9d01d40e6d5b0082c4d006bd0f80fd5beb51"
+    },
+    {
+      "file": "audio-studies/01-flowing/masters/03-confluence.wav",
+      "sha256": "346a9338adddec801bf7b5112062f94f4ffd31714d3b3d7cc9d4de970e1be761"
+    },
+    {
+      "file": "audio-studies/03-soft-twinkles/masters/05-confluence-soft-twinkles.wav",
+      "sha256": "5d9876d3ae6fb71225c1ab96d96b335668a9f6b8859deb02f2fac332cfea92e7"
+    }
+  ],
+  "seconds": 180,
+  "sampleRate": 24000,
+  "listenGain": 0.8413951416451951,
+  "weights": [
+    0.7340109905539037,
+    0.6803744629968934
+  ],
+  "reconstructionRmsDb": -94.81963946955531,
+  "sumPeakDb": -10.763203974921517,
+  "stems": [
+    {
+      "name": "sustained",
+      "file": "sustained.mp3",
+      "bytes": 2042708,
+      "sha256": "f4bdac458872bfc4a66c1047c10261b2a5e44bdb91c65c48afe79d877030511e"
+    },
+    {
+      "name": "passing",
+      "file": "passing.mp3",
+      "bytes": 1228964,
+      "sha256": "bf6125ff7c98bc75d05d470317225c5b1344526a31c62dcff3b524772328cce4"
+    },
+    {
+      "name": "twinkles",
+      "file": "twinkles.mp3",
+      "bytes": 1133228,
+      "sha256": "66b50441f77adaace4b46045ee453fff9c98deccc1c64af445098fc9eebf126e"
+    }
+  ]
+}

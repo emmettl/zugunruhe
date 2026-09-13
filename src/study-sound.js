@@ -1,6 +1,7 @@
 import { createSoundtrack } from './soundtrack.js';
 import soundUrl from '../audio-studies/03-soft-twinkles/05-confluence-soft-twinkles.mp3?url';
 import styles from './study-sound.css?inline';
+import { subscribeSoundScene } from './sound-scene.js';
 
 let installed = false;
 export function installStudySound() {
@@ -16,6 +17,7 @@ export function installStudySound() {
   </button><div class="sound-volume" role="group" aria-label="Sound settings"><label for="sound-volume">Sound volume</label><input id="sound-volume" type="range" min="0" max="100" step="1" aria-label="Sound volume"><p>Confluence · soft twinkles<br>Sound keeps its own pace.</p></div><span id="sound-feedback" role="status" class="sound-feedback"></span>`;
   row.append(widget);
   const button = widget.querySelector('button'), slider = widget.querySelector('input'), feedback = widget.querySelector('#sound-feedback');
+  const responsive = Boolean(document.getElementById('night-app'));
   let volume = 65;
   try { const saved = localStorage.getItem('zugunruhe-sound-volume'); if (saved !== null && Number.isFinite(Number(saved))) volume = Math.max(0, Math.min(100, Number(saved))); } catch {}
   slider.value = volume;
@@ -27,6 +29,7 @@ export function installStudySound() {
       return new Audio({ latencyHint: 'playback' });
     },
     async loadBuffer(context) {
+      if (responsive) return (await import('./night-sound-assets.js')).loadNightStems();
       const response = await fetch(soundUrl);
       if (!response.ok) throw new Error('Soundtrack unavailable');
       return context.decodeAudioData(await response.arrayBuffer());
@@ -43,6 +46,14 @@ export function installStudySound() {
       feedback.textContent = status === 'error' ? 'Sound could not start. Tap to try again.' : '';
     },
   });
+  const unsubscribe = responsive ? subscribeSoundScene(scene => {
+    soundtrack.setMix(scene.mix);
+    widget.dataset.mix = JSON.stringify(scene.mix);
+    if (widget.dataset.score !== scene.name) {
+      widget.dataset.score = scene.name;
+      widget.querySelector('.sound-volume p').textContent = `${scene.name}. Layers follow the scene; phrases keep their pace.`;
+    }
+  }) : () => {};
   button.addEventListener('click', () => {
     widget.querySelector('.sound-motes')?.remove();
     delete widget.dataset.dismissed;
@@ -61,5 +72,5 @@ export function installStudySound() {
   widget.addEventListener('focusin', () => { delete widget.dataset.dismissed; });
   document.addEventListener('visibilitychange', () => { if (document.hidden) soundtrack.pause(true); });
   // Page changes stop sound. Returning from bfcache keeps a paused, resumable score.
-  window.addEventListener('pagehide', (event) => { if (event.persisted) soundtrack.pause(true); else soundtrack.dispose(); });
+  window.addEventListener('pagehide', (event) => { if (event.persisted) soundtrack.pause(true); else { unsubscribe(); soundtrack.dispose(); } });
 }

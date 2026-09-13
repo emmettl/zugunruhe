@@ -13,6 +13,8 @@ import { withinNightGap } from './night-data.js';
 import { arcPoint } from './network-camera.js';
 import { installPlaybackKeyboard } from './playback-keyboard.js';
 import { installStudyDialog } from './study-ui.js';
+import { nightSound } from './night-sound.js';
+import { publishSoundScene } from './sound-scene.js';
 
 const $=id=>document.getElementById(id);
 $('night-app').innerHTML=`
@@ -28,6 +30,7 @@ $('night-app').innerHTML=`
 <section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>One night, several ways of seeing.</h2>
 <p>This first journey follows 4 September 2018 at 19:00 UTC to 5 September at 04:30 UTC. Nine and a half hours pass in about two and a quarter minutes. The journey opens after the nearly empty early-evening profiles, with light already visible. Playback starts only when you ask. The camera itinerary and the moments when the representation changes are artistic choices, not bird routes or changes in measurement coverage.</p>
 <p>It begins with the fifteen 1–4 km altitude bins at Memmingen, then reveals the same night at 37 stations in France, Germany, Belgium and the Netherlands. The islands are processed radar estimates with illustrative 80 km footprints, not coverage boundaries. Revealing other stations is a change of view; it is not evidence of departure spreading across Europe.</p>
+<p>Optional sound follows those reveals: sustained layers for the cloud, passing tones for the islands, and quiet twinkling phrases for the flow. The upper layers recede toward morning. Playing or scrubbing changes their balance gradually while the musical phrases keep their own pace. This first responsive score is authored around the journey, not a sonification of measured bird density or speed.</p>
 <p>The sea then replaces those separate profiles with the existing spatial estimate between stations. Its luminous threads are tracers integrated through estimated horizontal velocities, not tracked individual birds. The estimate has no weather or habitat constraints, and does not cover the entire continent.</p>
 <p>At Memmingen, the complete 1–4 km column mean peaks at 24.34 birds/km³ at 23:45 UTC. It falls to 1.56 at 04:30. Of the three local nights already extracted, this one has the highest column peak and is the only one currently prepared across the full network. It is a bounded first choice, not a search result across all migration seasons.</p>
 <p>The journey ends at 04:30, when 30 of the 37 stations still have complete fifteen-band profiles. Most stations are unavailable at 00:45, 00:50 and 00:55 UTC. For this continuous journey, missing density and velocity bands during that short gap are linearly interpolated between valid observations at 00:40 and 01:00. The moving trails are integrated through the same interpolated field, so they continue across the gap. This is a presentation estimate, not a recovered observation. Real values remain unchanged, and bands without valid observations on both sides remain unavailable. Controls identifies the interval and shows the original complete-station count. The four individual studies retain their original gap handling; the ending should not be read as no birds. Brightness uses the existing common density scales; it is not a network-wide bird count.</p>
@@ -54,6 +57,7 @@ $('close-controls').addEventListener('click',()=>controls(false));
 $('night-notes').addEventListener('click',()=>notes(true));$('close-notes').addEventListener('click',()=>notes(false));
 function setFrames(){
   if(index===lastFrame)return;lastFrame=index;
+  publishSoundScene(nightSound(index));
   const frames=network.stations.map(s=>sampleFrame(s.frames,index));scene?.setFrames(frames,index);
   const count=frames.filter(f=>frameMean(f)!==null).length;
   $('coverage').textContent=`${count}/37 complete observed station profiles · 1–4 km above sea level. ${withinNightGap(index)?'This interval blends missing bands between the 00:40 and 01:00 observations.':'The short 00:45–00:55 observation gap is interpolated for this journey.'}`;

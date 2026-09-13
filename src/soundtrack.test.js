@@ -17,6 +17,7 @@ function fixture(load = async () => ({ duration: 180 })) {
         cancelAndHoldAtTime: (time) => events.push(['hold', time]),
         setValueAtTime: (value, time) => events.push(['set', value, time]),
         linearRampToValueAtTime: (value, time) => events.push(['ramp', value, time]),
+        setTargetAtTime: (value, time, tau) => events.push(['target', value, time, tau]),
         setValueCurveAtTime: (curve, time, duration) => events.push(['curve', curve, time, duration]),
       }, events };
       gains.push(node); return node;
@@ -120,4 +121,36 @@ test('volume does not change source playback rate; disposal cancels a pending st
   const g = fixture(() => new Promise(r => { resolve = r; }));
   const pending = g.soundtrack.play(); await Promise.resolve(); g.soundtrack.dispose();
   resolve({ duration: 180 }); assert.equal(await pending, false); assert.equal(g.sources.length, 0);
+});
+
+test('scene balance is lazy, all stems share one clock, and scrubbing redirects fades without restarting', async () => {
+  const f = fixture(async () => ({ sustained: { duration: 180 }, passing: { duration: 180 }, twinkles: { duration: 180 } }));
+  f.soundtrack.setMix({ sustained: 1, passing: 0, twinkles: 0 });
+  assert.deepEqual(f.counts(), { created: 0, loads: 0 });
+  await f.soundtrack.play();
+  assert.equal(f.sources.length, 6);
+  assert.ok(f.sources.slice(0, 3).every(s => s.at === .05));
+  assert.ok(f.sources.slice(3).every(s => s.at === 156.05));
+  const passing = f.gains[2], twinkles = f.gains[3];
+  assert.equal(passing.gain.value, 0); assert.equal(twinkles.gain.value, 0);
+  f.context.currentTime = 10;
+  f.soundtrack.setMix({ passing: 1, twinkles: 1 });
+  assert.deepEqual(twinkles.events.slice(-2), [['hold', 10], ['target', 1, 10, 1.6]]);
+  f.context.currentTime = 10.2;
+  f.soundtrack.setMix({ passing: .3, twinkles: 0 });
+  assert.deepEqual(twinkles.events.slice(-2), [['hold', 10.2], ['target', 0, 10.2, 2.5]]);
+  const events = twinkles.events.length;
+  f.soundtrack.setMix({ twinkles: 0 });
+  assert.equal(twinkles.events.length, events);
+  assert.equal(f.sources.length, 6);
+  assert.ok(f.sources.every(s => s.playbackRate === undefined));
+  f.soundtrack.pause(true); f.soundtrack.setMix({ passing: 0 }); await f.soundtrack.play();
+  assert.equal(f.sources.length, 6);
+});
+
+test('mismatched stem durations fail atomically and can be retried', async () => {
+  let attempt = 0;
+  const f = fixture(async () => ({ sustained: { duration: 180 }, twinkles: { duration: ++attempt === 1 ? 179 : 180 } }));
+  assert.equal(await f.soundtrack.play(), false); assert.equal(f.sources.length, 0);
+  assert.equal(await f.soundtrack.play(), true); assert.equal(f.sources.length, 4);
 });
