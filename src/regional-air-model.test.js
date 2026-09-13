@@ -28,3 +28,28 @@ test('selected September window retains opposing regional winds and no widesprea
   assert.ok(pairs>=320);
  }
 });
+test('comparison nights retain a common clock, continuous coverage, and contrasting source vectors',()=>{
+ for(const [date,u,v,density] of [['2018-09-09',5.67,.19,7.04],['2018-10-08',-.35,1.38,13.65]]){
+  const data=JSON.parse(fs.readFileSync(new URL(`../data/processed/regional-air-${date}-night.json`,import.meta.url)));
+  assert.equal(data.date,date);assert.equal(data.stations.length,37);
+  for(let i=0;i<115;i++){
+   let pairs=0;
+   for(const s of data.stations){
+    const f=s.frames[i];assert.equal(Date.parse(f.time),Date.parse(`${date}T19:00:00Z`)+i*300000);
+    for(let b=0;b<15;b++){
+     assert.ok(Number.isFinite(f.uw[b])&&Number.isFinite(f.vw[b]));
+     if([f.dens[b],f.ub[b],f.vb[b]].every(Number.isFinite))pairs++;
+    }
+   }
+   assert.ok(pairs>=278,`${date}: widespread dropout at frame ${i}`);
+  }
+  const f=data.stations.find(s=>s.name==='demem').frames[36];
+  assert.equal(f.uw[5],u);assert.equal(f.vw[5],v);assert.equal(f.dens[5],density);
+  for(const kind of ['wind','birds']){
+   const paths=JSON.parse(fs.readFileSync(new URL(`../data/processed/regional-air-${date}-${kind}.json`,import.meta.url)));
+   assert.equal(paths.start,`${date}T19:00:00Z`);assert.equal(paths.seed,20180924);
+   // Warm-up and ending room must leave both flows present throughout the visible clock.
+   for(let i=12;i<=108;i++)assert.ok(paths.tracks.some(t=>t.start<i-2&&t.start+t.points.length-1>i+3),`${date} ${kind}: no established paths at ${i}`);
+  }
+ }
+});

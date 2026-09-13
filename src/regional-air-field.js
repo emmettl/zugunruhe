@@ -7,9 +7,10 @@ const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
 export function createRegionalAirField(scene,landscape){
  const uniforms={exaggeration:{value:4},relief:landscape.relief,gain:{value:1},viewExposure:{value:1},inspection:{value:0},selected:{value:-1},viewport:{value:new THREE.Vector2(1,1)}};
  let index=36,band=-1,drawn=-1;
+ const prepare=source=>source.tracks.map(t=>({...t,points:t.points.map(p=>[...globePoint(p[0],p[1]),landscape.heightAt(p[0],p[1]),p[2],p[3]])}));
  const layers=[wind,birds].map(source=>{
   // World positions and terrain are fixed; calculate once, not every animation frame.
-  const tracks=source.tracks.map(t=>({...t,points:t.points.map(p=>[...globePoint(p[0],p[1]),landscape.heightAt(p[0],p[1]),p[2],p[3]])}));
+  const tracks=prepare(source);
   const geometry=new THREE.InstancedBufferGeometry();
   geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,-1,0,1,-1,0,0,1,0,0,1,0,1,-1,0,1,1,0],3));
   const capacity=60000,attributes={};
@@ -51,5 +52,6 @@ export function createRegionalAirField(scene,landscape){
   }
  }
  return {uniforms,setIndex(value){index=value;},draw(){update();},resize(w,h){uniforms.viewport.value.set(w,h);},
+  setSources(sources=[wind,birds]){const prepared=sources.map(prepare);layers.forEach((layer,i)=>{layer.tracks=prepared[i];});drawn=-1;},
   setBand(value){band=value;drawn=-1;},setFlows(showBirds,showWind){layers.forEach(l=>{l.mesh.visible=l.isWind?showWind:showBirds;});}};
 }

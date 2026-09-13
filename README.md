@@ -83,6 +83,6 @@ clock carries the view from Memmingen through the archipelago into the estimated
 sea. [Night selection, itinerary and controls](docs/NIGHT.md).
 
 **Birds and air**, at `/air.html`, follows regional bird and wind fields across
-Swiss-adjacent Europe on 24–25 September 2018.
+Swiss-adjacent Europe across three contrasting nights in September and October 2018.
 [Data, interpretation and controls](docs/REGIONAL-AIR.md). The original three-night
 Memmingen comparison remains at `/air-station.html` ([notes](docs/AIR.md)).

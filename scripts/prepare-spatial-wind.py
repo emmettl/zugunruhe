@@ -11,8 +11,10 @@ assert hashlib.md5(archive.read_bytes()).hexdigest()=='09673506cbc2ed31f3d7a016e
 def member(name):return json.loads(subprocess.check_output(['unzip','-p',str(archive),name]))
 times={dt.datetime.strptime(t,'%d-%b-%Y %H:%M:%S'):i for i,t in enumerate(member('time.json'))}
 keys=['dens','ub','vb','uw','vw']
+comparison='--comparison' in sys.argv
+dates=['2018-09-24','2018-09-09','2018-10-04','2018-10-08','2018-10-09','2018-10-16','2018-10-17','2018-10-19'] if comparison else ['2018-09-24','2018-09-28','2018-10-07']
 nights=[]
-for date in ['2018-09-24','2018-09-28','2018-10-07']:
+for date in dates:
  start=dt.datetime.fromisoformat(date)+dt.timedelta(hours=19)
  stamps=[start+dt.timedelta(minutes=5*i) for i in range(115)]
  nights.append({'date':date,'times':[t.isoformat()+'Z' for t in stamps],'sourceIndices':[times.get(t) for t in stamps],'stations':[]})
@@ -25,7 +27,7 @@ for filename in subprocess.check_output(['unzip','-Z1',str(archive)],text=True).
  print(filename,flush=True)
 metadata={'source':{'doi':'10.5281/zenodo.4587338','license':'CC BY 4.0','archiveMd5':'09673506cbc2ed31f3d7a016ebb32cfb','wind':'Deposited ERA5, native hourly 0.25 degrees, interpolated upstream to radar profiles; wind informed bird/insect separation.'},'altitudeCentresMAsl':list(range(1100,4000,200)),'nights':nights}
 # Research material is deliberately not imported into the live study yet.
-out=ROOT/'data/raw/wind-audit/full-candidates.json'
+out=ROOT/'data/raw/wind-audit'/('comparison-candidates.json' if comparison else 'full-candidates.json')
 out.parent.mkdir(parents=True,exist_ok=True)
 out.write_text(json.dumps(metadata,separators=(',',':'),allow_nan=False)+'\n')
 report=[]
@@ -39,4 +41,4 @@ for n in nights:
   'timesBelowHalfCoverage':[n['times'][i] for i,c in enumerate(counts) if c<278],
   'missingSourceTimes':[t for t,i in zip(n['times'],n['sourceIndices']) if i is None],
   'minimumWindBands':min(winds)})
-(ROOT/'docs/spatial-wind-candidate-coverage.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+(ROOT/'docs'/('regional-air-candidate-coverage.json' if comparison else 'spatial-wind-candidate-coverage.json')).write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')

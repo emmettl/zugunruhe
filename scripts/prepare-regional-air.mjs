@@ -2,11 +2,15 @@ import fs from 'node:fs';
 import {createAirGrid,airMovementGrid,sampleAirMovement,AIR_BOUNDS} from '../src/regional-air-model.js';
 import {advancePath} from '../src/currents-model.js';
 import {terrainSampler} from '../src/network-terrain.js';
-const source=JSON.parse(fs.readFileSync(new URL('../data/raw/wind-audit/full-candidates.json',import.meta.url)));
-const night=source.nights.find(n=>n.date==='2018-09-24');
+const dates=process.argv.slice(2);
+const source=JSON.parse(fs.readFileSync(new URL(`../data/raw/wind-audit/${dates.length?'comparison-candidates':'full-candidates'}.json`,import.meta.url)));
+for(const date of dates.length?dates:['2018-09-24']){
+const night=source.nights.find(n=>n.date===date);
+if(!night)throw new Error(`No retained source for ${date}`);
+const prefix=`regional-air${date==='2018-09-24'?'':`-${date}`}`;
 const stations=night.stations.map(s=>({...s,frames:s.frames.map((f,i)=>({...f,time:night.times[i],minute:i*5}))}));
 const output={source:source.source,altitudeCentresMAsl:source.altitudeCentresMAsl,date:night.date,stations};
-fs.writeFileSync(new URL('../data/processed/regional-air-night.json',import.meta.url),JSON.stringify(output));
+fs.writeFileSync(new URL(`../data/processed/${prefix}-night.json`,import.meta.url),JSON.stringify(output));
 const {heightAt}=terrainSampler(JSON.parse(fs.readFileSync(new URL('../data/processed/network-terrain.json',import.meta.url))));
 const grid=createAirGrid(stations),last=night.times.length-1;
 let state=20180924;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
@@ -32,6 +36,7 @@ for(const kind of ['wind','birds']){
    if(points.length>=4)tracks.push({start,band,points});
   }
  }
- fs.writeFileSync(new URL(`../data/processed/regional-air-${kind}.json`,import.meta.url),JSON.stringify({kind,start:night.times[0],stepSeconds:300,bounds:AIR_BOUNDS,seed:20180924,method:'Distance-kernel station estimate; bilinear space, linear time; RK2 60-second steps; fixed altitude; illustrative seeds, no gap filling',tracks}));
- console.log(kind,tracks.length,'paths',tracks.reduce((n,t)=>n+t.points.length,0),'points');
+ fs.writeFileSync(new URL(`../data/processed/${prefix}-${kind}.json`,import.meta.url),JSON.stringify({kind,start:night.times[0],stepSeconds:300,bounds:AIR_BOUNDS,seed:20180924,method:'Distance-kernel station estimate; bilinear space, linear time; RK2 60-second steps; fixed altitude; illustrative seeds, no gap filling',tracks}));
+ console.log(date,kind,tracks.length,'paths',tracks.reduce((n,t)=>n+t.points.length,0),'points');
+}
 }

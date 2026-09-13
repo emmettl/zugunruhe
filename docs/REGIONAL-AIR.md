@@ -1,10 +1,10 @@
 # Regional Air
 
 `air.html` follows wind and processed bird movement across Swiss-adjacent Europe
-on 24–25 September 2018. The original three-night single-station comparison is
+on 9–10 September, 24–25 September and 8–9 October 2018. The original three-night single-station comparison is
 preserved at `air-station.html`. Earlier studies and frozen builds remain intact.
 The [selection investigation](SPATIAL-WIND.md) explains the 92-night screen and
-full-resolution checks that led to this date.
+full-resolution checks that led to the initial date. The [night comparison](REGIONAL-AIR-NIGHTS.md) records the subsequent shortlist and continuity checks.
 
 ## Data and reproduction
 
@@ -18,13 +18,15 @@ in upstream bird/insect separation are documented in [Air](AIR.md).
 ```sh
 python3 scripts/prepare-spatial-wind.py data/raw/dc_zeno.zip
 node scripts/prepare-regional-air.mjs
+python3 scripts/prepare-spatial-wind.py data/raw/dc_zeno.zip --comparison
+node scripts/prepare-regional-air.mjs 2018-09-09 2018-10-08
 ```
 
 The Python step verifies the pinned archive MD5 and retains full candidate
 profiles without filling nulls. The Node step selects September 24, writes
 `regional-air-night.json`, and prepares separate `regional-air-wind.json` and
 `regional-air-birds.json` paths. Runtime requires no external data service.
-The default view starts paused at 22:00 with all heights visible. The clock runs
+Alternative profiles and paths use date-qualified filenames and load on demand as separate static assets. The default view remains September 24, paused at 22:00 with all heights visible. The clock runs
 20:00–04:00; data on either side provide path warm-up and room for trail endings.
 
 ## Regional estimate
@@ -41,7 +43,7 @@ Wind pairs require both `uw/vw` components; their validity does not depend on
 bird density. Bird vectors require density and both `ub/vb`. Each field is
 bilinearly interpolated in space and linearly interpolated between adjacent
 five-minute snapshots. Missing pairs remain unavailable, never zero-filled.
-The selected window has every source timestamp and no widespread bird-data
+The selected windows have every source timestamp and no widespread bird-data
 collapse, but missing bird bands at individual stations are retained.
 
 ## Trails and representation
@@ -68,14 +70,21 @@ must not be read as additional measured spatial resolution.
 
 Geometry is placed over the shared curved terrain: relief ×8, layer height ×4,
 lifted by additional displayed ground elevation. Physically underground bands
-are excluded during integration. No September 4 cloud layer is enabled on this
-September 24 view. The source wind and bird fields are independent in display
+are excluded during integration. No September 4 cloud layer is enabled on these
+comparison nights. The source wind and bird fields are independent in display
 availability, but scientifically not independent because wind informed upstream
 bird/insect separation.
 
 ## Interaction and validation
 
-All heights is the opening view; Controls isolates any 200 m band. Blue and green
+All heights is the opening view; Controls isolates any 200 m band. Night selection
+pauses and retains the exact time, height, flow visibility, playback speed, station
+selection, camera and return bookmark. The old scene stays in place during
+loading; both new flows and profile readouts change together once loaded. A failed
+download retains the old night and permits retry. The `night` URL parameter
+selects the date on reload or sharing; an unknown date falls back to September 24.
+Night changes do not interpolate between unrelated dates. Common seeds,
+exposure and density scales avoid normalizing away differences in passage. Blue and green
 flows toggle independently. Tap a small station marker or use the station picker
 to descend, then Back to restore the camera bookmark. Regional view resets the
 camera. Flyover uses the existing 100 km / 65-second shallow itinerary; it is a
