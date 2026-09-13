@@ -5,15 +5,18 @@
 #sound-toggle .sound-waves{display:none}
 #sound-toggle[aria-pressed=true] .sound-waves{display:block}
 #sound-toggle[aria-pressed=true] .sound-slash{display:none}
-/* A short invitation to listen: four local motes, two passes, then stillness. */
-.sound-motes{position:absolute;inset:0;pointer-events:none}
-.sound-motes i{position:absolute;left:50%;top:50%;width:2px;height:2px;margin:-1px;border-radius:50%;background:#b7e4db;box-shadow:0 0 4px #9edacf66;opacity:0;animation:sound-mote 7s ease-in-out 2 both;animation-delay:var(--delay)}
-.sound-motes i:nth-child(1){--x:-32px;--y:-24px;--bend:-17px;--delay:.6s}
-.sound-motes i:nth-child(2){--x:10px;--y:-39px;--bend:12px;--delay:2.3s}
-.sound-motes i:nth-child(3){--x:-38px;--y:8px;--bend:-14px;--delay:4.2s}
-.sound-motes i:nth-child(4){--x:-13px;--y:-42px;--bend:-12px;--delay:6s}
-@keyframes sound-mote{0%{opacity:0;transform:translate(var(--x),var(--y)) scale(.7)}25%{opacity:.18}65%{opacity:.38;transform:translate(var(--bend),calc(var(--y) * .35)) scale(1)}100%{opacity:0;transform:translate(0,0) scale(.5)}}
-@media(prefers-reduced-motion:reduce){.sound-motes{display:none}.sound-motes i{animation:none}}
+/* Keep the invitation visible whenever playback or sound is off. Pseudo-elements
+   survive the studies updating their play glyph and never intercept a gesture. */
+#play,#sound-toggle{position:relative;overflow:visible;--cue:198 176 232}
+#sound-toggle{--cue:156 221 210}
+:is(#play[aria-label="Play"],#sound-toggle[aria-pressed="false"]):not(:disabled)::before,
+:is(#play[aria-label="Play"],#sound-toggle[aria-pressed="false"]):not(:disabled)::after{content:"";position:absolute;pointer-events:none;border-radius:inherit}
+:is(#play[aria-label="Play"],#sound-toggle[aria-pressed="false"]):not(:disabled)::before{inset:0;border:1px solid rgb(var(--cue) / .65);background:radial-gradient(ellipse,rgb(var(--cue) / .12),transparent 75%);box-shadow:0 0 14px rgb(var(--cue) / .2),inset 0 0 10px rgb(var(--cue) / .07);animation:control-glow 8s ease-in-out infinite}
+:is(#play[aria-label="Play"],#sound-toggle[aria-pressed="false"]):not(:disabled)::after{inset:-8px;background:radial-gradient(circle at 17% 22%,rgb(var(--cue) / .9) 0 1px,transparent 2px),radial-gradient(circle at 83% 74%,rgb(var(--cue) / .8) 0 1px,transparent 2px),radial-gradient(circle at 73% 9%,rgb(var(--cue) / .7) 0 1px,transparent 2px);opacity:.6;animation:control-motes 9s ease-in-out infinite}
+#sound-toggle[aria-pressed="false"]:not(:disabled)::before,#sound-toggle[aria-pressed="false"]:not(:disabled)::after{animation-delay:-3s}
+@keyframes control-glow{0%,100%{opacity:.65}50%{opacity:1}}
+@keyframes control-motes{0%,100%{opacity:.35;transform:translateY(2px)}50%{opacity:.75;transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){:is(#play,#sound-toggle)::before,:is(#play,#sound-toggle)::after{animation:none!important}:is(#play,#sound-toggle)::after{display:none}}
 .sound-volume{display:none;position:absolute;right:0;bottom:calc(100% + 8px);width:210px;padding:14px 16px 10px;border:1px solid #ffffff30;border-radius:8px;background:#0b111df5;box-shadow:0 8px 28px #0006;color:#d7e0e8;text-align:left;font:13px/1.5 Inter,system-ui,sans-serif;backdrop-filter:blur(12px)}
 .study-sound:not([data-dismissed=true]):is([data-state=playing],[data-state=loading],[data-state=starting]):is(:focus-within,:hover) .sound-volume{display:block}
 .sound-volume::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:9px}
