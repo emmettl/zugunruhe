@@ -31,6 +31,12 @@ and reproducible rendering scripts are retained under `audio-studies/`; the
   Scrubbing redirects exponential gain fades from their current level: about
   five seconds to arrive and eight to recede (95% settling). Pause holds the
   scene's balance while musical phrases continue. The volume popup names the phase.
+- The palette selector in Night, Sea and Currents also colours the music. Aquatic
+  is darker with a diffuse echo; Ember is warm and veiled; Boreal softly spacious;
+  Oxygen clearer and closer. Four-and-a-half-second settling reshapes tone and
+  space without seeking, retuning, loading another recording or changing the
+  phase mix. A palette selected before opting in is used on the first sound.
+  Studies without a palette selector retain their original tone.
 - Sound fades out when switched off and resumes from its retained position.
   Leaving the tab pauses it immediately; returning requires tapping Sound again.
   Navigation to another study stops the current page's sound. The new page starts
@@ -56,6 +62,13 @@ publishes the current mix even before audio loads. Repeated scrubs replace gain
 targets, rather than queueing transitions. The other studies remain listening
 references with the complete fixed recording.
 
+`sound-colour.js` adds a low-pass filter and a treble shelf, plus a restrained
+0.71-second filtered delay before the master volume. The delay has no feedback
+and its time never changes, avoiding pitch bends. Palette changes redirect
+AudioParam targets from their current values (1.5-second time constant).
+Treble is only attenuated; complementary direct and delayed gains sum to one.
+No extra audio assets are fetched. Colour and phase gains are independent.
+
 `src/soundtrack.js` decodes the recording once, schedules buffer sources against
 the Web Audio clock, and uses 24-second equal-power overlaps. Each repeat begins
 156 seconds after the preceding one. Sources are scheduled more than a cycle
@@ -74,8 +87,11 @@ The new encoded stems summed at full gain measure −24.0 LUFS and −10.8 dBTP.
 
 Unit checks cover lazy loading, overlap curves and scheduling, cancelled loads,
 rapid toggles, retained position, retry, device interruption, hidden-page starts,
-volume and disposal. The full unit suite has 62 checks, including synchronized
+volume and disposal. The full unit suite has 64 checks, including synchronized
 stems, interrupted fades, rejection/retry of mismatched stems and continuous mapping.
+Palette checks cover lazy application, rapid switching, retained musical time,
+unchanged master volume, fixed delay and restrained upper notes. Browser coverage
+changes palettes before loading and during playback, then scrubs between phases.
 
 Browser coverage exercises native decoding/playback, cancellation and retry,
 independence from the visual timeline, volume persistence, touch-target size and

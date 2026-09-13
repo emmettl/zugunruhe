@@ -2,6 +2,7 @@ import { createSoundtrack } from './soundtrack.js';
 import soundUrl from '../audio-studies/03-soft-twinkles/05-confluence-soft-twinkles.mp3?url';
 import styles from './study-sound.css?inline';
 import { subscribeSoundScene } from './sound-scene.js';
+import { soundColours } from './sound-colour.js';
 
 let installed = false;
 export function installStudySound() {
@@ -46,12 +47,29 @@ export function installStudySound() {
       feedback.textContent = status === 'error' ? 'Sound could not start. Tap to try again.' : '';
     },
   });
+  const palette = document.getElementById('palette');
+  const description = widget.querySelector('.sound-volume p');
+  let scoreName;
+  function describeSound() {
+    const colour = soundColours[widget.dataset.palette]?.label;
+    description.textContent = [scoreName || 'Confluence · soft twinkles', colour,
+      responsive ? 'Layers follow the scene; phrases keep their pace.' : 'Sound keeps its own pace.'].filter(Boolean).join('. ');
+  }
+  function applySoundPalette() {
+    if (!palette || !Object.hasOwn(soundColours, palette.value)) return;
+    soundtrack.setPalette(palette.value);
+    widget.dataset.palette = palette.value;
+    describeSound();
+  }
+  applySoundPalette();
+  palette?.addEventListener('change', applySoundPalette);
   const unsubscribe = responsive ? subscribeSoundScene(scene => {
     soundtrack.setMix(scene.mix);
     widget.dataset.mix = JSON.stringify(scene.mix);
     if (widget.dataset.score !== scene.name) {
       widget.dataset.score = scene.name;
-      widget.querySelector('.sound-volume p').textContent = `${scene.name}. Layers follow the scene; phrases keep their pace.`;
+      scoreName = scene.name;
+      describeSound();
     }
   }) : () => {};
   button.addEventListener('click', () => {
@@ -72,5 +90,5 @@ export function installStudySound() {
   widget.addEventListener('focusin', () => { delete widget.dataset.dismissed; });
   document.addEventListener('visibilitychange', () => { if (document.hidden) soundtrack.pause(true); });
   // Page changes stop sound. Returning from bfcache keeps a paused, resumable score.
-  window.addEventListener('pagehide', (event) => { if (event.persisted) soundtrack.pause(true); else { unsubscribe(); soundtrack.dispose(); } });
+  window.addEventListener('pagehide', (event) => { if (event.persisted) soundtrack.pause(true); else { unsubscribe(); palette?.removeEventListener('change', applySoundPalette); soundtrack.dispose(); } });
 }

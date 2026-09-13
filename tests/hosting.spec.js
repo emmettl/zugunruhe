@@ -121,6 +121,7 @@ test('Currents renders and retains playback, comparison and study navigation',as
   test.setTimeout(300000);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   const response=await page.goto('currents.html?palette=aquatic&clouds=total');expect(response.status()).toBe(200);
+  await expect(page.locator('.study-sound')).toHaveAttribute('data-palette','aquatic');
   await expect(page).toHaveTitle('Zugunruhe · Currents');
   await expect(page.locator('#camera-height')).toContainText('km above Earth');
   await expect(page.locator('#graphics-error')).toBeHidden();

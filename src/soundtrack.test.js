@@ -1,26 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSoundtrack, fadeCurve, CROSSFADE_SECONDS } from './soundtrack.js';
+import { soundColours } from './sound-colour.js';
+
+function parameter(value = 0) {
+  const events = [];
+  return { value, events,
+    cancelAndHoldAtTime: time => events.push(['hold', time]),
+    setValueAtTime: (value, time) => events.push(['set', value, time]),
+    linearRampToValueAtTime: (value, time) => events.push(['ramp', value, time]),
+    setTargetAtTime: (value, time, tau) => events.push(['target', value, time, tau]),
+    setValueCurveAtTime: (curve, time, duration) => events.push(['curve', curve, time, duration]),
+  };
+}
 
 function fixture(load = async () => ({ duration: 180 })) {
   const gains = [], sources = [], changes = [], intervals = new Map(), timeouts = new Map();
+  const filters = [], delays = [];
   let count = 0, hidden = false, listener;
   const context = {
-    currentTime: 0, state: 'suspended', destination: {},
+    currentTime: 0, sampleRate: 48000, state: 'suspended', destination: {},
     addEventListener(_, callback) { listener = callback; },
     async resume() { this.state = 'running'; listener?.(); },
     async suspend() { this.state = 'suspended'; listener?.(); },
     async close() { this.state = 'closed'; listener?.(); },
     createGain() {
-      const events = [];
-      const node = { connect() {}, disconnect() {}, gain: { value: 0,
-        cancelAndHoldAtTime: (time) => events.push(['hold', time]),
-        setValueAtTime: (value, time) => events.push(['set', value, time]),
-        linearRampToValueAtTime: (value, time) => events.push(['ramp', value, time]),
-        setTargetAtTime: (value, time, tau) => events.push(['target', value, time, tau]),
-        setValueCurveAtTime: (curve, time, duration) => events.push(['curve', curve, time, duration]),
-      }, events };
+      const gain = parameter();
+      const node = { connect() {}, disconnect() {}, gain, events: gain.events };
       gains.push(node); return node;
+    },
+    createBiquadFilter() {
+      const node = { connect() {}, disconnect() {}, frequency: parameter(350), gain: parameter(), Q: parameter(1) };
+      filters.push(node); return node;
+    },
+    createDelay() {
+      const node = { connect() {}, disconnect() {}, delayTime: parameter() };
+      delays.push(node); return node;
     },
     createBufferSource() {
       const source = { connect() {}, disconnect() {}, start(at) { this.at = at; }, stop() { this.stopped = true; } };
@@ -36,7 +51,7 @@ function fixture(load = async () => ({ duration: 180 })) {
     loadBuffer() { loads++; return load(); }, timers, isHidden: () => hidden,
     onChange: ({ status }) => changes.push(status),
   });
-  return { soundtrack, context, gains, sources, changes, intervals, timeouts,
+  return { soundtrack, context, gains, sources, changes, intervals, timeouts, filters, delays,
     counts: () => ({ created, loads }), hide: () => { hidden = true; } };
 }
 
@@ -153,4 +168,38 @@ test('mismatched stem durations fail atomically and can be retried', async () =>
   const f = fixture(async () => ({ sustained: { duration: 180 }, twinkles: { duration: ++attempt === 1 ? 179 : 180 } }));
   assert.equal(await f.soundtrack.play(), false); assert.equal(f.sources.length, 0);
   assert.equal(await f.soundtrack.play(), true); assert.equal(f.sources.length, 4);
+});
+
+test('palette is lazy, switches tone gently, and stays independent of score, volume and musical time', async () => {
+  const f = fixture();
+  f.soundtrack.setPalette('aquatic');
+  assert.deepEqual(f.counts(), { created: 0, loads: 0 });
+  await f.soundtrack.play();
+  assert.deepEqual(f.filters[0].frequency.events.at(-1), ['set', 1500, 0]);
+  const starts = f.sources.map(s => s.at), masterEvents = f.gains[0].events.length;
+  f.context.currentTime = 12;
+  f.soundtrack.setPalette('oxygen');
+  assert.deepEqual(f.filters[0].frequency.events.slice(-2), [['hold', 12], ['target', 11000, 12, 1.5]]);
+  f.context.currentTime = 12.1;
+  f.soundtrack.setPalette('ember');
+  assert.deepEqual(f.filters[0].frequency.events.slice(-2), [['hold', 12.1], ['target', 2800, 12.1, 1.5]]);
+  const events = f.filters[0].frequency.events.length;
+  f.soundtrack.setPalette('ember'); f.soundtrack.setPalette('invalid');
+  assert.equal(f.filters[0].frequency.events.length, events);
+  assert.equal(f.filters.length, 3); assert.equal(f.delays.length, 1);
+  assert.deepEqual(f.sources.map(s => s.at), starts);
+  assert.equal(f.gains[0].events.length, masterEvents);
+  assert.deepEqual(f.counts(), { created: 1, loads: 1 });
+  assert.equal(f.soundtrack.status, 'playing');
+  assert.equal(f.delays[0].delayTime.value, .71);
+  assert.equal(f.delays[0].delayTime.events.length, 0);
+  f.soundtrack.pause(true); f.soundtrack.setPalette('boreal'); await f.soundtrack.play();
+  assert.deepEqual(f.sources.map(s => s.at), starts);
+});
+
+test('palette profiles keep upper notes unboosted and echoes restrained', () => {
+  for (const colour of Object.values(soundColours)) {
+    assert.ok(colour.treble <= 0);
+    assert.ok(colour.halo >= 0 && colour.halo <= .2);
+  }
 });

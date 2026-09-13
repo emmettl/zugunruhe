@@ -1,5 +1,6 @@
 // Musical time belongs to the AudioContext. Scene changes alter the balance of
 // synchronized stems, never their playback position, pitch or repeat timing.
+import { createSoundColour, soundColours } from './sound-colour.js';
 export const CROSSFADE_SECONDS = 24;
 
 export function fadeCurve(incoming, samples = 129) {
@@ -13,6 +14,7 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
   isHidden = () => false, timers = globalThis, initialVolume = 0.65 }) {
   let context, master, buffers, loading, desired = false, disposed = false;
   let duration = 0, mix = {};
+  let palette, colour;
   const layers = new Map();
   let status = 'off', volume = Math.max(0, Math.min(1, initialVolume));
   let generation = 0, started = false, nextStart = 0, interval, suspension;
@@ -59,6 +61,7 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
     if (context) return;
     context = createContext();
     master = context.createGain(); master.gain.value = 0; master.connect(context.destination);
+    if (palette) { colour = createSoundColour(context, master); colour.setPalette(palette, false); }
     context.addEventListener('statechange', () => {
       // Device interruptions should never leave the button claiming sound is on.
       if (desired && status === 'playing' && context.state !== 'running') pause(true);
@@ -84,7 +87,7 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
         buffers = candidate; duration = length;
         for (const [name] of entries) {
           const layer = context.createGain(); layer.gain.value = mix[name] ?? 1;
-          layer.connect(master); layers.set(name, layer);
+          layer.connect(colour?.input || master); layers.set(name, layer);
         }
       }).finally(() => { loading = undefined; });
       await Promise.all([resume, loading]);
@@ -150,6 +153,16 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
       }
     }
   }
+  function setPalette(id) {
+    if (disposed || !Object.hasOwn(soundColours, id) || palette === id) return;
+    palette = id;
+    if (!context) return;
+    if (!colour) {
+      colour = createSoundColour(context, master);
+      for (const layer of layers.values()) { layer.disconnect(); layer.connect(colour.input); }
+    }
+    colour.setPalette(id, started);
+  }
   function dispose() {
     if (disposed) return;
     disposed = true; desired = false; ++generation; clearTimers();
@@ -157,8 +170,9 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
     sources.clear();
     for (const layer of layers.values()) layer.disconnect();
     layers.clear(); buffers = undefined;
+    colour?.dispose();
     void context?.close().catch(() => {});
   }
-  return { play, pause, setVolume, setMix, dispose,
+  return { play, pause, setVolume, setMix, setPalette, dispose,
     get status() { return status; }, get enabled() { return desired; } };
 }
