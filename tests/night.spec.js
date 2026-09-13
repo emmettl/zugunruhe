@@ -49,7 +49,13 @@ test.describe('reduced motion',()=>{
     await page.goto('night.html');
     await expect(page.locator('#play')).toBeEnabled();
     const label=page.locator('.map-label').last();
-    // Wait for a projected, full-size frame rather than the initial 1×1 placeholder.
+    // The shell changes the canvas height on startup. ResizeObserver updates the
+    // projection before the next draw updates labels, so allow both frames before
+    // recording the still view. A full-size label alone can be from the old layout.
+    await page.evaluate(async()=>{
+      await document.fonts.ready;
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    });
     await expect.poll(()=>label.evaluate(e=>parseFloat(e.style.left))).toBeGreaterThan(20);
     const pose=await label.getAttribute('style');
     await page.locator('#play').click();
