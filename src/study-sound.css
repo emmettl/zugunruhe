@@ -1,10 +1,19 @@
 .study-sound{position:relative;flex:0 0 44px;width:44px;height:48px;z-index:4;letter-spacing:0}
-#sound-toggle{display:flex;align-items:center;justify-content:center;width:44px;height:48px;min-height:44px;padding:0;border:1px solid #b5b9cf30;border-radius:5px;background:#090d16;color:#a8b0c1;touch-action:manipulation}
+#sound-toggle{position:relative;display:flex;align-items:center;justify-content:center;width:44px;height:48px;min-height:44px;padding:0;border:1px solid #b5b9cf30;border-radius:5px;background:#090d16;color:#a8b0c1;touch-action:manipulation}
 #sound-toggle[aria-pressed=true]{color:#b9e1d9;border-color:#9fd9ca66;background:#10201f}
 #sound-toggle:focus-visible{outline:2px solid #9cdee6;outline-offset:3px}
 #sound-toggle .sound-waves{display:none}
 #sound-toggle[aria-pressed=true] .sound-waves{display:block}
 #sound-toggle[aria-pressed=true] .sound-slash{display:none}
+/* A short invitation to listen: four local motes, two passes, then stillness. */
+.sound-motes{position:absolute;inset:0;pointer-events:none}
+.sound-motes i{position:absolute;left:50%;top:50%;width:2px;height:2px;margin:-1px;border-radius:50%;background:#b7e4db;box-shadow:0 0 4px #9edacf66;opacity:0;animation:sound-mote 7s ease-in-out 2 both;animation-delay:var(--delay)}
+.sound-motes i:nth-child(1){--x:-32px;--y:-24px;--bend:-17px;--delay:.6s}
+.sound-motes i:nth-child(2){--x:10px;--y:-39px;--bend:12px;--delay:2.3s}
+.sound-motes i:nth-child(3){--x:-38px;--y:8px;--bend:-14px;--delay:4.2s}
+.sound-motes i:nth-child(4){--x:-13px;--y:-42px;--bend:-12px;--delay:6s}
+@keyframes sound-mote{0%{opacity:0;transform:translate(var(--x),var(--y)) scale(.7)}25%{opacity:.18}65%{opacity:.38;transform:translate(var(--bend),calc(var(--y) * .35)) scale(1)}100%{opacity:0;transform:translate(0,0) scale(.5)}}
+@media(prefers-reduced-motion:reduce){.sound-motes{display:none}.sound-motes i{animation:none}}
 .sound-volume{display:none;position:absolute;right:0;bottom:calc(100% + 8px);width:210px;padding:14px 16px 10px;border:1px solid #ffffff30;border-radius:8px;background:#0b111df5;box-shadow:0 8px 28px #0006;color:#d7e0e8;text-align:left;font:13px/1.5 Inter,system-ui,sans-serif;backdrop-filter:blur(12px)}
 .study-sound:not([data-dismissed=true]):is([data-state=playing],[data-state=loading],[data-state=starting]):is(:focus-within,:hover) .sound-volume{display:block}
 .sound-volume::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:9px}

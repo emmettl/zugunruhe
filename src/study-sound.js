@@ -11,6 +11,7 @@ export function installStudySound() {
   const style = document.createElement('style'); style.textContent = styles; document.head.append(style);
   const widget = document.createElement('div'); widget.className = 'study-sound'; widget.dataset.state = 'off';
   widget.innerHTML = `<button type="button" id="sound-toggle" aria-label="Turn sound on" aria-pressed="false" title="Sound · off">
+    <span class="sound-motes" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-waves" d="M16 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14"/><path class="sound-slash" d="m3 3 18 18"/></svg>
   </button><div class="sound-volume" role="group" aria-label="Sound settings"><label for="sound-volume">Sound volume</label><input id="sound-volume" type="range" min="0" max="100" step="1" aria-label="Sound volume"><p>Confluence · soft twinkles<br>Sound keeps its own pace.</p></div><span id="sound-feedback" role="status" class="sound-feedback"></span>`;
   row.append(widget);
@@ -43,6 +44,7 @@ export function installStudySound() {
     },
   });
   button.addEventListener('click', () => {
+    widget.querySelector('.sound-motes')?.remove();
     delete widget.dataset.dismissed;
     button.focus({ preventScroll: true });
     if (soundtrack.enabled) soundtrack.pause(); else void soundtrack.play();

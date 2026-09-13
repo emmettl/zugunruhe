@@ -13,6 +13,9 @@ and reproducible rendering scripts are retained under `audio-studies/`; the
 
 - The speaker button beside the timeline starts or pauses sound. It has a
   44 × 48 px target and an accessible on/off label and pressed state.
+- Four faint motes drift into the speaker on entry, drawing attention to sound.
+  They settle after 20 seconds or disappear on the first tap, and are disabled
+  when reduced motion is requested. They do not intercept touches or load audio.
 - When sound is enabled, focus or hover reveals the volume slider. Touching the
   button focuses it; keyboard users can Tab to the slider. Escape dismisses the
   panel. Volume is remembered locally, with a default of 65%.
