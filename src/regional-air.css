@@ -1,0 +1,5 @@
+#air-app .air-reading{margin:0;min-height:0;font-size:12px;line-height:1.65;padding:7px 10px;max-width:calc(100% - 32px)}
+#air-app .map-label{font-size:9px}
+#air-controls .study-link{display:block;min-height:44px;padding:12px 0;color:#b6c9da;font-size:14px}
+#air-controls .view-buttons button{flex:1}
+@media(max-width:760px){#air-app .air-reading{font-size:11px}#air-app .title:has(#back-to-network:not([hidden])){padding:0;background:none}#air-app .map-label{font-size:8px}#air-app .title h1{font-size:26px}#air-app .title p{font-size:12px}}

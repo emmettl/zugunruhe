@@ -1,6 +1,6 @@
 # Birds and air
 
-Separate study at `air.html`, over the existing Memmingen terrain. Opens paused
+Preserved single-station comparison at `air-station.html`, over the existing Memmingen terrain. Opens paused
 at 22:00 UTC on 3 September 2018 and isolates the 2.1 km altitude centre.
 Green is processed bird density/movement; blue strands show deposited ERA5 wind.
 
@@ -63,3 +63,8 @@ Switching away pauses playback. Keyboard focus returns through nested dialogs.
 Unit checks cover source preservation, component interpolation, missing values,
 clock adjacency, vector bearings and the opening comparison. Browser checks cover
 night/height selection, flow toggles, keyboard playback, phone sizing and notes.
+
+A subsequent [spatial wind investigation](SPATIAL-WIND.md) screens 92 autumn
+nights and selects 24–25 September for the next regional experiment.
+
+The regional iteration now occupies `air.html`; see [Regional Air](REGIONAL-AIR.md).

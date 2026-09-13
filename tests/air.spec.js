@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 test('Air compares the same height and time across nights with accessible flow controls',async({page})=>{
  test.setTimeout(300000);
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- expect((await page.goto('air.html')).status()).toBe(200);
+ expect((await page.goto('air-station.html')).status()).toBe(200);
  await expect(page.locator('#play')).toBeEnabled();await expect(page.locator('#clock')).toHaveValue('48');
  await expect(page.locator('#reading')).toContainText('231°');await expect(page.locator('#reading')).toContainText('131°');
  await page.locator('#wind').click();await expect(page.locator('#wind')).toHaveAttribute('aria-pressed','false');

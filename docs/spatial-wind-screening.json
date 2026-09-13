@@ -1,0 +1,932 @@
+{
+  "sourceMd5": "09673506cbc2ed31f3d7a016ebb32cfb",
+  "hoursUTC": "20:00\u201303:00, hourly",
+  "heightsKm": [
+    1.1,
+    2.1,
+    3.1
+  ],
+  "stations": 37,
+  "nights": [
+    {
+      "date": "2018-08-01",
+      "pairedFraction": 0.7759009009009009,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.19,
+      "spatialRmsMs": 4.438022777429517,
+      "nearbyDifferenceMs": 4.768616237754909,
+      "heightShearMs": 6.529678579589652,
+      "overnightChangeMs": 3.518773653762917
+    },
+    {
+      "date": "2018-08-02",
+      "pairedFraction": 0.8907657657657657,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.11,
+      "spatialRmsMs": 4.212309420706564,
+      "nearbyDifferenceMs": 3.8053067466376254,
+      "heightShearMs": 4.2480342115210386,
+      "overnightChangeMs": 2.810756450238139
+    },
+    {
+      "date": "2018-08-03",
+      "pairedFraction": 0.875,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.09,
+      "spatialRmsMs": 4.293612293508252,
+      "nearbyDifferenceMs": 3.412938693589597,
+      "heightShearMs": 5.651515912575328,
+      "overnightChangeMs": 3.0330339523411975
+    },
+    {
+      "date": "2018-08-04",
+      "pairedFraction": 0.6722972972972973,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.08,
+      "spatialRmsMs": 4.7049038847042075,
+      "nearbyDifferenceMs": 4.016915533982501,
+      "heightShearMs": 6.897699923045196,
+      "overnightChangeMs": 3.3729198166545094
+    },
+    {
+      "date": "2018-08-05",
+      "pairedFraction": 0.8806306306306306,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.1,
+      "spatialRmsMs": 4.702270912941241,
+      "nearbyDifferenceMs": 3.581656579743033,
+      "heightShearMs": 6.833516537499585,
+      "overnightChangeMs": 4.00537366472729
+    },
+    {
+      "date": "2018-08-06",
+      "pairedFraction": 0.8344594594594594,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.08,
+      "spatialRmsMs": 3.4322825146827407,
+      "nearbyDifferenceMs": 3.461798428208976,
+      "heightShearMs": 6.749940458700937,
+      "overnightChangeMs": 3.6615379529512264
+    },
+    {
+      "date": "2018-08-07",
+      "pairedFraction": 0.6509009009009009,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.12,
+      "spatialRmsMs": 6.20352359764255,
+      "nearbyDifferenceMs": 5.7264606903312485,
+      "heightShearMs": 7.50351982321993,
+      "overnightChangeMs": 6.72192141036831
+    },
+    {
+      "date": "2018-08-08",
+      "pairedFraction": 0.7038288288288288,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.13,
+      "spatialRmsMs": 4.927648407857085,
+      "nearbyDifferenceMs": 5.0512702927080655,
+      "heightShearMs": 9.060262909559361,
+      "overnightChangeMs": 5.108165270123534
+    },
+    {
+      "date": "2018-08-09",
+      "pairedFraction": 0.5518018018018018,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.15,
+      "spatialRmsMs": 6.5205190678794995,
+      "nearbyDifferenceMs": 5.163809599091668,
+      "heightShearMs": 9.746145469712621,
+      "overnightChangeMs": 6.66045314452309
+    },
+    {
+      "date": "2018-08-10",
+      "pairedFraction": 0.6497747747747747,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.22,
+      "spatialRmsMs": 5.647901020737669,
+      "nearbyDifferenceMs": 4.889413111032481,
+      "heightShearMs": 6.946747868772034,
+      "overnightChangeMs": 4.921988788481356
+    },
+    {
+      "date": "2018-08-11",
+      "pairedFraction": 0.6903153153153153,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.26,
+      "spatialRmsMs": 5.089825220830714,
+      "nearbyDifferenceMs": 3.8093672865074586,
+      "heightShearMs": 7.472007882508503,
+      "overnightChangeMs": 3.6491428293042234
+    },
+    {
+      "date": "2018-08-12",
+      "pairedFraction": 0.49324324324324326,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.24,
+      "spatialRmsMs": 4.790925768123265,
+      "nearbyDifferenceMs": 4.27003220548074,
+      "heightShearMs": 6.45956712748641,
+      "overnightChangeMs": 4.634288986373741
+    },
+    {
+      "date": "2018-08-13",
+      "pairedFraction": 0.6261261261261262,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.13,
+      "spatialRmsMs": 5.016005827693517,
+      "nearbyDifferenceMs": 3.1369633397051375,
+      "heightShearMs": 3.997856085286058,
+      "overnightChangeMs": 4.138564217085931
+    },
+    {
+      "date": "2018-08-14",
+      "pairedFraction": 0.8468468468468469,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.25,
+      "spatialRmsMs": 5.381108498818219,
+      "nearbyDifferenceMs": 4.679348047743682,
+      "heightShearMs": 4.628887773532611,
+      "overnightChangeMs": 3.250428656996869
+    },
+    {
+      "date": "2018-08-15",
+      "pairedFraction": 0.7725225225225225,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.685,
+      "spatialRmsMs": 5.8051685106826385,
+      "nearbyDifferenceMs": 3.8904925038709592,
+      "heightShearMs": 4.398904226997009,
+      "overnightChangeMs": 3.9327102446105435
+    },
+    {
+      "date": "2018-08-16",
+      "pairedFraction": 0.6531531531531531,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.81,
+      "spatialRmsMs": 5.3088997930006325,
+      "nearbyDifferenceMs": 4.216207615684182,
+      "heightShearMs": 7.6825257684066335,
+      "overnightChangeMs": 3.975441256082022
+    },
+    {
+      "date": "2018-08-17",
+      "pairedFraction": 0.7747747747747747,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.805,
+      "spatialRmsMs": 5.260616315339269,
+      "nearbyDifferenceMs": 4.169498349842701,
+      "heightShearMs": 6.921059880229532,
+      "overnightChangeMs": 2.652766722380687
+    },
+    {
+      "date": "2018-08-18",
+      "pairedFraction": 0.8006756756756757,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.8,
+      "spatialRmsMs": 5.069347391080436,
+      "nearbyDifferenceMs": 3.7963315934878024,
+      "heightShearMs": 4.889825412524236,
+      "overnightChangeMs": 2.598894007153114
+    },
+    {
+      "date": "2018-08-19",
+      "pairedFraction": 0.7713963963963963,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.68,
+      "spatialRmsMs": 6.202774357610623,
+      "nearbyDifferenceMs": 4.26415062370622,
+      "heightShearMs": 3.433039838211092,
+      "overnightChangeMs": 3.107935128755897
+    },
+    {
+      "date": "2018-08-20",
+      "pairedFraction": 0.8220720720720721,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.405,
+      "spatialRmsMs": 4.663827588622776,
+      "nearbyDifferenceMs": 4.224148424110411,
+      "heightShearMs": 5.256083118226023,
+      "overnightChangeMs": 2.647911394937661
+    },
+    {
+      "date": "2018-08-21",
+      "pairedFraction": 0.8682432432432432,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.32,
+      "spatialRmsMs": 3.510649340187774,
+      "nearbyDifferenceMs": 3.5064805574250157,
+      "heightShearMs": 5.396860344037935,
+      "overnightChangeMs": 3.4345073179746937
+    },
+    {
+      "date": "2018-08-22",
+      "pairedFraction": 0.8322072072072072,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.04,
+      "spatialRmsMs": 3.528811960173054,
+      "nearbyDifferenceMs": 3.6191543835702524,
+      "heightShearMs": 4.568971982944997,
+      "overnightChangeMs": 3.4409798851823643
+    },
+    {
+      "date": "2018-08-23",
+      "pairedFraction": 0.6565315315315315,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.43,
+      "spatialRmsMs": 5.357722684517387,
+      "nearbyDifferenceMs": 4.227595697791666,
+      "heightShearMs": 6.726895907188819,
+      "overnightChangeMs": 3.6762172414694425
+    },
+    {
+      "date": "2018-08-24",
+      "pairedFraction": 0.5123873873873874,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.39,
+      "spatialRmsMs": 5.461317376528501,
+      "nearbyDifferenceMs": 4.526685367744149,
+      "heightShearMs": 5.953358485458694,
+      "overnightChangeMs": 4.068940482340776
+    },
+    {
+      "date": "2018-08-25",
+      "pairedFraction": 0.6475225225225225,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.35,
+      "spatialRmsMs": 4.044606984622409,
+      "nearbyDifferenceMs": 3.540427990621576,
+      "heightShearMs": 4.879291910885616,
+      "overnightChangeMs": 3.2673327498295994
+    },
+    {
+      "date": "2018-08-26",
+      "pairedFraction": 0.48986486486486486,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.47,
+      "spatialRmsMs": 6.941607968488014,
+      "nearbyDifferenceMs": 5.679966548393228,
+      "heightShearMs": 8.002726589382563,
+      "overnightChangeMs": 5.122328080668323
+    },
+    {
+      "date": "2018-08-27",
+      "pairedFraction": 0.7578828828828829,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.56,
+      "spatialRmsMs": 4.40599494232485,
+      "nearbyDifferenceMs": 3.6830382206072345,
+      "heightShearMs": 6.7184387162926384,
+      "overnightChangeMs": 4.241328594223844
+    },
+    {
+      "date": "2018-08-28",
+      "pairedFraction": 0.7432432432432432,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.8450000000000002,
+      "spatialRmsMs": 4.503132958349621,
+      "nearbyDifferenceMs": 3.191300230548422,
+      "heightShearMs": 6.895951505023149,
+      "overnightChangeMs": 5.8236258911013
+    },
+    {
+      "date": "2018-08-29",
+      "pairedFraction": 0.4831081081081081,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.9,
+      "spatialRmsMs": 5.560308117310341,
+      "nearbyDifferenceMs": 4.754774241120732,
+      "heightShearMs": 6.278512274597919,
+      "overnightChangeMs": 5.110001355986198
+    },
+    {
+      "date": "2018-08-30",
+      "pairedFraction": 0.6948198198198198,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.89,
+      "spatialRmsMs": 4.494046214791251,
+      "nearbyDifferenceMs": 4.1417123106924585,
+      "heightShearMs": 6.982806546761509,
+      "overnightChangeMs": 3.111798850984718
+    },
+    {
+      "date": "2018-08-31",
+      "pairedFraction": 0.7702702702702703,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.67,
+      "spatialRmsMs": 4.421733241956565,
+      "nearbyDifferenceMs": 3.4567665036631308,
+      "heightShearMs": 5.313609618597935,
+      "overnightChangeMs": 2.7983866809992692
+    },
+    {
+      "date": "2018-09-01",
+      "pairedFraction": 0.7387387387387387,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.545,
+      "spatialRmsMs": 4.194500634553491,
+      "nearbyDifferenceMs": 4.150082424655366,
+      "heightShearMs": 4.914322539431732,
+      "overnightChangeMs": 2.7856599219946343
+    },
+    {
+      "date": "2018-09-02",
+      "pairedFraction": 0.8108108108108109,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.945,
+      "spatialRmsMs": 5.216355580739157,
+      "nearbyDifferenceMs": 3.355139284035088,
+      "heightShearMs": 4.498156879933209,
+      "overnightChangeMs": 2.7438273800562953
+    },
+    {
+      "date": "2018-09-03",
+      "pairedFraction": 0.7612612612612613,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.0,
+      "spatialRmsMs": 4.4758127882015195,
+      "nearbyDifferenceMs": 3.5513413874807838,
+      "heightShearMs": 4.6170162701992385,
+      "overnightChangeMs": 2.9936680239529863
+    },
+    {
+      "date": "2018-09-04",
+      "pairedFraction": 0.8445945945945946,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.75,
+      "spatialRmsMs": 3.700051812292938,
+      "nearbyDifferenceMs": 3.5096842414674536,
+      "heightShearMs": 4.558455855936552,
+      "overnightChangeMs": 2.6099135380673757
+    },
+    {
+      "date": "2018-09-05",
+      "pairedFraction": 0.6745495495495496,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.51,
+      "spatialRmsMs": 3.3747998274634643,
+      "nearbyDifferenceMs": 3.3233058089411442,
+      "heightShearMs": 5.005588383841491,
+      "overnightChangeMs": 3.265543180639949
+    },
+    {
+      "date": "2018-09-06",
+      "pairedFraction": 0.5326576576576577,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.89,
+      "spatialRmsMs": 5.632804007384245,
+      "nearbyDifferenceMs": 3.7408188336250747,
+      "heightShearMs": 4.756413385945394,
+      "overnightChangeMs": 4.302283983820501
+    },
+    {
+      "date": "2018-09-07",
+      "pairedFraction": 0.6936936936936937,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.1749999999999998,
+      "spatialRmsMs": 6.217446890432081,
+      "nearbyDifferenceMs": 4.089954474688436,
+      "heightShearMs": 5.964050184539461,
+      "overnightChangeMs": 3.242798403057218
+    },
+    {
+      "date": "2018-09-08",
+      "pairedFraction": 0.7691441441441441,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.66,
+      "spatialRmsMs": 4.468047764948149,
+      "nearbyDifferenceMs": 3.324648551097047,
+      "heightShearMs": 6.052645079912983,
+      "overnightChangeMs": 3.0060404058437045
+    },
+    {
+      "date": "2018-09-09",
+      "pairedFraction": 0.8018018018018018,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.73,
+      "spatialRmsMs": 5.277286966825517,
+      "nearbyDifferenceMs": 3.8261906057624575,
+      "heightShearMs": 4.428080316355893,
+      "overnightChangeMs": 3.7557179886448675
+    },
+    {
+      "date": "2018-09-10",
+      "pairedFraction": 0.7691441441441441,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.75,
+      "spatialRmsMs": 6.537942205605684,
+      "nearbyDifferenceMs": 4.174766150792724,
+      "heightShearMs": 4.960774708729847,
+      "overnightChangeMs": 3.496186620559877
+    },
+    {
+      "date": "2018-09-11",
+      "pairedFraction": 0.7072072072072072,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.76,
+      "spatialRmsMs": 7.6635263878597035,
+      "nearbyDifferenceMs": 3.828360055285381,
+      "heightShearMs": 4.5183895862627805,
+      "overnightChangeMs": 4.5746039618183625
+    },
+    {
+      "date": "2018-09-12",
+      "pairedFraction": 0.7038288288288288,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.07,
+      "spatialRmsMs": 4.354343522154479,
+      "nearbyDifferenceMs": 4.407760132645994,
+      "heightShearMs": 9.063994071567212,
+      "overnightChangeMs": 3.332472374205636
+    },
+    {
+      "date": "2018-09-13",
+      "pairedFraction": 0.706081081081081,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.69,
+      "spatialRmsMs": 3.0627304472876595,
+      "nearbyDifferenceMs": 2.8679958679179336,
+      "heightShearMs": 6.242693849070372,
+      "overnightChangeMs": 2.8526495948636854
+    },
+    {
+      "date": "2018-09-14",
+      "pairedFraction": 0.4099099099099099,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.31,
+      "spatialRmsMs": 4.888562751162985,
+      "nearbyDifferenceMs": 4.025309243269017,
+      "heightShearMs": 6.236904090845601,
+      "overnightChangeMs": 3.903509695647326
+    },
+    {
+      "date": "2018-09-15",
+      "pairedFraction": 0.5011261261261262,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.53,
+      "spatialRmsMs": 4.965662141085397,
+      "nearbyDifferenceMs": 3.977396930939675,
+      "heightShearMs": 6.751019788447658,
+      "overnightChangeMs": 3.7345279263893016
+    },
+    {
+      "date": "2018-09-16",
+      "pairedFraction": 0.48986486486486486,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2,
+      "spatialRmsMs": 4.304176732842401,
+      "nearbyDifferenceMs": 3.667089299657871,
+      "heightShearMs": 4.678941889298299,
+      "overnightChangeMs": 3.293388993789477
+    },
+    {
+      "date": "2018-09-17",
+      "pairedFraction": 0.44594594594594594,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.3250000000000002,
+      "spatialRmsMs": 5.722397817073694,
+      "nearbyDifferenceMs": 3.487632857266908,
+      "heightShearMs": 5.122915439084522,
+      "overnightChangeMs": 5.064961931078605
+    },
+    {
+      "date": "2018-09-18",
+      "pairedFraction": 0.36486486486486486,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.3450000000000002,
+      "spatialRmsMs": 6.085479615630479,
+      "nearbyDifferenceMs": 4.673676889078623,
+      "heightShearMs": 4.091902041335113,
+      "overnightChangeMs": 3.5628585930065944
+    },
+    {
+      "date": "2018-09-19",
+      "pairedFraction": 0.40653153153153154,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.79,
+      "spatialRmsMs": 6.598062101468996,
+      "nearbyDifferenceMs": 5.1160615810291805,
+      "heightShearMs": 4.710883086631949,
+      "overnightChangeMs": 2.836100109475888
+    },
+    {
+      "date": "2018-09-20",
+      "pairedFraction": 0.6542792792792793,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.38,
+      "spatialRmsMs": 8.314257954794062,
+      "nearbyDifferenceMs": 6.065059603211984,
+      "heightShearMs": 5.050608052528985,
+      "overnightChangeMs": 8.185866275758444
+    },
+    {
+      "date": "2018-09-21",
+      "pairedFraction": 0.42117117117117114,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.705,
+      "spatialRmsMs": 6.057313129406252,
+      "nearbyDifferenceMs": 5.727139053959393,
+      "heightShearMs": 8.035472293386743,
+      "overnightChangeMs": 5.837792258733204
+    },
+    {
+      "date": "2018-09-22",
+      "pairedFraction": 0.26463963963963966,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.68,
+      "spatialRmsMs": 6.969047102643391,
+      "nearbyDifferenceMs": 6.475581990612654,
+      "heightShearMs": 9.534011093905702,
+      "overnightChangeMs": 4.943444484232268
+    },
+    {
+      "date": "2018-09-23",
+      "pairedFraction": 0.43243243243243246,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.74,
+      "spatialRmsMs": 6.594393351224477,
+      "nearbyDifferenceMs": 6.992301736706108,
+      "heightShearMs": 8.999118751436667,
+      "overnightChangeMs": 9.693808690504557
+    },
+    {
+      "date": "2018-09-24",
+      "pairedFraction": 0.7635135135135135,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.615,
+      "spatialRmsMs": 6.597859788014322,
+      "nearbyDifferenceMs": 6.222850329957445,
+      "heightShearMs": 6.49318716263013,
+      "overnightChangeMs": 3.957912629719487
+    },
+    {
+      "date": "2018-09-25",
+      "pairedFraction": 0.7342342342342343,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.89,
+      "spatialRmsMs": 5.926721067589925,
+      "nearbyDifferenceMs": 4.3734366004483975,
+      "heightShearMs": 7.146631609953719,
+      "overnightChangeMs": 4.463862658754282
+    },
+    {
+      "date": "2018-09-26",
+      "pairedFraction": 0.6666666666666666,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.815,
+      "spatialRmsMs": 7.145141745433232,
+      "nearbyDifferenceMs": 4.140709047322691,
+      "heightShearMs": 4.374013955454217,
+      "overnightChangeMs": 2.8476076834664275
+    },
+    {
+      "date": "2018-09-27",
+      "pairedFraction": 0.6373873873873874,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.9049999999999998,
+      "spatialRmsMs": 5.378988714295802,
+      "nearbyDifferenceMs": 3.8845632888443897,
+      "heightShearMs": 5.7212157335265585,
+      "overnightChangeMs": 4.677975712090355
+    },
+    {
+      "date": "2018-09-28",
+      "pairedFraction": 0.8051801801801802,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.41,
+      "spatialRmsMs": 5.188418083482029,
+      "nearbyDifferenceMs": 4.088212638176505,
+      "heightShearMs": 8.192590441937245,
+      "overnightChangeMs": 4.8257182310333295
+    },
+    {
+      "date": "2018-09-29",
+      "pairedFraction": 0.6914414414414415,
+      "windFraction": 1.0,
+      "medianBirdDensity": 3.115,
+      "spatialRmsMs": 5.273605049030377,
+      "nearbyDifferenceMs": 4.736142457173255,
+      "heightShearMs": 5.119974358329841,
+      "overnightChangeMs": 4.127144687932279
+    },
+    {
+      "date": "2018-09-30",
+      "pairedFraction": 0.5709459459459459,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.99,
+      "spatialRmsMs": 5.0744578930161985,
+      "nearbyDifferenceMs": 3.578455919201873,
+      "heightShearMs": 6.906438696468873,
+      "overnightChangeMs": 4.703050038372451
+    },
+    {
+      "date": "2018-10-01",
+      "pairedFraction": 0.3952702702702703,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.94,
+      "spatialRmsMs": 6.145753155856975,
+      "nearbyDifferenceMs": 5.4470795103607905,
+      "heightShearMs": 8.312436623476113,
+      "overnightChangeMs": 4.6606348571894545
+    },
+    {
+      "date": "2018-10-02",
+      "pairedFraction": 0.5213963963963963,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.27,
+      "spatialRmsMs": 9.315677492732636,
+      "nearbyDifferenceMs": 6.243115696657889,
+      "heightShearMs": 7.087247035692725,
+      "overnightChangeMs": 3.454850298190866
+    },
+    {
+      "date": "2018-10-03",
+      "pairedFraction": 0.7612612612612613,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.6950000000000003,
+      "spatialRmsMs": 7.311097175732778,
+      "nearbyDifferenceMs": 5.1618262814235685,
+      "heightShearMs": 6.232975174999342,
+      "overnightChangeMs": 3.5635452781077714
+    },
+    {
+      "date": "2018-10-04",
+      "pairedFraction": 0.8153153153153153,
+      "windFraction": 1.0,
+      "medianBirdDensity": 3.0549999999999997,
+      "spatialRmsMs": 6.084721668478157,
+      "nearbyDifferenceMs": 4.744577908551001,
+      "heightShearMs": 6.4139639366149614,
+      "overnightChangeMs": 3.6216785572939374
+    },
+    {
+      "date": "2018-10-05",
+      "pairedFraction": 0.795045045045045,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.98,
+      "spatialRmsMs": 4.043696107749986,
+      "nearbyDifferenceMs": 3.50574972702128,
+      "heightShearMs": 4.722925572524353,
+      "overnightChangeMs": 4.022747164689669
+    },
+    {
+      "date": "2018-10-06",
+      "pairedFraction": 0.37725225225225223,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.76,
+      "spatialRmsMs": 8.661851586322456,
+      "nearbyDifferenceMs": 4.504579547739831,
+      "heightShearMs": 7.013264739563047,
+      "overnightChangeMs": 7.366087702109624
+    },
+    {
+      "date": "2018-10-07",
+      "pairedFraction": 0.8524774774774775,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.65,
+      "spatialRmsMs": 6.229085088066719,
+      "nearbyDifferenceMs": 5.79461494153667,
+      "heightShearMs": 5.360681441072339,
+      "overnightChangeMs": 3.473514030062029
+    },
+    {
+      "date": "2018-10-08",
+      "pairedFraction": 0.8423423423423423,
+      "windFraction": 1.0,
+      "medianBirdDensity": 3.205,
+      "spatialRmsMs": 6.460282767069311,
+      "nearbyDifferenceMs": 3.796954044518424,
+      "heightShearMs": 4.0460087208240925,
+      "overnightChangeMs": 2.490886582422001
+    },
+    {
+      "date": "2018-10-09",
+      "pairedFraction": 0.8198198198198198,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.25,
+      "spatialRmsMs": 6.392296769775606,
+      "nearbyDifferenceMs": 3.104487846403813,
+      "heightShearMs": 3.5375403440241566,
+      "overnightChangeMs": 3.918690137956326
+    },
+    {
+      "date": "2018-10-10",
+      "pairedFraction": 0.5754504504504504,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.55,
+      "spatialRmsMs": 6.709680274479516,
+      "nearbyDifferenceMs": 8.045201051443213,
+      "heightShearMs": 5.30466301305725,
+      "overnightChangeMs": 5.9504747124181065
+    },
+    {
+      "date": "2018-10-11",
+      "pairedFraction": 0.49774774774774777,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.66,
+      "spatialRmsMs": 6.761134916734047,
+      "nearbyDifferenceMs": 5.750152768529354,
+      "heightShearMs": 6.032983462416973,
+      "overnightChangeMs": 5.51017237912444
+    },
+    {
+      "date": "2018-10-12",
+      "pairedFraction": 0.7094594594594594,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.74,
+      "spatialRmsMs": 6.984168519958143,
+      "nearbyDifferenceMs": 5.069873610333939,
+      "heightShearMs": 4.143131383224861,
+      "overnightChangeMs": 3.6269132598579468
+    },
+    {
+      "date": "2018-10-13",
+      "pairedFraction": 0.5957207207207207,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.25,
+      "spatialRmsMs": 5.490087922264623,
+      "nearbyDifferenceMs": 5.326542805504578,
+      "heightShearMs": 6.334693251467677,
+      "overnightChangeMs": 5.180349293653946
+    },
+    {
+      "date": "2018-10-14",
+      "pairedFraction": 0.39414414414414417,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.58,
+      "spatialRmsMs": 7.076091231415955,
+      "nearbyDifferenceMs": 7.804316139953506,
+      "heightShearMs": 6.664002258175042,
+      "overnightChangeMs": 4.50711779125722
+    },
+    {
+      "date": "2018-10-15",
+      "pairedFraction": 0.7342342342342343,
+      "windFraction": 1.0,
+      "medianBirdDensity": 3.66,
+      "spatialRmsMs": 7.035587203420315,
+      "nearbyDifferenceMs": 5.2198154998540796,
+      "heightShearMs": 4.237874660293343,
+      "overnightChangeMs": 4.049854029004772
+    },
+    {
+      "date": "2018-10-16",
+      "pairedFraction": 0.884009009009009,
+      "windFraction": 1.0,
+      "medianBirdDensity": 6.58,
+      "spatialRmsMs": 5.496907008747615,
+      "nearbyDifferenceMs": 4.15951048774714,
+      "heightShearMs": 3.8902232762188076,
+      "overnightChangeMs": 2.8448278115649983
+    },
+    {
+      "date": "2018-10-17",
+      "pairedFraction": 0.8141891891891891,
+      "windFraction": 1.0,
+      "medianBirdDensity": 4.63,
+      "spatialRmsMs": 4.828352785390363,
+      "nearbyDifferenceMs": 4.124610789077134,
+      "heightShearMs": 4.237322498597107,
+      "overnightChangeMs": 3.647495422072272
+    },
+    {
+      "date": "2018-10-18",
+      "pairedFraction": 0.7364864864864865,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.84,
+      "spatialRmsMs": 4.58463169573982,
+      "nearbyDifferenceMs": 5.073337519332443,
+      "heightShearMs": 5.471329751524773,
+      "overnightChangeMs": 3.146580075868465
+    },
+    {
+      "date": "2018-10-19",
+      "pairedFraction": 0.8333333333333334,
+      "windFraction": 1.0,
+      "medianBirdDensity": 2.4800000000000004,
+      "spatialRmsMs": 5.28789433829076,
+      "nearbyDifferenceMs": 3.682599697200434,
+      "heightShearMs": 4.951979331689622,
+      "overnightChangeMs": 3.399149366823997
+    },
+    {
+      "date": "2018-10-20",
+      "pairedFraction": 0.6069819819819819,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.54,
+      "spatialRmsMs": 5.117490335686536,
+      "nearbyDifferenceMs": 4.369818307835035,
+      "heightShearMs": 7.473318772815015,
+      "overnightChangeMs": 2.8560249495032846
+    },
+    {
+      "date": "2018-10-21",
+      "pairedFraction": 0.6790540540540541,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.91,
+      "spatialRmsMs": 6.254408841022391,
+      "nearbyDifferenceMs": 4.860198193120387,
+      "heightShearMs": 5.72368077320624,
+      "overnightChangeMs": 3.3795936269270466
+    },
+    {
+      "date": "2018-10-22",
+      "pairedFraction": 0.7083333333333334,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.9,
+      "spatialRmsMs": 8.874804894337615,
+      "nearbyDifferenceMs": 5.339811695844022,
+      "heightShearMs": 5.518887276319895,
+      "overnightChangeMs": 6.379114278951557
+    },
+    {
+      "date": "2018-10-23",
+      "pairedFraction": 0.4436936936936937,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.775,
+      "spatialRmsMs": 11.370135353085544,
+      "nearbyDifferenceMs": 7.951442919136323,
+      "heightShearMs": 9.567844303389828,
+      "overnightChangeMs": 3.0773534806849017
+    },
+    {
+      "date": "2018-10-24",
+      "pairedFraction": 0.4786036036036036,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.41,
+      "spatialRmsMs": 8.75886572319091,
+      "nearbyDifferenceMs": 6.250831603214466,
+      "heightShearMs": 7.106566563638311,
+      "overnightChangeMs": 5.17994939877862
+    },
+    {
+      "date": "2018-10-25",
+      "pairedFraction": 0.6295045045045045,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.53,
+      "spatialRmsMs": 4.924718787407044,
+      "nearbyDifferenceMs": 3.786194830658408,
+      "heightShearMs": 6.899253298571939,
+      "overnightChangeMs": 4.880852778982096
+    },
+    {
+      "date": "2018-10-26",
+      "pairedFraction": 0.20945945945945946,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.28,
+      "spatialRmsMs": 6.821571961596614,
+      "nearbyDifferenceMs": 4.531810819297729,
+      "heightShearMs": 9.174175277583068,
+      "overnightChangeMs": 4.951211651293234
+    },
+    {
+      "date": "2018-10-27",
+      "pairedFraction": 0.5168918918918919,
+      "windFraction": 1.0,
+      "medianBirdDensity": 1.1,
+      "spatialRmsMs": 5.258848066027425,
+      "nearbyDifferenceMs": 4.700189285096869,
+      "heightShearMs": 7.517109085072458,
+      "overnightChangeMs": 4.926956428886216
+    },
+    {
+      "date": "2018-10-28",
+      "pairedFraction": 0.29954954954954954,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.24,
+      "spatialRmsMs": 8.78376330781112,
+      "nearbyDifferenceMs": 6.9139517340276955,
+      "heightShearMs": 11.85339767515738,
+      "overnightChangeMs": 5.683341680047039
+    },
+    {
+      "date": "2018-10-29",
+      "pairedFraction": 0.2195945945945946,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.67,
+      "spatialRmsMs": 13.570155742002868,
+      "nearbyDifferenceMs": 10.16504263558667,
+      "heightShearMs": 9.783490004603522,
+      "overnightChangeMs": 10.993481161251628
+    },
+    {
+      "date": "2018-10-30",
+      "pairedFraction": 0.34234234234234234,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.43,
+      "spatialRmsMs": 9.565156987218664,
+      "nearbyDifferenceMs": 6.540315125631066,
+      "heightShearMs": 6.666606810517351,
+      "overnightChangeMs": 8.175684886631243
+    },
+    {
+      "date": "2018-10-31",
+      "pairedFraction": 0.39414414414414417,
+      "windFraction": 1.0,
+      "medianBirdDensity": 0.855,
+      "spatialRmsMs": 7.833390348061138,
+      "nearbyDifferenceMs": 8.48107227565686,
+      "heightShearMs": 6.691356792762722,
+      "overnightChangeMs": 7.676119099999462
+    }
+  ]
+}

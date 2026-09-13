@@ -1,0 +1,43 @@
+[
+  {
+    "date": "2018-09-24",
+    "frames": 115,
+    "bands": 15,
+    "stations": 37,
+    "pairedFraction": 0.6537720329024677,
+    "minimumPairedBands": 320,
+    "timesBelowHalfCoverage": [],
+    "missingSourceTimes": [],
+    "minimumWindBands": 555
+  },
+  {
+    "date": "2018-09-28",
+    "frames": 115,
+    "bands": 15,
+    "stations": 37,
+    "pairedFraction": 0.6722914218566393,
+    "minimumPairedBands": 20,
+    "timesBelowHalfCoverage": [
+      "2018-09-29T02:15:00Z",
+      "2018-09-29T02:20:00Z",
+      "2018-09-29T02:25:00Z"
+    ],
+    "missingSourceTimes": [],
+    "minimumWindBands": 555
+  },
+  {
+    "date": "2018-10-07",
+    "frames": 115,
+    "bands": 15,
+    "stations": 37,
+    "pairedFraction": 0.7262044653349001,
+    "minimumPairedBands": 20,
+    "timesBelowHalfCoverage": [
+      "2018-10-08T03:15:00Z",
+      "2018-10-08T03:20:00Z",
+      "2018-10-08T03:25:00Z"
+    ],
+    "missingSourceTimes": [],
+    "minimumWindBands": 555
+  }
+]

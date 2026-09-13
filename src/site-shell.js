@@ -17,7 +17,7 @@ function update(){
       const a=document.createElement('a');a.href=new URL(file,base).href;a.textContent=label;
       const path=location.pathname.replace(/\.html$/,'').replace(/\/$/,'');
       const target=new URL(file,base).pathname.replace(/\.html$/,'').replace(/\/$/,'');
-      if(path===target||(!file&&path===target+'/index'))a.setAttribute('aria-current','page');
+      if(path===target||(file==='air.html'&&path===target+'-station')||(!file&&path===target+'/index'))a.setAttribute('aria-current','page');
       nav.append(a);
     }
     header.append(nav);

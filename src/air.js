@@ -3,71 +3,84 @@ import '@motionstudies/web/tokens.css';
 import './network.css';
 import './study-ui.css';
 import './air.css';
-import * as THREE from 'three';
-import study from '../data/processed/air-three-nights.json';
-import {createLayers} from './layers.js';
-import {createAirWind} from './air-wind.js';
+import './regional-air.css';
+import study from '../data/processed/regional-air-night.json';
+import inventory from '../data/processed/network-stations.json';
 import {sampleAirFrame,describeVector} from './air-model.js';
+import {createRegionalAirField} from './regional-air-field.js';
+import {createContinentScene} from './continent-scene.js';
 import {installStudyDialog} from './study-ui.js';
 import {installPlaybackKeyboard} from './playback-keyboard.js';
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id),names=new Map(inventory.metadata.map(s=>[s.name,s.location]));
+const stations=study.stations.filter(s=>s.lat>=45&&s.lat<=50&&s.lon>=4&&s.lon<=13);
+const stationName=s=>names.get(s.name)||s.name;
 $('air-app').innerHTML=`
-<header><a class="identity" href="/">ZUGUNRUHE<span>BIRDS AND AIR</span></a><span class="header-place">Memmingen · Alpine foreland · September 2018</span></header>
-<main><div id="world"></div><div class="title"><span class="eyebrow">AIR</span><h1>The air has a direction, too.</h1><p>Birds in green. Wind in blue.<br>Three nights, sharing the same sky.</p></div>
+<header><a class="identity" href="/">ZUGUNRUHE<span>BIRDS AND AIR</span></a><span class="header-place">Swiss-adjacent Europe · 24–25 September 2018</span></header>
+<main><div id="world"></div><div class="title"><span class="eyebrow">AIR · ACROSS THE LANDSCAPE</span><h1 id="view-title">Across a changing sky.</h1><p id="view-subtitle">Blue air. Green passage.</p><button id="back-to-network" hidden>← Back to previous view</button></div>
 <div class="air-reading" id="reading"></div>
 <div class="air-actions"><div class="flow-switches" aria-label="Visible flows"><button id="birds" aria-pressed="true">● Birds</button><button id="wind" aria-pressed="true">╱ Wind</button></div><button id="controls-button">Controls</button></div>
 <div id="graphics-error" hidden>The 3D view needs WebGL. Reload in a browser with graphics support.</div></main>
-<footer><div class="playback"><button id="play" aria-label="Play" disabled>▶</button><div class="timeline"><div class="timeline-head"><span id="status"></span><strong id="time-label"></strong></div><input type="range" id="clock" aria-label="Study time" min="12" max="126" step=".01" value="48" disabled><div class="ticks"><span>19:00</span><span>00:00</span><span>04:30</span></div></div></div><div class="footnote"><span>Processed bird estimates · ERA5 wind · 1–4 km ASL</span><span>Drag to turn · pinch to zoom · Space to pause</span></div></footer>
-<section id="air-controls" hidden><button id="close-controls" aria-label="Close controls">×</button><h2>One sky. Three nights.</h2>
-<div class="control-row"><label for="night">Night</label><select id="night">${study.nights.map((n,i)=>`<option value="${i}" ${i===1?'selected':''}>${n.label} 2018</option>`).join('')}</select></div>
-<div class="control-row"><label for="altitude">Height</label><select id="altitude"><option value="-1">All heights</option>${study.altitudeCentresMAsl.map((h,i)=>`<option value="${i}" ${i===5?'selected':''}>${(h/1000).toFixed(1)} km ASL</option>`).join('')}</select></div>
-<div class="view-buttons"><button id="home">Perspective</button><button id="above">Above</button><button id="side">Side</button></div>
-<p id="coverage"></p><p>Green brightness follows bird density. Blue strands show wind direction and relative speed; their number and brightness do not measure air density.</p><button id="about">About this study ↗</button></section>
-<section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>Birds moving through moving air.</h2>
-<p>Three already-selected nights at Memmingen: 2–3, 3–4 and 4–5 September 2018. The clock runs from 19:00 to 04:30 UTC, opening at 22:00 on the middle night. Switching nights preserves the time and camera, and pauses playback. These are a bounded comparison of neighbouring nights, not selected extremes across a season.</p>
-<p>Bird density and horizontal movement are the processed radar estimates in the original archive. Wind is ERA5 pressure-level reanalysis, interpolated by the original researchers to each radar position, timestamp and height. Native wind resolution is hourly and 0.25°; pressure was converted to altitude using a standard-atmosphere formula. The archive rounds both components to 0.01 m/s. Wind also informed upstream bird/insect separation, so these estimates are not independent evidence of a behavioural response.</p>
-<p>Directions point toward movement, with north at 0° and east at 90°. The readout compares the same 200 m band, at the altitude centre shown. Bird movement is relative to the ground; wind is the movement of air. The displayed speed is the magnitude of the mean vector, not the average speed of individual birds. We do not infer species, individual heading, intent, or causation.</p>
-<p>All nights share one brightness scale. Isolating a height boosts its exposure threefold for legibility; All heights restores normal exposure. Green texture and blue strands are illustrative and repeated uniformly across each height, not observed spatial structure or individual paths. Their visual movement uses the same multiplier for bird and wind vectors. The 96 km terrain footprint and twelvefold vertical exaggeration are inherited from Cloud. Source heights are above sea level. With all heights visible, the numeric readout is hidden.</p>
-<p>Density and paired vector components interpolate only between adjacent five-minute profiles. Exact source values and missing values are retained; gaps are not filled in this comparison. Wind may remain visible when bird data are unavailable. Pausing freezes both textures. Touch and mouse gestures turn the scene; reduced-motion preferences keep the textures still while the clock may advance.</p>
-<p>Bird and deposited wind data: Nussbaumer and contributors, <a href="https://zenodo.org/records/4587338">Zenodo version 3</a>, CC BY 4.0. Weather source: <a href="https://doi.org/10.24381/cds.bd0915c6">ERA5 pressure-level reanalysis</a>, Copernicus Climate Change Service. This view uses the deposited wind values, not a new weather download.</p>
-<p>Terrain: <a href="https://registry.opendata.aws/terrain-tiles/">Mapzen Terrain Tiles</a>. Europe terrain produced using Copernicus data and information funded by the European Union — EU-DEM layers. SRTM and GMTED2010 courtesy of the U.S. Geological Survey. Austria terrain © offene Daten Österreichs — Digitales Geländemodell (DGM) Österreich. Sun position supplies illustrative twilight lighting. No other visualisations were consulted.</p></section>`;
-let night=1,index=48,band=5,playing=false,birds=true,wind=true,scene;
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const maxDensity=Math.max(...study.nights.flatMap(n=>n.frames.flatMap(f=>f.dens.filter(Number.isFinite))));
+<footer><div class="playback"><button id="play" aria-label="Play" disabled>▶</button><div class="timeline"><div class="timeline-head"><span id="status">24–25 September</span><strong id="time-label"></strong></div><input type="range" id="clock" aria-label="Study time" min="12" max="108" step=".01" value="36" disabled><div class="ticks"><span>20:00</span><span>00:00</span><span>04:00</span></div></div></div><div class="footnote"><span>Interpolated regional fields · radar birds + ERA5 wind</span><span>Drag to turn · pinch to zoom · Space to pause</span></div></footer>
+<section id="air-controls" hidden><button id="close-controls" aria-label="Close controls">×</button><h2>Through moving air.</h2>
+<div class="control-row"><label for="altitude">Height</label><select id="altitude"><option value="-1" selected>All heights · 1–4 km</option>${study.altitudeCentresMAsl.map((h,i)=>`<option value="${i}" >${(h/1000).toFixed(1)} km ASL</option>`).join('')}</select></div>
+<div class="control-row"><label for="station">Visit a station</label><select id="station"><option value="-1">Across the region</option>${stations.map((s,i)=>`<option value="${i}">${stationName(s)}</option>`).join('')}</select></div>
+<div class="view-buttons"><button id="overlook">Regional view</button><button id="flyover" aria-pressed="false">Flyover · 100 km</button></div>
+<p id="coverage"></p><p>Wind and birds share a clock and distance scale. The trails follow estimated regional movement; their glow and number are artistic choices.</p><button id="about">About this study ↗</button><a class="study-link" href="air-station.html">Original Memmingen comparison ↗</a></section>
+<section id="notes" hidden><button id="close-notes" aria-label="Close study notes">×</button><h2>A changing sky, shared.</h2>
+<p>24–25 September 2018 was selected after screening 92 autumn nights. Wind differs across the Swiss-adjacent region, with usable bird estimates through the night. The screen did not establish biological quality or a causal relationship between birds and wind.</p>
+<p>Blue trails follow wind; green trails follow processed bird movement relative to the ground. Both are integrated through an estimated vector field, not individual tracks, confirmed migration routes, or local turbulent eddies. Bird brightness follows estimated density. Wind brightness and the number of trails do not measure air density. Both sets of trails use the same geographic distance and time scale.</p>
+<p>The archive provides 37 locations across France, Germany, Belgium and the Netherlands, with no Swiss radar observations. Wind is ERA5 pressure-level reanalysis sampled upstream at those locations, at hourly 0.25° native resolution. It also informed the upstream bird/insect separation, so the two fields are not independent measurements. Native ERA5 does not resolve valley-scale wind. The original pressure-to-height conversion used a standard atmosphere.</p>
+<p>For this regional experiment, each 0.25° field-grid point combines available station profiles within 240 km using a 90 km Gaussian distance kernel, tapered beyond 180 km. Support fades from 120 to 240 km from the nearest available paired observation. The display boundary also feathers over 0.5° latitude and 0.75° longitude. The fields interpolate between grid points and adjacent five-minute frames. Wind availability is independent of missing bird values. Unavailable pairs are never replaced with zero, and no temporal gaps are filled.</p>
+<p>Paths use midpoint integration in one-minute steps, retain a fixed altitude, stop at terrain or absent support, and are prepared deterministically. Scrubbing restores the same paths. Wind tails show up to 60 minutes, bird tails 45 minutes. Trail birth and death fade smoothly. Seeds, lifetimes, widths and exposure are display choices; small differences between paths do not establish small-scale measured structure. All heights reduces common exposure to keep overlapping layers legible.</p>
+<p>The visible clock runs from 20:00 to 04:00 UTC, opening at 22:00 with all heights visible. Retained data from 19:00 to 04:30 provide warm-up and ending room for trails. Five real minutes pass per playback second. Height centres run from 1.1 to 3.9 km above sea level; terrain relief is exaggerated ×8 and layer height ×4. Layers lift with the displayed terrain and omit physically underground bands. No cloud-cover data from another night are shown.</p>
+<p>Tap a station, or choose it in Controls, to descend. Back returns to your previous camera position. Flyover is an authored 65-second viewing route across Germany, the Alpine foreland and eastern France, not a migration route. Dragging, pinching or Escape stops it. Controls pauses playback and camera travel; closing it keeps the scene paused. Reduced motion starts paused and uses immediate camera visits; explicit playback and Flyover remain available.</p>
+<p>Space or P toggles playback; arrows scrub five minutes, Shift + arrows thirty minutes, Home/End reach the endpoints. Touch rotates and pinches directly. The original single-station <a href="air-station.html">Memmingen comparison</a> remains available.</p>
+<p>Profiles: <a href="https://zenodo.org/records/4587338">Nussbaumer and contributors, Zenodo v3</a>, CC BY 4.0. Wind: <a href="https://doi.org/10.24381/cds.bd0915c6">ERA5 pressure-level reanalysis</a>, Copernicus Climate Change Service. Geography: Natural Earth, public domain. Terrain: Mapzen Terrain Tiles, Copernicus / EU-DEM, USGS SRTM and GMTED2010, © offene Daten Österreichs, © Kartverket, © Environment Agency 2015. Solar position: SunCalc. No prior-art visualisations were consulted.</p></section>`;
+let index=36,band=-1,selected=-1,playing=false,showBirds=true,showWind=true,scene,field;
+function select(value){selected=Number(value);$('station').value=selected;scene?.select(selected);update();}
 try{
- const colours=Array.from({length:15},(_,i)=>new THREE.Color('#73efaa').lerp(new THREE.Color('#b6efce'),i/28));
- scene=createLayers($('world'),maxDensity,{colours,createOverlay:createAirWind,focusExposure:3,fitWidth:.95});
- scene.canvas.setAttribute('aria-label','Bird density in green and ERA5 wind in blue at matching heights over Memmingen. Drag to turn; pinch to zoom.');
- $('play').disabled=false;$('clock').disabled=false;
+ scene=createContinentScene($('world'),stations,select,(world,landscape)=>(field=createRegionalAirField(world,landscape)),{travellingFlyover:true,markerScale:.3});
+ scene.preset('regional');scene.setInspection(true);
+ const canvas=scene.renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','Blue wind and green bird trails estimated across Swiss-adjacent Europe. Drag to turn; pinch to zoom; tap a station to visit.');
+ canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();playing=false;$('graphics-error').hidden=false;update();});
+ $('play').disabled=$('clock').disabled=false;
 }catch(error){$('graphics-error').hidden=false;console.error(error);}
-const vector=(label,u,v)=>{const d=describeVector(u,v);return `<span class="${label.toLowerCase()}">${label} ${d?d.speed<.1?'· still':`<i style="transform:rotate(${d.bearing}deg)" aria-hidden="true">↑</i> ${Math.round(d.bearing)}° · ${d.speed.toFixed(0)} km/h`:'· unavailable'}</span>`;};
+function setFrame(){scene?.setFrames([sampleAirFrame(study.stations[0].frames,index)],index);}
 function update(){
- const f=sampleAirFrame(study.nights[night].frames,index);scene?.setFrame(f);scene?.selectBand(band);
- $('clock').value=index;$('clock').setAttribute('aria-valuetext',`${f.time.slice(11,16)} UTC, ${f.time.slice(0,10)}`);
- $('time-label').innerHTML=`${f.time.slice(11,16)} <small>UTC</small>`;
+ const time=sampleAirFrame(study.stations[0].frames,index).time;
+ $('clock').value=index;$('clock').setAttribute('aria-valuetext',`${time.slice(11,16)} UTC, ${time.slice(0,10)}`);$('time-label').innerHTML=`${time.slice(11,16)} <small>UTC</small>`;
  $('play').textContent=playing?'Ⅱ':'▶';$('play').setAttribute('aria-label',playing?'Pause':'Play');
- $('status').textContent=`${study.nights[night].label} · ${playing?'Playing':'Paused'}`;
- $('reading').hidden=band<0;
- if(band>=0){const valid=f.dens[band]!==null;$('reading').innerHTML=`<span class="reading-height">${(study.altitudeCentresMAsl[band]/1000).toFixed(1)} km ASL</span>${vector('Birds',valid?f.ub[band]:null,valid?f.vb[band]:null)}${vector('Wind',f.uw[band],f.vw[band])}`;}
- const paired=f.dens.filter((d,b)=>d!==null&&[f.ub[b],f.vb[b],f.uw[b],f.vw[b]].every(Number.isFinite)).length;
- $('coverage').textContent=`${paired}/15 bands have both bird and wind estimates at this time. Missing values remain unavailable.`;
+ $('view-title').textContent=selected<0?'Across a changing sky.':stationName(stations[selected]);
+ $('view-subtitle').textContent=selected<0?'Blue air. Green passage.':'Within the flow. Drag to turn.';
+ $('back-to-network').hidden=!scene?.canReturn;$('back-to-network').disabled=scene?.returning??false;
+ $('flyover').textContent=scene?.flying?'Stop flyover':'Flyover · 100 km';$('flyover').setAttribute('aria-pressed',String(scene?.flying??false));
+ const label=band<0?'1–4 km ASL':`${(study.altitudeCentresMAsl[band]/1000).toFixed(1)} km ASL`;
+ const reading=selected<0||band<0?`${label} · regional estimate`:(()=>{const f=sampleAirFrame(stations[selected].frames,index),v=(u,v)=>{const a=describeVector(u,v);return a?`${Math.round(a.bearing)}° · ${Math.round(a.speed)} km/h`:'unavailable';};return `${label}<br><span class="wind">Wind toward ${v(f.uw[band],f.vw[band])}</span><br><span class="birds">Birds toward ${v(f.ub[band],f.vb[band])}</span>`;})();
+ $('reading').innerHTML=reading;
+ const frames=study.stations.map(s=>sampleAirFrame(s.frames,index));const bands=band<0?Array.from({length:15},(_,i)=>i):[band];
+ const paired=frames.reduce((n,f)=>n+bands.filter(b=>[f.dens[b],f.ub[b],f.vb[b]].every(Number.isFinite)).length,0);
+ $('coverage').textContent=`${paired}/${37*bands.length} bird band profiles available at ${time.slice(11,16)} UTC. Wind profiles available at all 37 locations.`;
 }
-function pause(){playing=false;update();}
 const controls=installStudyDialog($('air-controls'),$('controls-button'),$('close-controls'));
 const notes=installStudyDialog($('notes'),$('about'),$('close-notes'));
+function pause(){playing=false;scene?.stopFlyover();update();}
 $('controls-button').addEventListener('click',()=>{pause();controls(true);});$('close-controls').addEventListener('click',()=>controls(false));
 $('about').addEventListener('click',()=>notes(true));$('close-notes').addEventListener('click',()=>notes(false));
-$('night').addEventListener('change',e=>{night=Number(e.target.value);pause();});
-$('altitude').addEventListener('change',e=>{band=Number(e.target.value);update();});
-for(const [id,method] of [['home','home'],['above','viewTop'],['side','viewSide']])$(id).addEventListener('click',()=>{scene?.[method]();controls(false);});
-for(const id of ['birds','wind'])$(id).addEventListener('click',()=>{if(id==='birds')birds=!birds;else wind=!wind;$(id).setAttribute('aria-pressed',String(id==='birds'?birds:wind));scene?.setFlows(birds,wind);});
-$('play').addEventListener('click',()=>{if(!scene)return;if(index>=126)index=12;playing=!playing;update();});
-$('clock').addEventListener('input',e=>{index=Number(e.target.value);pause();});
-installPlaybackKeyboard({timeline:$('clock'),play:$('play')});
+$('station').addEventListener('change',()=>{controls(false);select($('station').value);});$('back-to-network').addEventListener('click',()=>select(-1));
+$('altitude').addEventListener('change',()=>{band=Number($('altitude').value);field?.setBand(band);update();});
+for(const id of ['birds','wind'])$(id).addEventListener('click',()=>{if(id==='birds')showBirds=!showBirds;else showWind=!showWind;$(id).setAttribute('aria-pressed',String(id==='birds'?showBirds:showWind));field?.setFlows(showBirds,showWind);});
+$('play').addEventListener('click',()=>{if(!scene)return;if(index>=108)index=12;playing=!playing;setFrame();update();});
+$('clock').addEventListener('input',()=>{playing=false;index=Number($('clock').value);setFrame();update();});
+$('overlook').addEventListener('click',()=>{controls(false);scene?.preset('regional');selected=-1;$('station').value='-1';update();});
+$('flyover').addEventListener('click',()=>{controls(false);const start=!scene?.flying;scene?.preset('flyover');selected=-1;$('station').value='-1';if(start&&scene){playing=true;if(index>=108)index=12;}setFrame();update();});
+installPlaybackKeyboard({timeline:$('clock'),play:$('play'),blocked:()=>!!document.querySelector('dialog[open]')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('dialog[open]')){scene?.stopFlyover();update();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
-scene?.canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();playing=false;$('play').disabled=true;$('graphics-error').hidden=false;});
-update();let last=performance.now(),lastUI=0;
+setFrame();update();
+let last=performance.now(),lastUI=0;
 function draw(now){const dt=Math.min(.1,(now-last)/1000);last=now;
- if(!document.hidden){if(playing){index=Math.min(126,index+dt);if(index===126)playing=false;scene?.setFrame(sampleAirFrame(study.nights[night].frames,index));if(now-lastUI>100||!playing){update();lastUI=now;}}
- scene?.draw(dt,playing&&!reduced);}requestAnimationFrame(draw);}
+ if(!document.hidden&&!document.querySelector('dialog[open]')){
+  if(playing){index=Math.min(108,index+dt);if(index===108)playing=false;setFrame();}
+  scene?.draw(dt,playing);if(now-lastUI>150){update();lastUI=now;}
+ }requestAnimationFrame(draw);}
 requestAnimationFrame(draw);

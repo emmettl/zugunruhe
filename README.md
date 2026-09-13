@@ -70,7 +70,7 @@ Sea also has a first [cloud-cover comparison](docs/CLOUDS.md): hourly ERA5 weath
 [GitHub Pages](https://emmettl.github.io/zugunruhe/) ·
 [Deployment workflow and rollback](docs/HOSTING.md)
 
-The same verified artifact goes to both hosts, with the three current studies
+The same verified artifact goes to both hosts, with all current studies
 and both frozen snapshots included. `npm run preview:hosted` checks the built
 site under its production `/zugunruhe/` prefix.
 
@@ -82,6 +82,7 @@ The first continuous journey, **A night in passage**, is at `/night.html`: one
 clock carries the view from Memmingen through the archipelago into the estimated
 sea. [Night selection, itinerary and controls](docs/NIGHT.md).
 
-**Birds and air**, at `/air.html`, compares bird movement with the archive’s
-matching ERA5 wind across three nights at Memmingen.
-[Data, interpretation and controls](docs/AIR.md).
+**Birds and air**, at `/air.html`, follows regional bird and wind fields across
+Swiss-adjacent Europe on 24–25 September 2018.
+[Data, interpretation and controls](docs/REGIONAL-AIR.md). The original three-night
+Memmingen comparison remains at `/air-station.html` ([notes](docs/AIR.md)).

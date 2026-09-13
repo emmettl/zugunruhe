@@ -11,7 +11,7 @@ import { stationLift } from './network-terrain.js';
 
 const earthCentre = new THREE.Vector3(0,-R,0);
 const point = (lat,lon,h=0)=>new THREE.Vector3(...globePoint(lat,lon,h));
-export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false,onInteract=()=>{}}={}) {
+export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false,onInteract=()=>{},markerScale=1}={}) {
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setClearColor('#050610');
   renderer.domElement.setAttribute('role','img');
@@ -49,7 +49,7 @@ export function createContinentScene(container, stations, onSelect, createField=
   const clouds=createCloudCover(scene,landscape);
   const field=createField(scene,landscape),uniforms=field.uniforms;
   const markers=stations.map((s,i)=>{
-    const marker=new THREE.Mesh(new THREE.SphereGeometry(.022,8,6),new THREE.MeshBasicMaterial({color:'#e4e2f0',transparent:true,opacity:.85,depthTest:false}));
+    const marker=new THREE.Mesh(new THREE.SphereGeometry(.022*markerScale,8,6),new THREE.MeshBasicMaterial({color:'#e4e2f0',transparent:true,opacity:.85,depthTest:false}));
     marker.position.copy(point(s.lat,s.lon,groundAtStation[i]*landscape.relief.value+.2));marker.userData.station=i;marker.visible=false;marker.renderOrder=2;scene.add(marker);return marker;
   });
   const labels=[['FRANCE',46.5,2],['GERMANY',51,10],['SWITZERLAND',46.6,8.2],['BELGIUM',50.6,4.4],['NETHERLANDS',52.5,5.5],['Memmingen',48.0431,10.2204]].map(([name,lat,lon])=>{
@@ -71,7 +71,7 @@ export function createContinentScene(container, stations, onSelect, createField=
       flyover.start();return;
     }
     flyover.stop();journey.reset();selected=-1;uniforms.selected.value=-1;
-    const presets={flyover:[[45.5,6,100],[49.1,8,1]],germany:[[48,11,500],[51,10,0]],europe:[[44,9,1200],[48.5,6.5,0]]};
+    const presets={regional:[[44.5,9.5,480],[48.1,8.8,1]],flyover:[[45.5,6,100],[49.1,8,1]],germany:[[48,11,500],[51,10,0]],europe:[[44,9,1200],[48.5,6.5,0]]};
     const [eye,target]=presets[name];camera.position.copy(point(...eye));controls.target.copy(point(...target));controls.update();
   }
   preset('europe');
