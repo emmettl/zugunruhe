@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>First listening sketches · Zugunruhe</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #090e15; color: #e2e8ed; font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 780px; padding: 48px 24px 64px; margin: auto; }
+    .eyebrow { color: #adc1ca; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 14px 0 12px; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; font-weight: 450; letter-spacing: -.035em; }
+    .intro { max-width: 570px; color: #b5c3cf; margin-bottom: 32px; }
+    section { margin: 16px 0; padding: 24px; background: #101923; border: 1px solid #293744; border-radius: 14px; }
+    .title { display: flex; align-items: baseline; gap: 15px; }
+    .number { font-size: 13px; color: #8cc8c7; letter-spacing: .1em; }
+    h2 { margin: 0; font-size: 23px; font-weight: 450; }
+    section p { color: #b5c3cf; margin: 8px 0 18px; }
+    audio { display: block; width: 100%; height: 56px; }
+    a { color: #9fd4d0; text-underline-offset: 4px; }
+    .download { display: inline-flex; min-height: 44px; align-items: center; margin-top: 8px; font-size: 14px; }
+    a:focus-visible { outline: 2px solid #bfe8e3; outline-offset: 5px; }
+    footer { padding-top: 16px; color: #a9bac6; font-size: 14px; }
+    footer p { max-width: 620px; }
+    #status { min-height: 1.6em; color: #bfe8e3; }
+    @media (max-width: 480px) { main { padding: 28px 16px 40px; } section { padding: 18px 14px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Zugunruhe · Listening study 01</div>
+    <h1>A sound to spend time with.</h1>
+    <p class="intro">Three first sketches, three minutes each. A shared set of tones,
+      heard as sustained layers, passing phrases, and a meeting of the two.</p>
+    <section aria-labelledby="sustained-title">
+      <div class="title"><span class="number">01</span><h2 id="sustained-title">Sustained</h2></div>
+      <p>Soft, overlapping swells. The harmony gathers and thins.</p>
+      <audio controls preload="none" aria-label="Play Sustained, three minutes" data-title="Sustained" src="01-sustained.mp3"></audio>
+      <a class="download" href="01-sustained.mp3" download>Download Sustained · MP3</a>
+    </section>
+    <section aria-labelledby="passing-title">
+      <div class="title"><span class="number">02</span><h2 id="passing-title">Passing</h2></div>
+      <p>Rounded, bell-like tones. Small phrases leave space behind them.</p>
+      <audio controls preload="none" aria-label="Play Passing, three minutes" data-title="Passing" src="02-passing.mp3"></audio>
+      <a class="download" href="02-passing.mp3" download>Download Passing · MP3</a>
+    </section>
+    <section aria-labelledby="confluence-title">
+      <div class="title"><span class="number">03</span><h2 id="confluence-title">Confluence</h2></div>
+      <p>The same layers and phrases together, with a sustained foundation.</p>
+      <audio controls preload="none" aria-label="Play Confluence, three minutes" data-title="Confluence" src="03-confluence.mp3"></audio>
+      <a class="download" href="03-confluence.mp3" download>Download Confluence · MP3</a>
+    </section>
+    <footer>
+      <p id="status" role="status" aria-live="polite">Ready when you are.</p>
+      <p>Made with the existing Driftbox rack. These are listening sketches with a held
+        scene reference; their musical movement is authored and does not yet follow the bird data.</p>
+      <p>All three have matched listening levels and keep their natural dynamics.
+        Starting a sketch pauses the other two.</p>
+    </footer>
+  </main>
+  <script>
+    const players = [...document.querySelectorAll('audio')];
+    const status = document.querySelector('#status');
+    for (const player of players) {
+      player.addEventListener('play', () => {
+        for (const other of players) if (other !== player) other.pause();
+        status.textContent = `Listening to ${player.dataset.title}.`;
+      });
+      player.addEventListener('pause', () => {
+        if (players.every((other) => other.paused)) status.textContent = 'Paused.';
+      });
+      player.addEventListener('ended', () => { status.textContent = `${player.dataset.title} has finished.`; });
+      player.addEventListener('error', () => { status.textContent = `${player.dataset.title} could not load. Try the download link.`; });
+    }
+  </script>
+</body>
+</html>

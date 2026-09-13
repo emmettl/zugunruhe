@@ -1,0 +1,1064 @@
+{
+  "created": "2026-09-13T10:14:28.438Z",
+  "renderScriptSha256": "578c174cd1c00bf689821c97fda641ff8e85f549fcc2bbc8b45ba8fce600d27d",
+  "seed": 9132027,
+  "preservedOriginals": {
+    "01-sustained.mp3": "70417ceaf6033e6dd3529f230c1a68341aa49c0d879d6dc41b55d2b127c2395b",
+    "02-passing.mp3": "c947ea6ce98f2c3635895aa801b75b3d13985755a45472cec0eb4003fda79ebe",
+    "03-confluence.mp3": "fb9f2e6b9357a99d835b0ca45e9736468520a61db1b68952b2d883671796e52b",
+    "masters/03-confluence.wav": "346a9338adddec801bf7b5112062f94f4ffd31714d3b3d7cc9d4de970e1be761",
+    "render-manifest.json": "4f16ca6eaa23856e1f967f8847b69265bcfa6deb71bf7d32e68bdbe9d051b948"
+  },
+  "rackFiles": {
+    "headless.js": "7a0232736c7d473d8464aeab684edd8340d3dbe095ca0d5a1c08e8b68909d210",
+    "graph.js": "58a241907c9ce98aa81edf4bebc86d95e15b7088bd3f5968b23bd14c5d8bb7b3",
+    "compile.js": "05ed06ccbe75af6a96b7cd428560b14bbd16681999e046438cedcadc4dba8c47",
+    "dsp/wavetable.js": "d3bc6cc018f4e74f3eaa4b165c16930130137d788e42836dd407f4eb69998187",
+    "modules/wavetable.js": "d7c4145b1552d7a23a27f9c8b720cae6c46f0311ec10d0abf2e3fc1149ccfb01",
+    "modules/offset.js": "9e89f46f9f40d744a82a0235ceb0a758e6243afe3f4f88291eb14b1b3964d0b7",
+    "modules/vca.js": "a222b05914155b7196719876c08a395a72fd21cf5ae5f6aed62f294d396f3ac1",
+    "modules/mixer.js": "9088c17a97cde8ab1a37ae63857f87f3a4cf876b78fa9f50fbe342af567231a8",
+    "modules/reverb.js": "c366877780ad2383f80c888e6328eab70bf102e1e85f032ac971af56ac90a534",
+    "modules/out.js": "bcf0ded1403ce65381a904a9f2c9681f4d1a489b6b29802b2c1df222255bb465"
+  },
+  "revision": {
+    "previousListeningFile": {
+      "file": "04-confluence-twinkles.mp3",
+      "bytes": 4321681,
+      "adjustmentDb": -1.5,
+      "sha256": "123243a850997b21ba44be236c7bbb5c628a71a59f6aab118e3fdfcee6d9f386",
+      "lufs": -24.3,
+      "truePeakDb": -11,
+      "loudnessRangeLu": 6.9
+    },
+    "changes": "Twinkle stem 5 dB lower by whole-piece RMS; attacks lengthened by 120–280 ms; up to 3 dB extra attenuation on the highest notes before stem gain; gentler upper-partial transient."
+  },
+  "scene": {
+    "file": "data/processed/regional-air-2018-09-09-night.json",
+    "sha256": "154d328a494b33cc7b0d25dabd6dac20f09555ec37fa73a8548c63480e8c009a",
+    "station": "demem",
+    "time": "2018-09-09T22:00:00Z",
+    "role": "Held reference scene only. These first timbre studies do not yet map observations to musical parameters.",
+    "source": {
+      "doi": "10.5281/zenodo.4587338",
+      "license": "CC BY 4.0",
+      "archiveMd5": "09673506cbc2ed31f3d7a016ebb32cfb",
+      "wind": "Deposited ERA5, native hourly 0.25 degrees, interpolated upstream to radar profiles; wind informed bird/insect separation."
+    }
+  },
+  "description": "Original Confluence PCM plus quiet authored upper-register arpeggio gestures. No observation mapping yet.",
+  "gestures": [
+    {
+      "at": 6.5,
+      "notes": [
+        78,
+        81,
+        86
+      ],
+      "gaps": [
+        0,
+        1.05,
+        2.32
+      ],
+      "pan": -0.35
+    },
+    {
+      "at": 27.2,
+      "notes": [
+        83,
+        81,
+        78,
+        76
+      ],
+      "gaps": [
+        0,
+        0.86,
+        1.97,
+        3.31
+      ],
+      "pan": 0.38
+    },
+    {
+      "at": 49.8,
+      "notes": [
+        76,
+        78,
+        83
+      ],
+      "gaps": [
+        0,
+        1.26,
+        2.71
+      ],
+      "pan": -0.18
+    },
+    {
+      "at": 74,
+      "notes": [
+        86,
+        81,
+        78
+      ],
+      "gaps": [
+        0,
+        1.12,
+        2.55
+      ],
+      "pan": 0.31
+    },
+    {
+      "at": 97.6,
+      "notes": [
+        78,
+        81,
+        83,
+        86
+      ],
+      "gaps": [
+        0,
+        0.94,
+        2.07,
+        3.49
+      ],
+      "pan": -0.42
+    },
+    {
+      "at": 120.8,
+      "notes": [
+        83,
+        81,
+        76
+      ],
+      "gaps": [
+        0,
+        1.35,
+        2.86
+      ],
+      "pan": 0.26
+    },
+    {
+      "at": 145.6,
+      "notes": [
+        76,
+        78,
+        81
+      ],
+      "gaps": [
+        0,
+        1.09,
+        2.42
+      ],
+      "pan": -0.29
+    },
+    {
+      "at": 160.9,
+      "notes": [
+        86,
+        83,
+        78
+      ],
+      "gaps": [
+        0,
+        1.32,
+        2.86
+      ],
+      "pan": 0.32
+    }
+  ],
+  "score": [
+    {
+      "lane": 0,
+      "start": 6.5,
+      "duration": 4.70023713670671,
+      "note": 78,
+      "attack": 0.2282175280537922,
+      "decay": 1.024899184703827,
+      "amplitude": 0.02720798431104049,
+      "pan": -0.475
+    },
+    {
+      "lane": 1,
+      "start": 7.55,
+      "duration": 4.595681152120233,
+      "note": 81,
+      "attack": 0.2841352188086603,
+      "decay": 0.9981472468934953,
+      "amplitude": 0.022693975370760046,
+      "pan": -0.35
+    },
+    {
+      "lane": 2,
+      "start": 8.82,
+      "duration": 5.073149896785617,
+      "note": 86,
+      "attack": 0.4054401183978189,
+      "decay": 1.150402527861297,
+      "amplitude": 0.020928346031523094,
+      "pan": -0.22499999999999998
+    },
+    {
+      "lane": 3,
+      "start": 27.2,
+      "duration": 5.049999671056867,
+      "note": 83,
+      "attack": 0.3024197751248721,
+      "decay": 1.07246528910473,
+      "amplitude": 0.026489844308750145,
+      "pan": 0.505
+    },
+    {
+      "lane": 0,
+      "start": 28.06,
+      "duration": 4.487571760639549,
+      "note": 81,
+      "attack": 0.31786579994601194,
+      "decay": 1.0930748637765646,
+      "amplitude": 0.02246601336379538,
+      "pan": 0.4216666666666667
+    },
+    {
+      "lane": 1,
+      "start": 29.169999999999998,
+      "duration": 4.821124077215791,
+      "note": 78,
+      "attack": 0.23915791188017466,
+      "decay": 1.0820773812942206,
+      "amplitude": 0.026391763275624255,
+      "pan": 0.3383333333333334
+    },
+    {
+      "lane": 2,
+      "start": 30.509999999999998,
+      "duration": 4.537419049069285,
+      "note": 76,
+      "attack": 0.19755989748169667,
+      "decay": 1.036308335699141,
+      "amplitude": 0.025660283446793906,
+      "pan": 0.255
+    },
+    {
+      "lane": 3,
+      "start": 49.8,
+      "duration": 4.562467761710287,
+      "note": 76,
+      "attack": 0.24699310937547125,
+      "decay": 1.1841274977661669,
+      "amplitude": 0.027467987361829725,
+      "pan": -0.305
+    },
+    {
+      "lane": 0,
+      "start": 51.059999999999995,
+      "duration": 4.72193034850061,
+      "note": 78,
+      "attack": 0.23580312885460442,
+      "decay": 1.219543670862913,
+      "amplitude": 0.03140168621118413,
+      "pan": -0.18
+    },
+    {
+      "lane": 1,
+      "start": 52.51,
+      "duration": 4.736672631278634,
+      "note": 83,
+      "attack": 0.3112852175405715,
+      "decay": 1.0518667905591428,
+      "amplitude": 0.021634497721557972,
+      "pan": -0.05499999999999999
+    },
+    {
+      "lane": 2,
+      "start": 74,
+      "duration": 5.015979010984302,
+      "note": 86,
+      "attack": 0.407984183105873,
+      "decay": 1.0318248679861426,
+      "amplitude": 0.023343450933136667,
+      "pan": 0.435
+    },
+    {
+      "lane": 3,
+      "start": 75.12,
+      "duration": 5.110921608284116,
+      "note": 81,
+      "attack": 0.3020342840591911,
+      "decay": 1.1900832769460976,
+      "amplitude": 0.02324121296200411,
+      "pan": 0.31
+    },
+    {
+      "lane": 0,
+      "start": 76.55,
+      "duration": 5.090385654196144,
+      "note": 78,
+      "attack": 0.22505479859304614,
+      "decay": 1.1991038847714661,
+      "amplitude": 0.024751142729301935,
+      "pan": 0.185
+    },
+    {
+      "lane": 1,
+      "start": 97.6,
+      "duration": 4.902251130715013,
+      "note": 78,
+      "attack": 0.2073668824939523,
+      "decay": 1.0442815269343555,
+      "amplitude": 0.030314693331252782,
+      "pan": -0.5449999999999999
+    },
+    {
+      "lane": 2,
+      "start": 98.53999999999999,
+      "duration": 4.982230661436915,
+      "note": 81,
+      "attack": 0.2615473411150742,
+      "decay": 0.9652953254058957,
+      "amplitude": 0.021498550104494585,
+      "pan": -0.46166666666666667
+    },
+    {
+      "lane": 3,
+      "start": 99.66999999999999,
+      "duration": 5.172863652184606,
+      "note": 83,
+      "attack": 0.3485849404113833,
+      "decay": 1.1036123507656157,
+      "amplitude": 0.021157445157606133,
+      "pan": -0.3783333333333333
+    },
+    {
+      "lane": 0,
+      "start": 101.08999999999999,
+      "duration": 4.8151666816324,
+      "note": 86,
+      "attack": 0.3801548820373137,
+      "decay": 1.0670811280608177,
+      "amplitude": 0.014337125445860965,
+      "pan": -0.295
+    },
+    {
+      "lane": 1,
+      "start": 120.8,
+      "duration": 4.675440141931176,
+      "note": 83,
+      "attack": 0.3267770675069187,
+      "decay": 1.1975524864159524,
+      "amplitude": 0.02560622391778552,
+      "pan": 0.385
+    },
+    {
+      "lane": 2,
+      "start": 122.14999999999999,
+      "duration": 5.169731129333377,
+      "note": 81,
+      "attack": 0.2628737764165271,
+      "decay": 1.102465252391994,
+      "amplitude": 0.02880592367482852,
+      "pan": 0.26
+    },
+    {
+      "lane": 3,
+      "start": 123.66,
+      "duration": 5.148452584818006,
+      "note": 76,
+      "attack": 0.2459923837298993,
+      "decay": 0.9863342870958149,
+      "amplitude": 0.021581343305804766,
+      "pan": 0.135
+    },
+    {
+      "lane": 0,
+      "start": 145.6,
+      "duration": 4.903658684715629,
+      "note": 76,
+      "attack": 0.24870874112588354,
+      "decay": 1.1930783670395613,
+      "amplitude": 0.028990563919302076,
+      "pan": -0.415
+    },
+    {
+      "lane": 1,
+      "start": 146.69,
+      "duration": 4.461476481333375,
+      "note": 78,
+      "attack": 0.23797684740857222,
+      "decay": 1.1451254087500273,
+      "amplitude": 0.02659051095286617,
+      "pan": -0.29
+    },
+    {
+      "lane": 2,
+      "start": 148.01999999999998,
+      "duration": 4.422193793579936,
+      "note": 81,
+      "attack": 0.3129404329799581,
+      "decay": 1.0402325371280312,
+      "amplitude": 0.025877798801782807,
+      "pan": -0.16499999999999998
+    },
+    {
+      "lane": 3,
+      "start": 160.9,
+      "duration": 4.810503347590566,
+      "note": 86,
+      "attack": 0.39347208337509076,
+      "decay": 1.0419584975577891,
+      "amplitude": 0.020506069001890857,
+      "pan": 0.445
+    },
+    {
+      "lane": 0,
+      "start": 162.22,
+      "duration": 4.798403167352081,
+      "note": 83,
+      "attack": 0.3129555268597323,
+      "decay": 1.1747259117662907,
+      "amplitude": 0.020869416430185563,
+      "pan": 0.32
+    },
+    {
+      "lane": 1,
+      "start": 163.76000000000002,
+      "duration": 4.763253215327859,
+      "note": 78,
+      "attack": 0.21507671109051443,
+      "decay": 1.0094108774326742,
+      "amplitude": 0.026050352715835903,
+      "pan": 0.195
+    }
+  ],
+  "patch": {
+    "modules": [
+      {
+        "id": "send",
+        "type": "mixer",
+        "params": {}
+      },
+      {
+        "id": "room",
+        "type": "reverb",
+        "params": {
+          "algorithm": 1,
+          "size": 0.82,
+          "decay": 0.88,
+          "damp": 0.53,
+          "mix": 1,
+          "lowCut": 600,
+          "highCut": 5200,
+          "gate": 0
+        }
+      },
+      {
+        "id": "space",
+        "type": "out",
+        "params": {
+          "level": 0.4,
+          "pan": 0
+        }
+      },
+      {
+        "id": "t0pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "t0lift",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t0octave",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t0a",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0.02
+        }
+      },
+      {
+        "id": "t0b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0
+        }
+      },
+      {
+        "id": "t0gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "t0dry",
+        "type": "out",
+        "params": {
+          "level": 0.58,
+          "pan": 0
+        }
+      },
+      {
+        "id": "t1pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "t1lift",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t1octave",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t1a",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0.02
+        }
+      },
+      {
+        "id": "t1b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0
+        }
+      },
+      {
+        "id": "t1gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "t1dry",
+        "type": "out",
+        "params": {
+          "level": 0.58,
+          "pan": 0
+        }
+      },
+      {
+        "id": "t2pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "t2lift",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t2octave",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t2a",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0.02
+        }
+      },
+      {
+        "id": "t2b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0
+        }
+      },
+      {
+        "id": "t2gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "t2dry",
+        "type": "out",
+        "params": {
+          "level": 0.58,
+          "pan": 0
+        }
+      },
+      {
+        "id": "t3pitch",
+        "type": "offset",
+        "params": {
+          "offset": 0,
+          "gain": 0
+        }
+      },
+      {
+        "id": "t3lift",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t3octave",
+        "type": "offset",
+        "params": {
+          "offset": 1,
+          "gain": 1
+        }
+      },
+      {
+        "id": "t3a",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0.02
+        }
+      },
+      {
+        "id": "t3b",
+        "type": "wavetable",
+        "params": {
+          "tune": 24,
+          "position": 0,
+          "index": 0
+        }
+      },
+      {
+        "id": "t3gain",
+        "type": "vca",
+        "params": {
+          "gain": 0,
+          "curve": 0
+        }
+      },
+      {
+        "id": "t3dry",
+        "type": "out",
+        "params": {
+          "level": 0.58,
+          "pan": 0
+        }
+      }
+    ],
+    "cables": [
+      {
+        "from": [
+          "send",
+          "out"
+        ],
+        "to": [
+          "room",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "room",
+          "out"
+        ],
+        "to": [
+          "space",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t0pitch",
+          "out"
+        ],
+        "to": [
+          "t0lift",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t0lift",
+          "out"
+        ],
+        "to": [
+          "t0a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t0lift",
+          "out"
+        ],
+        "to": [
+          "t0octave",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t0octave",
+          "out"
+        ],
+        "to": [
+          "t0b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t0b",
+          "out"
+        ],
+        "to": [
+          "t0a",
+          "pm"
+        ]
+      },
+      {
+        "from": [
+          "t0a",
+          "out"
+        ],
+        "to": [
+          "t0gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t0gain",
+          "out"
+        ],
+        "to": [
+          "t0dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t0gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in1"
+        ]
+      },
+      {
+        "from": [
+          "t1pitch",
+          "out"
+        ],
+        "to": [
+          "t1lift",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t1lift",
+          "out"
+        ],
+        "to": [
+          "t1a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t1lift",
+          "out"
+        ],
+        "to": [
+          "t1octave",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t1octave",
+          "out"
+        ],
+        "to": [
+          "t1b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t1b",
+          "out"
+        ],
+        "to": [
+          "t1a",
+          "pm"
+        ]
+      },
+      {
+        "from": [
+          "t1a",
+          "out"
+        ],
+        "to": [
+          "t1gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t1gain",
+          "out"
+        ],
+        "to": [
+          "t1dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t1gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in2"
+        ]
+      },
+      {
+        "from": [
+          "t2pitch",
+          "out"
+        ],
+        "to": [
+          "t2lift",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t2lift",
+          "out"
+        ],
+        "to": [
+          "t2a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t2lift",
+          "out"
+        ],
+        "to": [
+          "t2octave",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t2octave",
+          "out"
+        ],
+        "to": [
+          "t2b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t2b",
+          "out"
+        ],
+        "to": [
+          "t2a",
+          "pm"
+        ]
+      },
+      {
+        "from": [
+          "t2a",
+          "out"
+        ],
+        "to": [
+          "t2gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t2gain",
+          "out"
+        ],
+        "to": [
+          "t2dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t2gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in3"
+        ]
+      },
+      {
+        "from": [
+          "t3pitch",
+          "out"
+        ],
+        "to": [
+          "t3lift",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t3lift",
+          "out"
+        ],
+        "to": [
+          "t3a",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t3lift",
+          "out"
+        ],
+        "to": [
+          "t3octave",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t3octave",
+          "out"
+        ],
+        "to": [
+          "t3b",
+          "pitch"
+        ]
+      },
+      {
+        "from": [
+          "t3b",
+          "out"
+        ],
+        "to": [
+          "t3a",
+          "pm"
+        ]
+      },
+      {
+        "from": [
+          "t3a",
+          "out"
+        ],
+        "to": [
+          "t3gain",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t3gain",
+          "out"
+        ],
+        "to": [
+          "t3dry",
+          "in"
+        ]
+      },
+      {
+        "from": [
+          "t3gain",
+          "out"
+        ],
+        "to": [
+          "send",
+          "in4"
+        ]
+      }
+    ]
+  },
+  "balance": {
+    "targetStemRelativeRmsDb": -25,
+    "actualStemRelativeRmsDb": -25.00000000200945,
+    "stemGain": 1.3754899590628893,
+    "mixPeakDb": -9.263322050244813
+  },
+  "sketches": [
+    {
+      "name": "confluence with softer twinkles",
+      "file": "05-confluence-soft-twinkles",
+      "seconds": 180,
+      "sampleRate": 44100,
+      "listeningFile": {
+        "file": "05-confluence-soft-twinkles.mp3",
+        "bytes": 4321688,
+        "adjustmentDb": -1.5,
+        "sha256": "aa66120530dc339b0e602cfc06ed825d3a4f1617c8ff78921607818c9b0899ac",
+        "lufs": -24.3,
+        "truePeakDb": -11,
+        "loudnessRangeLu": 6.8
+      }
+    }
+  ],
+  "encoding": {
+    "codec": "MP3 / libmp3lame / 192 kbit/s",
+    "targetLufs": -24,
+    "processing": "Constant gain only. Dynamics preserved. Encoded files decoded and checked for loudness and true peak.",
+    "encoder": "ffmpeg version 7.1 Copyright (c) 2000-2024 the FFmpeg developers"
+  }
+}

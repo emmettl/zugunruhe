@@ -2,7 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 const root=path.resolve('dist'),port=Number(process.env.PORT??4187);
-const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.zip':'application/zip'};
+const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.zip':'application/zip','.mp3':'audio/mpeg'};
 http.createServer((req,res)=>{
   const url=new URL(req.url,'http://localhost');
   if(url.pathname==='/zugunruhe'){res.writeHead(301,{Location:'/zugunruhe/'+url.search});res.end();return;}

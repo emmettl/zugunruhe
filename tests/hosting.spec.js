@@ -76,6 +76,7 @@ for(const [file,title] of [['','Zugunruhe · Layers'],['network.html','Zugunruhe
     }else await expect(page.locator('#clock')).not.toBeEmpty();
     for(const href of await page.locator('a[href]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('href')).filter(h=>h.startsWith('/'))))expect(href).toMatch(/^\/zugunruhe\//);
     if(!file.startsWith('studies/')){
+      await expect(page.locator('#sound-toggle')).toHaveAttribute('aria-pressed','false');
       await checkMobileAccess(page,!file);
       const timeline=page.locator(file?'#clock':'#time'),canvas=page.locator('canvas').first();
       await canvas.press('Home');await expect(timeline).toHaveValue('0');
@@ -94,6 +95,7 @@ for(const [file,title] of [['','Zugunruhe · Layers'],['network.html','Zugunruhe
         await expect(page.locator('#luminosity')).toHaveValue('1.6');
       }
     }
+    if(file.startsWith('studies/'))await expect(page.locator('#sound-toggle')).toHaveCount(0);
     expect(errors).toEqual([]);
   });
 }

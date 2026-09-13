@@ -21,6 +21,12 @@ Part of this is to show the flow via sound in addition to light, to help the vie
 It is anticipated that some of these techniques may flow back to the other projects (in particular Gleislicht) as a way to "hear the city". 
 The driftbox engine used in gleislicht is a jumping off point but I forsee new realtime generative music whose mood and sounds are rather different. 
 
+The current studies now include an optional first soundtrack, **Confluence with
+softer twinkles**, rendered with the Driftbox rack. Use the speaker button beside
+the timeline. The music keeps its own pace while the visual scene is paused,
+scrubbed or explored. [Soundtrack and controls](docs/SOUNDTRACK.md) ·
+[Listening experiments and direction](docs/AUDIO-DIRECTION.md).
+
 # Plan of commencement
 
 There are three different strands: 
