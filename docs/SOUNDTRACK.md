@@ -123,3 +123,25 @@ independence from the visual timeline, volume persistence, touch-target size and
 default-off navigation. Hosting checks also assert that editable studies gain
 the button and frozen snapshots do not. The original frozen manifests continue
 to be verified by the production build.
+
+## Air: density-responsive phrases
+
+Regional Air now uses the sustained Confluence stem and six complete gestures
+from the approved soft twinkles. Mean paired bird density determines phrase
+spacing, on one fixed scale across nights and heights. Station visits use the
+selected radar; the regional view uses the eleven stations within its bounds.
+At least half the selected density/velocity pairs must be valid. Missing data
+and hiding Birds stop new phrases; existing tails finish. Wind visibility does
+not change the score in this experiment.
+
+Activity smooths with an eight-second time constant, with a maximum of one
+16-second gesture per 18 musical seconds. The score keeps its own clock through
+scrubbing, changing nights and visual playback speed. Notes, bed gain and
+phrase levels stay fixed; the amount of space changes. This is an authored
+mapping of a station summary, not an area-wide bird count.
+
+Seven buffers load only on explicit sound enablement, decode at 24 kHz and
+reuse the same output/fade/suspend lifecycle. The original single-station Air
+comparison and all other studies keep their existing scores. Source, balance,
+reproduction and two retained listening comparisons are documented in
+`audio-studies/06-density/README.md`.

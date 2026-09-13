@@ -97,3 +97,25 @@ test('a failed soundtrack fetch leaves a working retry control', async ({ page }
   await expect(page.locator('.study-sound')).toHaveAttribute('data-state', 'playing');
   await page.locator('#sound-toggle').click();
 });
+
+test('Air density shapes phrases without enabling sound or coupling it to visual playback', async ({page})=>{
+  const audio=[];page.on('request',r=>{if(r.url().includes('.mp3'))audio.push(r.url());});
+  await page.goto('air.html');
+  const widget=page.locator('.study-sound');
+  await expect(widget).toHaveAttribute('data-score','Density · passing phrases');
+  await expect.poll(async()=>Number(await widget.getAttribute('data-activity'))).toBeGreaterThan(0);
+  expect(audio).toEqual([]);
+  await page.getByRole('button',{name:'Turn sound on',exact:true}).click();
+  await expect(widget).toHaveAttribute('data-state','playing');
+  await page.locator('#clock').press('End');
+  await expect(widget).toHaveAttribute('data-state','playing');
+  await page.locator('#birds').click();
+  await expect(widget).toHaveAttribute('data-activity','0.000');
+  await expect(widget).toHaveAttribute('data-state','playing');
+  await page.locator('#birds').click();
+  await expect.poll(async()=>Number(await widget.getAttribute('data-activity'))).toBeGreaterThan(0);
+  expect(audio.length).toBe(7);
+  expect(audio.filter(url=>url.includes('phrase-')).length).toBe(6);
+  await page.getByRole('button',{name:'Turn sound off',exact:true}).click();
+  await expect(widget).toHaveAttribute('data-state','paused');
+});

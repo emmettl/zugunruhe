@@ -17,7 +17,8 @@ export function installStudySound() {
   </button><div class="sound-volume" role="group" aria-label="Sound settings"><label for="sound-volume">Sound volume</label><input id="sound-volume" type="range" min="0" max="100" step="1" aria-label="Sound volume"><p>Confluence · soft twinkles<br>Sound keeps its own pace.</p></div><span id="sound-feedback" role="status" class="sound-feedback"></span>`;
   row.append(widget);
   const button = widget.querySelector('button'), slider = widget.querySelector('input'), feedback = widget.querySelector('#sound-feedback');
-  const responsive = Boolean(document.getElementById('night-app'));
+  const air = Boolean(document.querySelector('[data-sound="density"]'));
+  const responsive = air || Boolean(document.getElementById('night-app'));
   const hasClouds = Boolean(document.getElementById('clouds'));
   let volume = 65;
   try { const saved = localStorage.getItem('zugunruhe-sound-volume'); if (saved !== null && Number.isFinite(Number(saved))) volume = Math.max(0, Math.min(100, Number(saved))); } catch {}
@@ -30,6 +31,7 @@ export function installStudySound() {
       return new Audio({ latencyHint: 'playback' });
     },
     async loadBuffer(context) {
+      if (air) return (await import('./air-sound-assets.js')).loadAirBed();
       if (responsive) return (await import('./night-sound-assets.js')).loadNightStems();
       const response = await fetch(soundUrl);
       if (!response.ok) throw new Error('Soundtrack unavailable');
@@ -38,6 +40,7 @@ export function installStudySound() {
       const cloud = await (await import('./cloud-sound-assets.js')).loadCloudMotif();
       return { recording, cloud };
     },
+    loadPhrases: air ? async () => (await import('./air-sound-assets.js')).loadAirPhrases() : undefined,
     isHidden: () => document.hidden,
     initialVolume: volume / 100,
     onChange({ status }) {
@@ -56,7 +59,7 @@ export function installStudySound() {
   function describeSound() {
     const colour = soundColours[widget.dataset.palette]?.label;
     description.textContent = [scoreName || 'Confluence · soft twinkles', colour, cloudPhrase,
-      responsive ? 'Layers follow the scene; phrases keep their pace.' : 'Sound keeps its own pace.'].filter(Boolean).join('. ');
+      air ? 'Bird density shapes phrase spacing; the bed stays steady.' : responsive ? 'Layers follow the scene; phrases keep their pace.' : 'Sound keeps its own pace.'].filter(Boolean).join('. ');
   }
   function applySoundPalette() {
     if (!palette || !Object.hasOwn(soundColours, palette.value)) return;
@@ -68,6 +71,11 @@ export function installStudySound() {
   palette?.addEventListener('change', applySoundPalette);
   const unsubscribe = responsive ? subscribeSoundScene(scene => {
     soundtrack.setMix(scene.mix);
+    if (air) {
+      soundtrack.setActivity(scene.activity);
+      widget.dataset.activity = scene.activity.toFixed(3);
+      widget.dataset.density = scene.density === null ? 'unavailable' : scene.density.toFixed(3);
+    }
     widget.dataset.mix = JSON.stringify(scene.mix);
     if (widget.dataset.score !== scene.name) {
       widget.dataset.score = scene.name;

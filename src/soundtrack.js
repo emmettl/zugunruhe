@@ -1,6 +1,7 @@
 // Musical time belongs to the AudioContext. Scene changes alter the balance of
 // synchronized stems, never their playback position, pitch or repeat timing.
 import { createSoundColour, soundColours } from './sound-colour.js';
+import { createDensityPhrases } from './density-phrases.js';
 export const CROSSFADE_SECONDS = 24;
 
 export function fadeCurve(incoming, samples = 129) {
@@ -11,10 +12,10 @@ export function fadeCurve(incoming, samples = 129) {
 }
 
 export function createSoundtrack({ createContext, loadBuffer, onChange = () => {},
-  isHidden = () => false, timers = globalThis, initialVolume = 0.65 }) {
+  isHidden = () => false, timers = globalThis, initialVolume = 0.65, loadPhrases }) {
   let context, master, buffers, loading, desired = false, disposed = false;
   let duration = 0, mix = {};
-  let palette, colour;
+  let palette, colour, phrases, activity = 0;
   const layers = new Map();
   let status = 'off', volume = Math.max(0, Math.min(1, initialVolume));
   let generation = 0, started = false, nextStart = 0, interval, suspension;
@@ -51,6 +52,7 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
     // Keep more than a complete cycle scheduled, so a busy WebGL frame cannot
     // disturb a join. Suspended contexts retain their scheduled musical position.
     const now = context.currentTime;
+    phrases?.tick();
     if (nextStart < now) nextStart = now + 0.05;
     while (nextStart < now + duration) {
       schedule(nextStart);
@@ -77,17 +79,23 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
       // Create and resume synchronously inside the originating user gesture.
       ensureContext();
       const resume = context.resume();
-      if (!buffers && !loading) loading = Promise.resolve().then(() => loadBuffer(context)).then((loaded) => {
+      if (!buffers && !loading) loading = Promise.resolve().then(() => Promise.all([loadBuffer(context), loadPhrases?.(context)])).then(([loaded, accents]) => {
         if (disposed) return;
         const candidate = loaded?.duration ? { recording: loaded } : loaded;
         const entries = Object.entries(candidate || {});
         const length = entries[0]?.[1]?.duration;
         if (!entries.length || !Number.isFinite(length) || length <= CROSSFADE_SECONDS * 2
           || entries.some(([, b]) => !Number.isFinite(b?.duration) || Math.abs(b.duration - length) > .001)) throw new Error('Invalid soundtrack stems');
+        if (loadPhrases && (!Array.isArray(accents) || accents.length !== 6 || accents.some(b => !Number.isFinite(b?.duration) || b.duration <= 0 || b.duration > 18))) throw new Error('Invalid phrase buffers');
         buffers = candidate; duration = length;
         for (const [name] of entries) {
           const layer = context.createGain(); layer.gain.value = mix[name] ?? 1;
           layer.connect(colour?.input || master); layers.set(name, layer);
+        }
+        if (accents) {
+          const output = context.createGain(); output.gain.value = 1;
+          output.connect(colour?.input || master); layers.set('phrases', output);
+          phrases = createDensityPhrases(context, output, accents); phrases.setActivity(activity);
         }
       }).finally(() => { loading = undefined; });
       await Promise.all([resume, loading]);
@@ -153,6 +161,11 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
       }
     }
   }
+  function setActivity(value) {
+    if (disposed) return;
+    activity = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
+    phrases?.setActivity(activity);
+  }
   function setPalette(id) {
     if (disposed || !Object.hasOwn(soundColours, id) || palette === id) return;
     palette = id;
@@ -168,11 +181,12 @@ export function createSoundtrack({ createContext, loadBuffer, onChange = () => {
     disposed = true; desired = false; ++generation; clearTimers();
     for (const source of sources) source.stop();
     sources.clear();
+    phrases?.dispose();
     for (const layer of layers.values()) layer.disconnect();
     layers.clear(); buffers = undefined;
     colour?.dispose();
     void context?.close().catch(() => {});
   }
-  return { play, pause, setVolume, setMix, setPalette, dispose,
+  return { play, pause, setVolume, setMix, setPalette, setActivity, dispose,
     get status() { return status; }, get enabled() { return desired; } };
 }

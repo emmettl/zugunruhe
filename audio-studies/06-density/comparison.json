@@ -1,0 +1,56 @@
+[
+  {
+    "name": "quiet",
+    "file": "regional-air-2018-09-09-night.json",
+    "time": "2018-09-10T04:00:00Z",
+    "density": 1.2691150442477874,
+    "coverage": 0.6848484848484848,
+    "activity": 0.3252069910390134,
+    "events": [
+      {
+        "at": 9.1,
+        "index": 0
+      },
+      {
+        "at": 64.1,
+        "index": 1
+      }
+    ],
+    "seconds": 90,
+    "peakDb": -18.798099628988297,
+    "rmsDb": -33.035301918524254
+  },
+  {
+    "name": "busy",
+    "file": "regional-air-2018-10-08-night.json",
+    "time": "2018-10-08T21:55:00Z",
+    "density": 12.775031847133764,
+    "coverage": 0.9515151515151515,
+    "activity": 1,
+    "events": [
+      {
+        "at": 3.1,
+        "index": 0
+      },
+      {
+        "at": 21.1,
+        "index": 1
+      },
+      {
+        "at": 39.1,
+        "index": 2
+      },
+      {
+        "at": 57.1,
+        "index": 3
+      },
+      {
+        "at": 75.1,
+        "index": 4
+      }
+    ],
+    "seconds": 90,
+    "peakDb": -18.458697690928236,
+    "rmsDb": -33.01498142981566
+  }
+]

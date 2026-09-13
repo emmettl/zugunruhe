@@ -1,0 +1,81 @@
+{
+  "source": "audio-studies/04-responsive/masters/twinkles.wav",
+  "sourceSha256": "14b59e71c5d089e2c5a855a28a9d753cbadc4d89f39d4ca45f55d00335b2ab07",
+  "description": "Approved soft twinkle gestures, fixed levels, 0.5-second lead-in and 3-second tail fade. No pitch or loudness normalisation.",
+  "phrases": [
+    {
+      "file": "phrase-0.mp3",
+      "start": 6,
+      "seconds": 16,
+      "notes": [
+        78,
+        81,
+        86
+      ],
+      "bytes": 86684,
+      "sha256": "d7509b47055b9e69042f86345e5b542b8f16f403c3a8cc89b22036aa931e5f51"
+    },
+    {
+      "file": "phrase-1.mp3",
+      "start": 26.7,
+      "seconds": 16,
+      "notes": [
+        83,
+        81,
+        78,
+        76
+      ],
+      "bytes": 85964,
+      "sha256": "a480760aa1ee0c81c12b18c8e02413731a4f0f05b1579a212d7a9de0ef0e8eec"
+    },
+    {
+      "file": "phrase-2.mp3",
+      "start": 49.3,
+      "seconds": 16,
+      "notes": [
+        76,
+        78,
+        83
+      ],
+      "bytes": 84620,
+      "sha256": "7b123eb501964be2f567fd468246a2219f0aa78705bf89112222f0de05857070"
+    },
+    {
+      "file": "phrase-3.mp3",
+      "start": 73.5,
+      "seconds": 16,
+      "notes": [
+        86,
+        81,
+        78
+      ],
+      "bytes": 87092,
+      "sha256": "1d0de1cbb819d4092909efa78cd60b6f78697d351d2fe9334717b8629328af5c"
+    },
+    {
+      "file": "phrase-4.mp3",
+      "start": 97.1,
+      "seconds": 16,
+      "notes": [
+        78,
+        81,
+        83,
+        86
+      ],
+      "bytes": 87380,
+      "sha256": "22ccd8ad248b98862b715b2ce03f905267438db1b6a24600d801f3ce1218491e"
+    },
+    {
+      "file": "phrase-5.mp3",
+      "start": 120.3,
+      "seconds": 16,
+      "notes": [
+        83,
+        81,
+        76
+      ],
+      "bytes": 85868,
+      "sha256": "cec6780086b3aa83dcfe7ef91560e64a484c8c50b1ac2b8450a69dff1ab0a125"
+    }
+  ]
+}

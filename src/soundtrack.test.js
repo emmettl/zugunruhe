@@ -14,7 +14,7 @@ function parameter(value = 0) {
   };
 }
 
-function fixture(load = async () => ({ duration: 180 })) {
+function fixture(load = async () => ({ duration: 180 }), extra = {}) {
   const gains = [], sources = [], changes = [], intervals = new Map(), timeouts = new Map();
   const filters = [], delays = [];
   let count = 0, hidden = false, listener;
@@ -48,7 +48,7 @@ function fixture(load = async () => ({ duration: 180 })) {
   };
   let created = 0, loads = 0;
   const soundtrack = createSoundtrack({ createContext() { created++; return context; },
-    loadBuffer() { loads++; return load(); }, timers, isHidden: () => hidden,
+    loadBuffer() { loads++; return load(); }, ...extra, timers, isHidden: () => hidden,
     onChange: ({ status }) => changes.push(status),
   });
   return { soundtrack, context, gains, sources, changes, intervals, timeouts, filters, delays,
@@ -202,4 +202,24 @@ test('palette profiles keep upper notes unboosted and echoes restrained', () => 
     assert.ok(colour.treble <= 0);
     assert.ok(colour.halo >= 0 && colour.halo <= .2);
   }
+});
+
+
+test('density phrases stay opt-in, change spacing without restarting the bed, and dispose together', async () => {
+  let phraseLoads = 0;
+  const f = fixture(async()=>({sustained:{duration:180}}), {loadPhrases:async()=>{phraseLoads++;return Array.from({length:6},()=>({duration:16}));}});
+  f.soundtrack.setActivity(1);
+  assert.equal(phraseLoads,0);
+  await f.soundtrack.play(); assert.equal(phraseLoads,1);
+  const bed = f.sources.slice();
+  for(let t=1;t<=4;t++){f.context.currentTime=t;for(const tick of f.intervals.values())tick();}
+  assert.equal(f.sources.length,bed.length+1);
+  f.soundtrack.setActivity(0);
+  for(let t=5;t<=40;t++){f.context.currentTime=t;for(const tick of f.intervals.values())tick();}
+  assert.equal(f.sources.length,bed.length+1);
+  assert.ok(f.sources.every(s=>!s.stopped)); // Quiet scenes retain sounding tails.
+  f.soundtrack.pause(true);assert.equal(f.intervals.size,0);
+  await f.soundtrack.play(); assert.equal(phraseLoads,1);
+  assert.deepEqual(f.sources.slice(0,bed.length),bed);
+  f.soundtrack.dispose(); assert.ok(f.sources.every(s=>s.stopped));
 });

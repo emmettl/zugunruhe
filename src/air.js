@@ -12,10 +12,13 @@ import {createRegionalAirField} from './regional-air-field.js';
 import {createContinentScene} from './continent-scene.js';
 import {installStudyDialog} from './study-ui.js';
 import {installPlaybackKeyboard} from './playback-keyboard.js';
+import {airSound} from './air-sound.js';
+import {publishSoundScene} from './sound-scene.js';
 const $=id=>document.getElementById(id),names=new Map(inventory.metadata.map(s=>[s.name,s.location]));
 let study=initialStudy,night=airNights.find(n=>n.date===study.date),loadingNight=false;
 let stations=study.stations.filter(s=>s.lat>=45&&s.lat<=50&&s.lon>=4&&s.lon<=13);
 const stationName=s=>names.get(s.name)||s.name;
+$('air-app').dataset.sound='density';
 $('air-app').innerHTML=`
 <header><a class="identity" href="/">ZUGUNRUHE<span>BIRDS AND AIR</span></a><span class="header-place" id="night-place">Swiss-adjacent Europe · 24–25 September 2018</span></header>
 <main><div id="world"></div><div class="title"><span class="eyebrow">AIR · ACROSS THE LANDSCAPE</span><h1 id="view-title">Across a changing sky.</h1><p id="view-subtitle">Blue air. Green passage.</p><button id="back-to-network" hidden>← Back to previous view</button></div>
@@ -39,6 +42,7 @@ $('air-app').innerHTML=`
 <p>Paths use midpoint integration in one-minute steps, retain a fixed altitude, stop at terrain or absent support, and are prepared deterministically. Scrubbing restores the same paths. Wind tails show up to 60 minutes, bird tails 45 minutes. Trail birth and death fade smoothly. Seeds, lifetimes, widths and exposure are display choices; small differences between paths do not establish small-scale measured structure. All heights reduces common exposure to keep overlapping layers legible.</p>
 <p>The visible clock runs from 20:00 to 04:00 UTC, opening at 22:00 with all heights visible. Retained data from 19:00 to 04:30 provide warm-up and ending room for trails. At normal speed (1×), five real minutes pass per playback second. Playback speed in Controls ranges from ¼× to 4× and changes both flows together. The chosen speed is retained in the page URL. Camera travel keeps its own pace. Height centres run from 1.1 to 3.9 km above sea level; terrain relief is exaggerated ×8 and layer height ×4. Layers lift with the displayed terrain and omit physically underground bands. No cloud-cover data from another night are shown.</p>
 <p>Tap a station, or choose it in Controls, to descend. Back returns to your previous camera position. Flyover is an authored 65-second viewing route across Germany, the Alpine foreland and eastern France, not a migration route. Dragging, pinching or Escape stops it. Controls pauses playback and camera travel; closing it keeps the scene paused. Reduced motion starts paused and uses immediate camera visits; explicit playback and Flyover remain available.</p>
+<p>Optional sound keeps a steady sustained bed. Estimated bird density shapes the spacing of six quiet, composed phrases, using one fixed scale across nights. The regional view averages available bird density and velocity pairs at the eleven radar locations within the displayed region, at the selected heights; visiting a station uses that station. This is a station summary, not an area-wide bird count. If fewer than half the selected pairs are available, or Birds is hidden, no new phrases begin. Existing phrases keep their tails. Scrubbing and night changes ease the response gradually without restarting the musical clock. Pitch and phrase loudness stay fixed; the notes and the mapping are artistic choices. Sound pauses separately from the visual clock.</p>
 <p>Space or P toggles playback; arrows scrub five minutes, Shift + arrows thirty minutes, Home/End reach the endpoints. Touch rotates and pinches directly. The original single-station <a href="air-station.html">Memmingen comparison</a> remains available.</p>
 <p>Profiles: <a href="https://zenodo.org/records/4587338">Nussbaumer and contributors, Zenodo v3</a>, CC BY 4.0. Wind: <a href="https://doi.org/10.24381/cds.bd0915c6">ERA5 pressure-level reanalysis</a>, Copernicus Climate Change Service. Geography: Natural Earth, public domain. Terrain: Mapzen Terrain Tiles, Copernicus / EU-DEM, USGS SRTM and GMTED2010, © offene Daten Österreichs, © Kartverket, © Environment Agency 2015. Solar position: SunCalc. No prior-art visualisations were consulted.</p></section>`;
 const speedLabels=new Map([[.25,"¼×"],[.5,"½×"],[1,"1×"],[2,"2×"],[4,"4×"]]);
@@ -56,6 +60,7 @@ try{
 }catch(error){$('graphics-error').hidden=false;console.error(error);}
 function setFrame(){scene?.setFrames([sampleAirFrame(study.stations[0].frames,index)],index);}
 function update(){
+ publishSoundScene(airSound((selected<0?stations:[stations[selected]]).map(s=>sampleAirFrame(s.frames,index)),band,showBirds));
  const time=sampleAirFrame(study.stations[0].frames,index).time;
  $('clock').value=index;$('clock').setAttribute('aria-valuetext',`${time.slice(11,16)} UTC, ${time.slice(0,10)}`);$('time-label').innerHTML=`${time.slice(11,16)} <small>UTC</small>`;
  $('status').textContent=`${night.label}${loadingNight?' · loading…':playbackSpeed===1?'':` · ${speedLabels.get(playbackSpeed)}`}`;
@@ -103,7 +108,7 @@ async function switchNight(next){
 }
 $('night').addEventListener('change',()=>{const next=airNights.find(n=>n.date===$('night').value);if(next)switchNight(next);});
 $('altitude').addEventListener('change',()=>{band=Number($('altitude').value);field?.setBand(band);update();});
-for(const id of ['birds','wind'])$(id).addEventListener('click',()=>{if(id==='birds')showBirds=!showBirds;else showWind=!showWind;$(id).setAttribute('aria-pressed',String(id==='birds'?showBirds:showWind));field?.setFlows(showBirds,showWind);});
+for(const id of ['birds','wind'])$(id).addEventListener('click',()=>{if(id==='birds')showBirds=!showBirds;else showWind=!showWind;$(id).setAttribute('aria-pressed',String(id==='birds'?showBirds:showWind));field?.setFlows(showBirds,showWind);update();});
 $('play').addEventListener('click',()=>{if(!scene||loadingNight)return;if(index>=108)index=12;playing=!playing;setFrame();update();});
 $('clock').addEventListener('input',()=>{if(loadingNight)return;playing=false;index=Number($('clock').value);setFrame();update();});
 $('overlook').addEventListener('click',()=>{controls(false);scene?.preset('regional');selected=-1;$('station').value='-1';update();});
