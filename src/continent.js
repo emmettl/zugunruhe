@@ -108,9 +108,9 @@ installPlaybackKeyboard({timeline:$('clock'),play:$('play'),blocked:()=>!$('note
 document.addEventListener('visibilitychange',()=>{last=performance.now();});
 scene?.renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();playing=false;$('graphics-error').hidden=false;updateUI();});
 setFrames();updateUI();
-function animate(now){const dt=Math.min(.1,(now-last)/1000);last=now;
+function animate(now){const cameraDt=Math.max(0,(now-last)/1000),dt=Math.min(.1,cameraDt);last=now;
   if(!document.hidden){if(playing){index=Math.min(144,index+dt);if(index===144)playing=false;setFrames();}
-    const altitude=scene?.draw(dt,playing);
+    const altitude=scene?.draw(dt,playing,cameraDt);
     if(now-lastUI>100){updateUI();$('camera-height').textContent=altitude===undefined?'':`${Math.round(altitude).toLocaleString()} km above Earth`;lastUI=now;}
   }requestAnimationFrame(animate);
 }requestAnimationFrame(animate);

@@ -94,10 +94,11 @@ export function createContinentScene(container, stations, onSelect, createField=
     const position=target.clone().addScaledVector(heading,distance*.82).addScaledVector(up,distance*.5724);
     journey.focus({position,target});
   }
-  function draw(dt,playing){
+  // Camera travel follows elapsed time even when rendering takes longer than the playback step.
+  function draw(dt,playing,cameraDt=dt){
     field.draw(dt,playing);
     if(driven){/* The night itinerary owns this pose until a gesture takes over. */}
-    else if(journey.moving){journey.step(dt);if(flyover.active)controls.enabled=false;}
+    else if(journey.moving){journey.step(cameraDt);if(flyover.active)controls.enabled=false;}
     else if(flyover.active){flyover.step(reducedMotion?dt*.5:dt);controls.enabled=!flyover.active;}
     else controls.update();
     // Keep manual orbit above even the most exaggerated peak in this grid.

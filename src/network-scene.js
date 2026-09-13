@@ -112,7 +112,8 @@ export function createNetworkScene(container, stations, onSelect) {
     const position=target.clone().addScaledVector(heading,distance*.82).addScaledVector(up,distance*.5724);
     journey.focus({position,target});
   }
-  function draw(dt,playing){
+  // Camera travel follows elapsed time even when rendering takes longer than the playback step.
+  function draw(dt,playing,cameraDt=dt){
     currentFrames.forEach((f,si)=>{for(let b=0;b<15;b++){
       const n=si*15+b,valid=f.dens[b]!==null&&f.ub[b]!==null&&f.vb[b]!==null,u=valid?f.ub[b]:0,v=valid?-f.vb[b]:0;
       if(angles[n]===null&&valid)angles[n]=Math.atan2(v,u);
@@ -120,7 +121,7 @@ export function createNetworkScene(container, stations, onSelect) {
       for(let j=0;j<3;j++){const i=si*45+b*3+j;arrays.phase.set(phases[n],i*2);arrays.axis.set([Math.cos(angles[n]??0),Math.sin(angles[n]??0)],i*2);}
     }});
     geo.attributes.phase.needsUpdate=true;geo.attributes.axis.needsUpdate=true;
-    if(journey.moving)journey.step(dt);else controls.update();
+    if(journey.moving)journey.step(cameraDt);else controls.update();
     // Keep manual orbit above even the most exaggerated peak in this grid.
     const minimumAltitude=Math.max(20,landscape.maxHeightKm*landscape.relief.value+2);
     if(cameraAltitude(camera.position.toArray())<minimumAltitude)camera.position.sub(earthCentre).setLength(R+minimumAltitude/100).add(earthCentre);
