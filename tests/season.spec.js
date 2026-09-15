@@ -1,0 +1,70 @@
+import { test, expect } from '@playwright/test';
+
+test('seasonal calendar selects nights, periods, stations and preserves deep links', async ({ page }) => {
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
+  await page.goto('season-data.html');
+  await expect(page).toHaveTitle('Zugunruhe · Season data');
+  await expect(page.locator('#night-title')).toHaveText('4 September');
+  await expect(page.locator('#night-density')).toContainText('21.92');
+  await expect(page.locator('#night-coverage')).toContainText('45 / 48');
+  await expect(page.locator('#period-coverage')).toContainText('171 of 365');
+  await expect(page.getByRole('link', { name: 'Season', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('#sound-toggle')).toHaveCount(0);
+  await page.locator('#season-calendar').press('Home');
+  await expect(page.locator('#night-title')).toHaveText('1 January');
+  await expect(page.locator('#night-density')).toContainText('Insufficient');
+  await expect(page.locator('#night-coverage')).toContainText('0 / 48');
+  await page.getByRole('button', { name: 'Autumn', exact: true }).click();
+  await expect(page.locator('#season-date')).toHaveAttribute('max', '121');
+  await page.locator('#season-calendar').press('End');
+  await expect(page.locator('#night-title')).toHaveText('30 November');
+  await page.locator('#season-calendar').press('Shift+ArrowLeft');
+  await expect(page.locator('#night-title')).toHaveText('23 November');
+  await page.locator('#season-station').selectOption('frmtc');
+  await expect(page.locator('#season-station')).toBeEnabled();
+  await expect(page.locator('#station-location')).toContainText('181 nights');
+  await expect(page.locator('#night-title')).toHaveText('23 November');
+  await expect(page).toHaveURL(/station=frmtc/);
+  await page.reload();
+  await expect(page.locator('#season-station')).toHaveValue('frmtc');
+  await expect(page.locator('#season-station')).toBeEnabled();
+  await expect(page.locator('#night-title')).toHaveText('23 November');
+  await expect(page.getByRole('button', { name: 'Autumn', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('#season-calendar').press('Space');
+  await expect.poll(async () => Number(await page.locator('#season-date').inputValue())).toBeGreaterThan(114);
+  await page.locator('#season-calendar').press('p');
+  await expect(page.locator('#season-play')).toHaveAttribute('aria-label', 'Play nights');
+  await page.getByRole('button', { name: 'About the data' }).click();
+  await expect(page.locator('#season-notes')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#season-notes')).toBeHidden();
+  await expect(page.locator('#season-about')).toBeFocused();
+  await page.getByText('Read this night’s altitude profile', { exact: true }).click();
+  await expect(page.locator('#night-profile tbody tr')).toHaveCount(15);
+  for (const width of [390, 320, 1280]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  expect(errors).toEqual([]);
+});
+
+test('a failed station download retains the calendar and can be retried', async ({ page }) => {
+  await page.goto('season-data.html');
+  await page.route('**/frmtc-*.json', route => route.fulfill({ status: 503, body: 'Unavailable' }));
+  await page.locator('#season-station').selectOption('frmtc');
+  await expect(page.locator('#season-error')).toContainText('could not load');
+  await expect(page.locator('#season-station')).toHaveValue('demem');
+  await expect(page.locator('#night-density')).toContainText('21.92');
+  await expect(page.locator('#season-play')).toBeEnabled();
+  await page.unroute('**/frmtc-*.json');
+  await page.route('**/frmtc-*.json', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{"schemaVersion":1,"site":{"name":"frmtc"},"nights":[]}' }));
+  await page.locator('#season-station').selectOption('frmtc');
+  await expect(page.locator('#season-error')).toContainText('could not load');
+  await expect(page.locator('#season-station')).toHaveValue('demem');
+  await expect(page.locator('#night-density')).toContainText('21.92');
+  await page.unroute('**/frmtc-*.json');
+  await page.locator('#season-station').selectOption('frmtc');
+  await expect(page.locator('#season-station')).toBeEnabled();
+  await expect(page.locator('#station-location')).toContainText('181 nights');
+  await expect(page.locator('#season-error')).toBeHidden();
+});

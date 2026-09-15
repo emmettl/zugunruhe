@@ -92,3 +92,14 @@ sea. [Night selection, itinerary and controls](docs/NIGHT.md).
 Swiss-adjacent Europe across three contrasting nights in September and October 2018.
 [Data, interpretation and controls](docs/REGIONAL-AIR.md). The original three-night
 Memmingen comparison remains at `/air-station.html` ([notes](docs/AIR.md)).
+
+**A season of nights**, at `/season.html`, is a local spatial sketch: drift through
+nightly veils of light, with altitude rising through their colour and calendar time
+extending into the distance. Explore year/spring/autumn windows at 37 stations.
+**Across places** gathers the selected night onto a geographic map; choosing a
+radar or **Through this place** unfolds its season around the same anchored veil.
+Returning to geography retains the date reached among the nights.
+The original data calendar, with nightly columns and selectable four-hour traces,
+remains at `/season-data.html`. Missing observations stay missing in both views.
+[Seasonal coverage, interpretation and reproduction](docs/SEASON-NIGHTS.md) ·
+[Potential avenues for future studies](docs/POTENTIAL-AVENUES.md).
