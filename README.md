@@ -103,3 +103,9 @@ The original data calendar, with nightly columns and selectable four-hour traces
 remains at `/season-data.html`. Missing observations stay missing in both views.
 [Seasonal coverage, interpretation and reproduction](docs/SEASON-NIGHTS.md) ·
 [Potential avenues for future studies](docs/POTENTIAL-AVENUES.md).
+
+**A thread of passage**, at `/migration.html`, follows recorded journeys of fifteen
+white storks from July to September 2018. Sparse glints reveal individual GPS
+observations. Hold a position, follow a bird, or unfold its geographic route into
+calendar time and latitude. This excerpt extends from Europe into Morocco;
+recording gaps remain open. [Data, interpretation and reproduction](docs/MIGRATION.md).

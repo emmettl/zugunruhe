@@ -8,6 +8,7 @@ export default defineConfig({base:'./',build:{rolldownOptions:{input:{
   air:fileURLToPath(new URL('./air.html',import.meta.url)),
   season:fileURLToPath(new URL('./season.html',import.meta.url)),
   'season-data':fileURLToPath(new URL('./season-data.html',import.meta.url)),
+  migration:fileURLToPath(new URL('./migration.html',import.meta.url)),
   night:fileURLToPath(new URL('./night.html',import.meta.url)),
   currents:fileURLToPath(new URL('./currents.html',import.meta.url)),
   continent:fileURLToPath(new URL('./continent.html',import.meta.url)),

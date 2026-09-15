@@ -18,8 +18,9 @@ New experiment: [Season of nights](SEASON-NIGHTS.md).
 
 A small cohort of GPS-tagged birds could introduce continuity across departure,
 travel, stopovers and return. Sparse accumulating paths could give pauses as much
-weight as movement. Investigate European migration studies in Movebank; no
-particular reusable dataset has yet been verified. Study-specific download and
+weight as movement. A first CC0 subset is now verified and explored in
+[A thread of passage](MIGRATION.md): fifteen white storks, July–September 2018.
+Longer and more complete journeys remain an avenue to investigate. Study-specific download and
 reuse terms apply. Connections between fixes must remain identified as
 interpolation, and tagged individuals do not represent an entire population.
 
