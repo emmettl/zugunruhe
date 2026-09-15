@@ -12,7 +12,7 @@
     "preview:hosted": "node scripts/serve-hosted.mjs"
   },
   "dependencies": {
-    "@motionstudies/web": "0.1.0-alpha.17",
+    "@motionstudies/web": "0.1.0-alpha.18",
     "suncalc": "1.9.0",
     "three": "0.185.1"
   },
