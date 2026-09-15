@@ -104,6 +104,15 @@ remains at `/season-data.html`. Missing observations stay missing in both views.
 [Seasonal coverage, interpretation and reproduction](docs/SEASON-NIGHTS.md) ·
 [Potential avenues for future studies](docs/POTENTIAL-AVENUES.md).
 
+**Of a feather**, at `/flock.html`, is the first individual flock simulation:
+420 birds with local neighbour interactions, banking turns, flapping and gliding.
+Watch from outside, follow one bird, or fly among them with a gently turning camera.
+Optional traces reveal individual paths; a mouse or touch disturbance introduces
+a local response. Click or tap to sound a note and startle nearby birds. **Listen**
+tries a provisional soundtrack whose activity follows the flock’s agitation.
+This is an explicitly simulated study in an imagined setting.
+[Behaviour, camera and research notes](docs/FLOCK.md).
+
 **A thread of passage**, at `/migration.html`, follows recorded journeys of fifteen
 white storks from July to September 2018. Sparse glints reveal individual GPS
 observations. Hold a position, follow a bird, or unfold its geographic route into

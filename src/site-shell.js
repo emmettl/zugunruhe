@@ -4,6 +4,7 @@ const base=new URL(/* @vite-ignore */ '../',import.meta.url);
 const frozen=document.documentElement.hasAttribute('data-frozen-study');
 const styles=document.createElement('style');
 styles.textContent=`.site-navigation{display:flex;align-items:center;gap:3px;margin-left:auto;white-space:nowrap}.site-navigation a{font:12px Inter,system-ui,sans-serif;text-decoration:none;color:#9994aa;padding:8px 10px;border-radius:4px}.site-navigation a[aria-current=page]{color:#ece1f3;background:#c6b2ea12}.site-navigation a:hover{color:white}.site-navigation a:focus-visible{outline:2px solid #9cdde5;outline-offset:2px}header:has(.site-navigation){gap:20px}@media(max-width:760px){.site-navigation a{font-size:11px;padding:8px 7px}header:has(.site-navigation){gap:12px}.site-navigation{gap:0}}`;
+styles.textContent += `@media(max-width:760px){header .site-navigation{display:flex!important;flex-wrap:nowrap;overflow-x:auto;max-width:100%;min-width:0}header .site-navigation a{flex:1 0 auto;padding:12px 7px!important;min-height:44px}}`;
 if(!frozen)document.head.append(styles);
 function update(){
   if(!frozen)installStudySound();
@@ -15,7 +16,7 @@ function update(){
   if(!frozen&&header&&!header.querySelector('.site-navigation')){
     header.querySelector('.previous')?.remove();
     const nav=document.createElement('nav');nav.className='site-navigation';nav.setAttribute('aria-label','Studies');
-    for(const [file,label] of [['','Cloud'],['network.html','Islands'],['continent.html','Sea'],['currents.html','Currents'],['night.html','Night'],['air.html','Air'],['season.html','Season']]){
+    for(const [file,label] of [['','Cloud'],['network.html','Islands'],['continent.html','Sea'],['currents.html','Currents'],['night.html','Night'],['air.html','Air'],['season.html','Season'],['flock.html','Flock']]){
       const a=document.createElement('a');a.href=new URL(file,base).href;a.textContent=label;
       const path=location.pathname.replace(/\.html$/,'').replace(/\/$/,'');
       const target=new URL(file,base).pathname.replace(/\.html$/,'').replace(/\/$/,'');
