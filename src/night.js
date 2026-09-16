@@ -45,7 +45,7 @@ function interrupt(){
   if(!scene)return;playing=false;guided=false;returning=null;scene.releaseCamera();updateUI();
 }
 try{
-  scene=createContinentScene($('world'),network.stations,()=>{},createNightField,{onInteract:interrupt});
+  scene=createContinentScene($('world'),network.stations,()=>{},createNightField,{onInteract:interrupt,renderOnChange:true});
   scene.setPalette('boreal',true);scene.setGain(.9);scene.driveCamera(heldPose);
   scene.renderer.domElement.setAttribute('aria-label','A journey from one radar cloud through separate stations to an estimated sea of migration. Drag to pause and explore; pinch to zoom.');
   $('play').disabled=false;$('clock').disabled=false;
@@ -68,10 +68,15 @@ function setFrames(){
   $('evidence').textContent=index<24?'Memmingen · processed radar estimates':index<54?`${count}/37 complete profiles · separate observations`:withinNightGap(index)?'Estimated field · temporal interpolation':`${count}/37 complete profiles · estimated field`;
 }
 function updateUI(){
-  $('play').textContent=playing?'Ⅱ':'▶';$('play').setAttribute('aria-label',playing?'Pause':'Play');
-  $('clock').value=index;
+  // Preserve the pressed button's text node across frames. Replacing it while
+  // WebKit is dispatching a pointer gesture can discard the pending click.
+  const setText=(id,value)=>{if($(id).textContent!==value)$(id).textContent=value;};
+  setText('play',playing?'Ⅱ':'▶');
+  const label=playing?'Pause':'Play';
+  if($('play').getAttribute('aria-label')!==label)$('play').setAttribute('aria-label',label);
+  if(Number($('clock').value)!==index)$('clock').value=index;
   $('continue').hidden=guided||index===NIGHT_END;
-  $('status').textContent=returning?'Returning to the journey':!guided?'Exploring · time paused':index===NIGHT_END?'End · play to begin again':playing?nightChapter(index).name:started?'Paused':'Ready · 2¼ minutes';
+  setText('status',returning?'Returning to the journey':!guided?'Exploring · time paused':index===NIGHT_END?'End · play to begin again':playing?nightChapter(index).name:started?'Paused':'Ready · 2¼ minutes');
 }
 function resume(){
   if(!scene)return;started=true;
@@ -100,12 +105,12 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.q
 setFrames();updateUI();
 let previous=performance.now();
 function draw(now){
-  const dt=Math.min(.1,(now-previous)/1000);previous=now;
+  const elapsed=Math.max(0,(now-previous)/1000),dt=Math.min(.1,elapsed);previous=now;
   // Controls pause the journey. Keep that backdrop still while a dialog is open,
   // avoiding expensive WebGL frames competing with form and keyboard interaction.
   if(scene&&!document.querySelector('dialog[open]')){
     if(returning){
-      returning.elapsed+=dt;const t=ease(returning.elapsed/2.4);
+      returning.elapsed+=elapsed;const t=ease(returning.elapsed/2.4);
       scene.driveCamera({position:arcPoint(returning.from.position,returning.to.position,t),target:arcPoint(returning.from.target,returning.to.target,t)});
       if(t>=1){returning=null;playing=true;}
     }else{

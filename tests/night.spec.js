@@ -63,3 +63,18 @@ test.describe('reduced motion',()=>{
     await expect(label).toHaveAttribute('style',pose);
   });
 });
+
+test('a held playback click survives animation frames', async ({ page }) => {
+  await page.goto('night.html');
+  const play = page.locator('#play'); await expect(play).toBeEnabled();
+  const text = await play.evaluateHandle(button => button.firstChild);
+  const box = await play.boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  // Replacing the pressed text on each frame can cancel WebKit's pending click.
+  expect(await text.evaluate(node => node.isConnected)).toBe(true);
+  await page.mouse.up();
+  await expect(play).toHaveAttribute('aria-label', 'Pause');
+  await play.click(); await expect(play).toHaveAttribute('aria-label', 'Play');
+});

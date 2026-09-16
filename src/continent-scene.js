@@ -1,3 +1,4 @@
+import { createRenderState } from './render-state.js';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import SunCalc from 'suncalc';
@@ -11,7 +12,8 @@ import { stationLift } from './network-terrain.js';
 
 const earthCentre = new THREE.Vector3(0,-R,0);
 const point = (lat,lon,h=0)=>new THREE.Vector3(...globePoint(lat,lon,h));
-export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false,onInteract=()=>{},markerScale=1}={}) {
+export function createContinentScene(container, stations, onSelect, createField=createContinentalField, {travellingFlyover=false,onInteract=()=>{},markerScale=1,renderOnChange=false}={}) {
+  const renderState = createRenderState();
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setClearColor('#050610');
   renderer.domElement.setAttribute('role','img');
@@ -57,6 +59,7 @@ export function createContinentScene(container, stations, onSelect, createField=
   });
   let width=1,height=1,selected=-1,driven=false;
   function setFrames(frames,index){
+    renderState.invalidate();
     field.setIndex(index);clouds.setTime(frames[0].time);
     const sun=SunCalc.getPosition(new Date(frames[0].time),48.5,6.5);
     sunUniform.value.set(-Math.sin(sun.azimuth)*Math.cos(sun.altitude),Math.sin(sun.altitude),Math.cos(sun.azimuth)*Math.cos(sun.altitude));
@@ -75,7 +78,7 @@ export function createContinentScene(container, stations, onSelect, createField=
     const [eye,target]=presets[name];camera.position.copy(point(...eye));controls.target.copy(point(...target));controls.update();
   }
   preset('europe');
-  function resize(){width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();field.resize?.(width,height);}
+  function resize(){renderState.invalidate();width=container.clientWidth;height=container.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();field.resize?.(width,height);}
   const observer=new ResizeObserver(resize);observer.observe(container);resize();
   const probe=new THREE.Vector3();
   function focusStation(i,force=false){
@@ -105,6 +108,12 @@ export function createContinentScene(container, stations, onSelect, createField=
     const minimumAltitude=Math.max(20,landscape.maxHeightKm*landscape.relief.value+2);
     if(cameraAltitude(camera.position.toArray())<minimumAltitude)camera.position.sub(earthCentre).setLength(R+minimumAltitude/100).add(earthCentre);
     uniforms.viewExposure.value=THREE.MathUtils.lerp(.3,1,THREE.MathUtils.smoothstep(cameraAltitude(camera.position.toArray()),70,500));
+    // Night's paused field has a fixed texture phase. Keep processing controls
+    // and colour easing, but do not submit the same expensive transparent layers.
+    if(renderOnChange&&!renderState.changed([
+      ...camera.position.toArray(),...camera.quaternion.toArray(),...camera.projectionMatrix.elements,
+      ...uniforms.colourStops.value.flatMap(c=>c.toArray()),uniforms.time.value,
+    ]))return cameraAltitude(camera.position.toArray());
     renderer.render(scene,camera);
     labels.forEach(({el,point:p})=>{probe.copy(p).project(camera);const visible=p.clone().sub(earthCentre).dot(camera.position.clone().sub(p))>0;
       el.hidden=journey.canReturn||!visible||probe.z>1||probe.z<0||Math.abs(probe.x)>.93||Math.abs(probe.y)>.8;el.style.left=`${(probe.x*.5+.5)*width}px`;el.style.top=`${(-probe.y*.5+.5)*height}px`;
@@ -149,7 +158,7 @@ export function createContinentScene(container, stations, onSelect, createField=
   }
   return {setFrames,draw,preset,stopFlyover,releaseCamera,
     cameraPose:()=>({position:camera.position.clone(),target:controls.target.clone()}),
-    driveCamera(pose){driven=true;controls.enabled=false;camera.position.copy(pose.position);controls.target.copy(pose.target);camera.lookAt(pose.target);},get flying(){return flyover.active;},setThreads:field.setThreads,setClouds:clouds.setMode,setPalette:field.setPalette,setGain:v=>uniforms.gain.value=v,setInspection:v=>{uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
-    setRelief:v=>{landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
+    driveCamera(pose){driven=true;controls.enabled=false;camera.position.copy(pose.position);controls.target.copy(pose.target);camera.lookAt(pose.target);},get flying(){return flyover.active;},setThreads(value){field.setThreads(value);renderState.invalidate();},setClouds(value){clouds.setMode(value);renderState.invalidate();},setPalette:field.setPalette,setGain(v){uniforms.gain.value=v;renderState.invalidate();},setInspection:v=>{renderState.invalidate();uniforms.inspection.value=v?1:0;markers.forEach(m=>m.visible=v);},setExaggeration:v=>{renderState.invalidate();uniforms.exaggeration.value=v;if(selected>=0)focusStation(selected,true);},
+    setRelief:v=>{renderState.invalidate();landscape.relief.value=v;markers.forEach((m,i)=>m.position.copy(point(stations[i].lat,stations[i].lon,groundAtStation[i]*v+.2)));if(selected>=0)focusStation(selected,true);},select:focusStation,
     get canReturn(){return journey.canReturn;},get returning(){return journey.returning;},renderer};
 }
