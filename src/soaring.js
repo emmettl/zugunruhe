@@ -2,6 +2,7 @@ import './site-shell.js';
 import './soaring.css';
 import { createSoaringFlock, SOARING_STEP } from './soaring-model.js';
 import { createSoaringScene } from './soaring-scene.js';
+import { soaringStory } from './soaring-story.js';
 import { createSoaringSound } from './soaring-score.js';
 import { installStudyDialog } from './study-ui.js';
 
@@ -11,7 +12,7 @@ $('soaring-app').innerHTML = `
 <header><a class="identity" href="/">ZUGUNRUHE<span>STUDIES IN MOTION</span></a></header>
 <main id="soaring-study" data-score="off">
   <div id="soaring-world"></div>
-  <div class="soaring-heading"><p class="eyebrow">TWENTY WHITE STORKS · A SIMULATION</p><h1>Borrowed sky.</h1><p>Rise together. Find your own moment to leave.</p></div>
+  <div class="soaring-heading"><p class="eyebrow">TWENTY WHITE STORKS · A SIMULATION</p><h1>Borrowed sky.</h1><p>Leave the circle. Search for the next climb.</p></div>
   <div class="soaring-caption"><button id="soaring-listen" aria-label="Start soaring soundtrack" aria-pressed="false">Listen</button><button id="soaring-about">About this study ↗</button></div>
   <div class="soaring-bottom">
     <div class="flight-story"><div><p class="eyebrow" id="soaring-bird">WITH BIRD 01</p><h2 id="soaring-stage">In the climb.</h2><p id="soaring-description">A circle becomes a little height.</p></div><div class="flight-measures"><span id="soaring-height"></span><span id="soaring-climb"></span></div></div>
@@ -21,12 +22,12 @@ $('soaring-app').innerHTML = `
   </div><div id="soaring-error" role="alert" hidden></div>
 </main>
 <section id="soaring-notes" hidden><button id="soaring-close" aria-label="Close study notes">×</button><h2>A little height, borrowed.</h2>
-<p>Twenty imagined white storks circle in rising air, then spend that height gliding towards the next thermal. Each has a different climbing radius, glide efficiency and preferred departure height. Nearby circling birds steady an approach; departing companions can encourage an earlier departure.</p>
-<p>The birds gain height when lift exceeds their sinking speed. Banking costs a little more height. They wait for a turn towards the next thermal before leaving, and can flap if they get too low. Successive thermals drift across an invented landscape.</p>
-<p>This is an authored simulation, not tracked birds, a weather forecast or a validated aerodynamic model. Thermal locations along the route are supplied to the birds. The short distances, lift, flight rules, social cues and decision thresholds are chosen to make the movement legible. The white-stork form and soaring behaviour distinguish this study from the starling-inspired <a href="flock.html">Flock</a>.</p>
+<p>Twenty imagined white storks circle in rising air, then spend that height gliding towards the next thermal. Each has a different climbing radius, glide efficiency and preferred departure height. The air strengthens, weakens and falls quiet. Birds search independently and can turn towards a visible companion that is gaining height. Departing companions can encourage an earlier departure.</p>
+<p>The birds gain height when lift exceeds their sinking speed. Banking costs a little more height. They wait for a turn towards the next thermal before leaving, and can flap if they get too low. Thermals drift, dissipate and reform over an invented landscape. The optional Lift guides fade and shrink with their strength. Birds remember the strongest lift they have encountered to estimate where to circle. A simplified effort reserve recovers in a climb and falls during searching and flapping; a tired bird seeks more height before leaving. Restlessness builds during waiting and weak lift.</p>
+<p>This is an authored simulation, not tracked birds, a weather forecast or a validated aerodynamic model. Birds have a broad eastward migration direction, but no map of future thermals. They can miss lift, lose sight of a companion and spend height searching. The opening bird has already found a thermal; subsequent discovery comes from local lift or visible climbing birds. The remembered lift, effort reserve and restlessness are authored behavioural rules, not measured physiology. The short distances, lift, flight rules, social cues and decision thresholds are chosen to make the movement legible. The white-stork form and soaring behaviour distinguish this study from the starling-inspired <a href="flock.html">Flock</a>.</p>
 <p><b>Watch</b> lets you orbit the group. <b>Follow one</b> travels beside the bird tinted gold. <b>With the air</b> gives the camera its own momentum and samples the same rising air, with a gentle pull towards your companion and space around nearby birds. The horizon stays level. The camera does not steer the birds.</p>
 <p><b>Lift</b> shows schematic spirals marking the rising columns; these are guides, not measured air trajectories. <b>Traces</b> reveal recent flight paths. Height is measured above the imagined reference plane, not the terrain below. The story and measurements always refer to the selected bird, including in Watch.</p>
-<p><b>Listen</b> begins a quiet, provisional score in D major pentatonic. Climbing brings ascending phrases closer together; greater height adds an upper harmonic. Departure sounds a high note and opens into longer, wider tones. Pausing holds the flight state while the music continues. Notes and a hidden tab stop sound; Listen starts it again. This is a musical reading of motion, not a claim about a bird’s feelings.</p>
+<p><b>Listen</b> begins a quiet, provisional score in D major pentatonic. Climbing brings ascending phrases closer together; greater height adds an upper harmonic. Departure sounds a high note and opens into longer, wider tones. Searching leaves more silence and thins the upper voices. Noticing a climber and finding lift gradually brings the sound together again; growing readiness slightly draws phrases closer. Pausing holds the flight state while the music continues. Notes and a hidden tab stop sound; Listen starts it again. This is a musical reading of motion, not a claim about a bird’s feelings.</p>
 <p>Space pauses flight. Keys 1, 2 and 3 change the view; N changes your companion. Reduced-motion settings start flight paused. Restart returns to the same first climb.</p>
 <details><summary>Research and observations</summary><p><a href="https://doi.org/10.1016/j.jtbi.2010.10.038" target="_blank" rel="noreferrer">Van Loon et al. (2011), Simsoar</a> explores individual decisions in soaring migration. <a href="https://pubmed.ncbi.nlm.nih.gov/29798883/" target="_blank" rel="noreferrer">Flack et al. (2018)</a> studies social roles in migrating white storks. These inform the questions here; this study does not reproduce either paper’s model or data.</p><p>For a separate view of measured journeys, <a href="migration.html">follow fifteen recorded white storks</a>. Those migration tracks are not the source of these simulated flights.</p></details></section>`;
 
@@ -45,13 +46,15 @@ function update() {
 function measure() {
   if (!scene) return;
   const i = scene.selected, k = i * 3, height = flock.position[k + 1], climb = flock.velocity[k + 1];
-  const story = { seeking: ['Finding lift.', flock.cue[i] === 'companions' ? 'A circling companion shows the way.' : 'A little searching, on the way to rising air.'], climbing: ['In the climb.', 'A circle becomes a little height.'], gliding: ['Between the thermals.', climb > .5 ? 'Leaving the circle, still held by its rising air.' : 'Trading a little height for distance.'] }[flock.mode[i]];
+  const story = soaringStory(flock, i);
   text('soaring-bird', `BIRD ${String(i + 1).padStart(2, '0')} · ${playing ? 'IN FLIGHT' : 'FLIGHT PAUSED'}`);
   text('soaring-stage', story[0]); text('soaring-description', story[1]);
   text('soaring-height', `${Math.round(height)} m high`); text('soaring-climb', `${climb >= 0 ? '+' : '−'}${Math.abs(climb).toFixed(1)} m/s`);
   const study = $('soaring-study'); study.dataset.bird = String(i + 1); study.dataset.time = flock.time.toFixed(2); study.dataset.phase = flock.mode[i];
+  study.dataset.cue = flock.cue[i]; study.dataset.guide = String(flock.guide[i] + 1);
+  study.dataset.certainty = flock.certainty[i].toFixed(3); study.dataset.reserve = flock.reserve[i].toFixed(3);
   study.dataset.height = height.toFixed(2); study.dataset.departures = String(flock.departures[i]);
-  sound.setState({ bird: i, height, climb, mode: flock.mode[i], departures: flock.departures[i] });
+  sound.setState({ bird: i, height, climb, mode: flock.mode[i], departures: flock.departures[i], certainty: flock.certainty[i], readiness: flock.readiness[i] });
 }
 function listeningUI(starting = false) {
   text('soaring-listen', starting ? 'Starting…' : listening ? 'Listening' : 'Listen');

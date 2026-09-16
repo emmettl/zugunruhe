@@ -122,7 +122,8 @@ recording gaps remain open. [Data, interpretation and reproduction](docs/MIGRATI
 ## Soaring — Borrowed sky
 
 At `/soaring.html`, twenty simulated white storks climb in drifting thermals and
-make individual decisions to leave. Follow a bird, travel with the rising air,
+make individual decisions to leave. As lift fades, they search without a thermal
+map and can follow companions that find rising air. Follow a bird, travel with the rising air,
 reveal lift and flight traces, or listen to a provisional score shaped by climbing
 and departure. This authored study is separate from the recorded migration data.
 [Flight rules, research and controls](docs/SOARING.md).

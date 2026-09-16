@@ -21,7 +21,7 @@ test('music is lazy, responds once to departure, ignores companion changes, and 
   const f = fixture(); assert.equal(f.created, 0);
   f.sound.setState({ bird: 0, height: 180, climb: 3, mode: 'climbing', departures: 0 });
   await f.sound.start(); f.tick(); assert.equal(f.context.oscillators.length, 3);
-  f.sound.setState({ bird: 0, height: 260, climb: 0, mode: 'gliding', departures: 1 }); f.tick();
+  f.sound.setState({ bird: 0, height: 260, climb: 0, mode: 'seeking', departures: 1 }); f.tick();
   assert.equal(f.context.oscillators.length, 5);
   for (let i = 0; i < 5; i++) f.tick(); assert.equal(f.context.oscillators.length, 5);
   f.sound.setState({ bird: 1, height: 250, climb: -1, mode: 'gliding', departures: 2 }); f.tick();
@@ -36,4 +36,14 @@ test('stopping while the browser resumes cannot restart the soundtrack', async (
   const pending = f.sound.start(); f.sound.stop(); resume();
   assert.equal(await pending, false); assert.equal(f.sound.playing, false); assert.equal(f.scheduled, false);
   f.sound.dispose();
+});
+
+
+test('uncertainty thins the foundation and leaves more silence at equal height and climb', () => {
+  const searching = soaringMusic({ height: 250, climb: 0, mode: 'seeking', certainty: .08 });
+  const following = soaringMusic({ height: 250, climb: 0, mode: 'gliding', certainty: .75 });
+  assert.ok(searching.interval > following.interval + 3);
+  assert.ok(searching.foundation < following.foundation * .6);
+  assert.ok(searching.brightness < following.brightness);
+  assert.ok(soaringMusic({ readiness: 1 }).interval < soaringMusic({ readiness: 0 }).interval);
 });

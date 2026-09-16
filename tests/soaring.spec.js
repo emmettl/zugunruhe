@@ -15,6 +15,8 @@ test('soaring supports viewpoints, held pause, restart, notes, sound and respons
   await expect(study).toHaveAttribute('data-camera', 'follow');
   await page.getByRole('button', { name: 'Another bird' }).click();
   await expect(study).toHaveAttribute('data-bird', '2');
+  await expect(study).toHaveAttribute('data-cue', /companions|discovery|search/);
+  await expect(study).toHaveAttribute('data-certainty', /[01]\.\d{3}/);
   await page.getByRole('button', { name: 'With the air', exact: true }).click();
   await expect(study).toHaveAttribute('data-camera', 'air');
   for (const name of ['Lift', 'Traces']) { await page.getByRole('button', { name, exact: true }).click(); await expect(page.getByRole('button', { name, exact: true })).toHaveAttribute('aria-pressed', 'true'); }
@@ -24,7 +26,9 @@ test('soaring supports viewpoints, held pause, restart, notes, sound and respons
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); await page.waitForTimeout(400); await page.mouse.up();
   await expect(study).toHaveAttribute('data-playing', 'false');
   await page.waitForTimeout(200); const held = await study.getAttribute('data-time');
+  const heldCertainty = await study.getAttribute('data-certainty'), heldReserve = await study.getAttribute('data-reserve');
   await page.waitForTimeout(350); await expect(study).toHaveAttribute('data-time', held);
+  await expect(study).toHaveAttribute('data-certainty', heldCertainty); await expect(study).toHaveAttribute('data-reserve', heldReserve);
   await expect(study).toHaveAttribute('data-score', 'off');
   await page.getByRole('button', { name: 'Start soaring soundtrack' }).click();
   await expect(study).toHaveAttribute('data-score', 'playing');

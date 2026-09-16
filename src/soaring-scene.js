@@ -91,9 +91,14 @@ export function createSoaringScene(container, flock) {
   const trailGeo = new THREE.BufferGeometry(); trailGeo.setAttribute('position',new THREE.BufferAttribute(trailPositions,3).setUsage(THREE.DynamicDrawUsage));
   const trails = new THREE.LineSegments(trailGeo,new THREE.LineBasicMaterial({color:'#c49c57',transparent:true,opacity:.27,depthWrite:false})); trails.visible=false; trails.frustumCulled=false; scene.add(trails);
   let head=0,samples=0,lastTrail=-1;
+  const liftVitality = new Float32Array(3*3*70*2);
   const liftPositions = new Float32Array(3*3*70*6), liftGeo = new THREE.BufferGeometry();
   liftGeo.setAttribute('position',new THREE.BufferAttribute(liftPositions,3).setUsage(THREE.DynamicDrawUsage));
-  const liftLines = new THREE.LineSegments(liftGeo,new THREE.LineBasicMaterial({color:'#ac8550',transparent:true,opacity:.22,depthWrite:false})); liftLines.visible=false; liftLines.frustumCulled=false; scene.add(liftLines);
+  liftGeo.setAttribute('vitality',new THREE.BufferAttribute(liftVitality,1).setUsage(THREE.DynamicDrawUsage));
+  const liftLines = new THREE.LineSegments(liftGeo,new THREE.ShaderMaterial({transparent:true,depthWrite:false,
+    vertexShader:'attribute float vitality;varying float life;void main(){life=vitality;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader:'varying float life;void main(){gl_FragColor=vec4(.67,.52,.31,.25*life);}',
+  })); liftLines.visible=false; liftLines.frustumCulled=false; scene.add(liftLines);
   const pilot=createSoaringCamera(), dummy=new THREE.Object3D(), forward=new THREE.Vector3(), right=new THREE.Vector3(), up=new THREE.Vector3();
   const worldUp=new THREE.Vector3(0,1,0), matrix=new THREE.Matrix4(), roll=new THREE.Quaternion(), axis=new THREE.Vector3(0,0,1);
   const desired=new THREE.Vector3(), look=focus.clone(), direction=new THREE.Vector3(1,0,0), point=new THREE.Vector3();
@@ -132,11 +137,11 @@ export function createSoaringScene(container, flock) {
       const a=(i*trailLength+(head-j+trailLength)%trailLength)*3,b=(i*trailLength+(head-j-1+trailLength)%trailLength)*3;
       trailPositions.set(history.subarray(a,a+3),out);trailPositions.set(history.subarray(b,b+3),out+3);out+=6;
     }trailGeo.setDrawRange(0,out/3);trailGeo.attributes.position.needsUpdate=true;}
-    if(liftLines.visible){let out=0;const first=Math.max(0,flock.thermal[selected]-1);
+    if(liftLines.visible){let out=0;const first=Math.max(0,Math.round((flock.position[selected*3]-flock.time*1.1)/700)-1);
       for(let id=first;id<first+3;id++){const column=thermalAt(id,flock.time);for(let strand=0;strand<3;strand++)for(let j=0;j<70;j++){
         for(const t of [j/70,(j+1)/70]){const angle=t*Math.PI*5+strand*Math.PI*2/3-flock.time*.1;
-          liftPositions.set([column.x+Math.cos(angle)*column.radius*.72,80+t*470,column.z+Math.sin(angle)*column.radius*.72],out);out+=3;}
-      }}liftGeo.attributes.position.needsUpdate=true;
+          liftPositions.set([column.x+Math.cos(angle)*column.radius*.72,80+t*470*column.life,column.z+Math.sin(angle)*column.radius*.72],out);liftVitality[out/3]=column.life;out+=3;}
+      }}liftGeo.attributes.position.needsUpdate=true;liftGeo.attributes.vitality.needsUpdate=true;
     }
     sky.position.copy(camera.position); renderer.render(scene,camera);
   }
