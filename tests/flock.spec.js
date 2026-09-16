@@ -16,6 +16,10 @@ test('flock renders and supports viewpoints, pause, traces, disturbance and note
   await expect(page.locator('#flock-state')).not.toHaveText(bird);
   await page.getByRole('button', { name: 'Fly among', exact: true }).click();
   await expect(page.locator('#flock-study')).toHaveAttribute('data-camera', 'within');
+  await page.getByRole('button', { name: 'Show air currents', exact: true }).click();
+  await expect(page.locator('#flock-air')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#flock-episode')).toBeVisible();
+  await expect(page.locator('#flock-study')).toHaveAttribute('data-readiness', /0\.\d+/);
   await page.getByRole('button', { name: 'Traces', exact: true }).click();
   await expect(page.locator('#flock-trails')).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Disturb', exact: true }).click();
@@ -34,6 +38,11 @@ test('flock renders and supports viewpoints, pause, traces, disturbance and note
   for (const width of [320, 390, 1280]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const heading = await page.locator('.flock-heading').boundingBox(), caption = await page.locator('.flock-caption').boundingBox();
+    if (width < 760) expect(heading.y + heading.height).toBeLessThanOrEqual(caption.y);
+    for (const button of await page.locator('.flock-options button:visible').all()) {
+      const box = await button.boundingBox(); expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x + box.width).toBeLessThanOrEqual(width);
+    }
   }
   expect(errors).toEqual([]);
 });
@@ -85,8 +94,10 @@ test('responsive soundtrack is opt-in, follows measured motion and stops indepen
   await expect(study).toHaveAttribute('data-score', 'playing');
   await page.getByRole('button', { name: 'Pause flock' }).click();
   const held = await study.getAttribute('data-agitation');
+  const intention = await study.getAttribute('data-readiness');
   await page.waitForTimeout(400);
   await expect(study).toHaveAttribute('data-agitation', held);
+  await expect(study).toHaveAttribute('data-readiness', intention);
   await expect(study).toHaveAttribute('data-score', 'playing');
   await page.getByRole('button', { name: 'Stop responsive soundtrack' }).click();
   await expect(study).toHaveAttribute('data-score', 'off');

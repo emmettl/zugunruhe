@@ -1,4 +1,5 @@
-import { agitationMusic, createAgitationEnvelope } from './flock-agitation.js';
+import { createMusicalState, flockMusic } from './flock-music-state.js';
+import { createAgitationEnvelope } from './flock-agitation.js';
 const midiHz = note => 440 * 2 ** ((note - 69) / 12);
 const melody = [66, 69, 64, 71, 69, 74, 66, 62];
 
@@ -12,8 +13,8 @@ export function createFlockScore(context) {
   const bus = context.createGain(); bus.connect(output); bus.connect(delay);
   delay.connect(feedback); feedback.connect(delay); delay.connect(echo); echo.connect(output);
   const filter = context.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 650; filter.Q.value = .45; filter.connect(bus);
-  const drone = [], voices = new Set(), envelope = createAgitationEnvelope();
-  let active = false, last = null, progress = 0, phrase = 0, motion = 0, started = false;
+  const drone = [], voices = new Set(), envelope = createAgitationEnvelope(), musicalState = createMusicalState();
+  let active = false, last = null, progress = 0, phrase = 0, motion = 0, started = false, breath = 0;
   function startDrones() {
     if (started) return; started = true;
     for (const [note, pan, level] of [[50, -.35, .016], [57, .35, .012], [64, 0, .007]]) {
@@ -23,19 +24,20 @@ export function createFlockScore(context) {
       drone.push({ oscillator, gain, panner, pan, level });
     }
   }
-  function note(at, brightness) {
+  function note(at, music) {
     if (voices.size >= 4) return;
-    const frequency = midiHz(melody[phrase++ % melody.length]);
+    const index = phrase++;
+    const frequency = midiHz(melody[(music.fragmented ? index * 3 : index) % melody.length]);
     const gain = context.createGain(), pan = context.createStereoPanner(), partials = [];
-    pan.pan.value = Math.sin(phrase * 2.4) * .45; gain.connect(pan); pan.connect(bus);
-    gain.gain.setValueAtTime(0, at); gain.gain.linearRampToValueAtTime(.018, at + .22);
-    gain.gain.exponentialRampToValueAtTime(.0001, at + 4.5); gain.gain.linearRampToValueAtTime(0, at + 4.6);
+    pan.pan.value = Math.sin(phrase * 2.4) * music.spread; gain.connect(pan); pan.connect(bus);
+    gain.gain.setValueAtTime(0, at); gain.gain.linearRampToValueAtTime(.018, at + music.attack);
+    gain.gain.exponentialRampToValueAtTime(.0001, at + music.release - .1); gain.gain.linearRampToValueAtTime(0, at + music.release);
     const voice = { stop() { gain.gain.cancelScheduledValues(context.currentTime); gain.gain.setTargetAtTime(0, context.currentTime, .025); for (const { oscillator } of partials) oscillator.stop(context.currentTime + .12); } };
     voices.add(voice);
-    for (const [multiple, level] of [[1, 1], [2, brightness], [3, brightness * .2]]) {
+    for (const [multiple, level] of [[1, 1], [2, music.brightness], [3, music.brightness * .2]]) {
       const oscillator = context.createOscillator(), partial = context.createGain();
       oscillator.type = 'sine'; oscillator.frequency.value = frequency * multiple; partial.gain.value = level;
-      oscillator.connect(partial); partial.connect(gain); oscillator.start(at); oscillator.stop(at + 4.6); partials.push({ oscillator, partial });
+      oscillator.connect(partial); partial.connect(gain); oscillator.start(at); oscillator.stop(at + music.release); partials.push({ oscillator, partial });
     }
     partials[0].oscillator.onended = () => {
       for (const { oscillator, partial } of partials) { oscillator.disconnect(); partial.disconnect(); }
@@ -47,16 +49,17 @@ export function createFlockScore(context) {
     tick(target) {
       if (!active || context.state !== 'running') { last = null; return; }
       const now = context.currentTime, dt = last === null ? 0 : Math.max(0, Math.min(.5, now - last)); last = now;
-      const activity = envelope.advance(target, dt), music = agitationMusic(activity);
-      filter.frequency.setTargetAtTime(650 + 1200 * activity, now, .7);
+      const inputs = typeof target === 'number' ? { agitation: target } : target;
+      const activity = envelope.advance(inputs.agitation, dt), state = musicalState.advance(inputs, dt), music = flockMusic(activity, state);
+      filter.frequency.setTargetAtTime(650 + 1000 * activity + 400 * state.alarm + 180 * state.readiness, now, .7);
       // Quiet foundation, gently changing lateral motion; no agitation gain boost.
-      motion += dt * music.motion;
+      motion += dt * music.motion; breath += dt * music.breathRate * Math.PI * 2;
       drone.forEach((layer, i) => {
-        layer.gain.gain.setTargetAtTime(layer.level * (.9 + .1 * Math.sin(motion + i * 2)), now, .5);
+        layer.gain.gain.setTargetAtTime(layer.level * (1 - music.breathDepth * (.5 + .5 * Math.sin(breath + i * music.phaseSpread))), now, .5);
         layer.panner.pan.setTargetAtTime(layer.pan + Math.sin(motion * .7 + i * 2) * .12, now, .7);
       });
       progress += dt / music.interval;
-      if (progress >= 1) { progress %= 1; note(now + .06, music.brightness); }
+      if (progress >= 1) { progress %= 1; note(now + .06, music); }
     },
     stop() {
       active = false; last = null; progress = 0;

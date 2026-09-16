@@ -1,3 +1,5 @@
+import { createParticipant } from './flock-camera.js';
+import { sampleAir } from './flock-air.js';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
@@ -20,6 +22,8 @@ export function createFlockScene(container, flock) {
   const matrix = new THREE.Matrix4(), orientation = new THREE.Quaternion(), roll = new THREE.Quaternion(), dummy = new THREE.Object3D();
   const bodyForward = new THREE.Vector3(0, 0, 1);
   focus.fromArray(flock.centre); previousFocus.copy(focus); camera.position.add(focus); controls.target.copy(focus);
+  const participant = createParticipant();
+  let showAir = false;
   let mode = 'watch', selected = 0, transition = 0, trails = false, lost = false, reduced = false;
   let lastTrailTime = -1, trailHead = 0, trailSamples = 0, pointer = null;
   const look = v(), raycaster = new THREE.Raycaster(), plane = new THREE.Plane(), threatPoint = v();
@@ -43,7 +47,7 @@ export function createFlockScene(container, flock) {
     ridge.push(Math.cos(a) * 800, -1800, Math.sin(a) * 800, Math.cos(b) * 800, -1800, Math.sin(b) * 800, Math.cos(b) * 800, height(b), Math.sin(b) * 800);
   }
   const ridgeGeo = new THREE.BufferGeometry(); ridgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(ridge, 3));
-  scene.add(new THREE.Mesh(ridgeGeo, new THREE.MeshBasicMaterial({ color: ridgeColour, side: THREE.DoubleSide })));
+  const horizon = new THREE.Mesh(ridgeGeo, new THREE.MeshBasicMaterial({ color: ridgeColour, side: THREE.DoubleSide })); scene.add(horizon);
 
   // Local +Z is the beak, +X spans the wings. Silhouettes remain legible in a bank.
   const geometry = new THREE.BufferGeometry();
@@ -88,6 +92,12 @@ export function createFlockScene(container, flock) {
   marker.visible = false; scene.add(marker);
   const pulseRing = new THREE.Mesh(marker.geometry.clone(), marker.material.clone());
   pulseRing.visible = false; scene.add(pulseRing); let pulseAge = Infinity;
+  // Sparse threads make invisible air readable without filling the sky.
+  const airPositions = new Float32Array(96 * 6), airGeo = new THREE.BufferGeometry();
+  airGeo.setAttribute('position', new THREE.BufferAttribute(airPositions, 3).setUsage(THREE.DynamicDrawUsage));
+  const airLines = new THREE.LineSegments(airGeo, new THREE.LineBasicMaterial({ color: '#9abec6', transparent: true, opacity: .20, depthWrite: false }));
+  airLines.frustumCulled = false; airLines.visible = false; scene.add(airLines);
+  const breeze = [0, 0, 0];
   function chooseBird() {
     let best = Infinity;
     for (let i = 0; i < flock.count; i++) {
@@ -98,6 +108,8 @@ export function createFlockScene(container, flock) {
   }
   chooseBird();
   function setMode(next) {
+    if (next === 'within' && mode !== 'within') participant.enter(camera.position.toArray());
+    if (next !== 'within') participant.leave();
     mode = next; transition = reduced ? 0 : 1;
     controls.enabled = mode === 'watch';
     for (let i = 0; i < flock.count; i++) birds.setColorAt(i, i === selected && mode === 'follow' ? new THREE.Color('#ffd194') : colors[i]);
@@ -161,7 +173,7 @@ export function createFlockScene(container, flock) {
         transition *= Math.exp(-dt * 1.3);
       }
       controls.update(); look.copy(focus);
-    } else {
+    } else if (mode === 'follow') {
       const k = selected * 3;
       position.fromArray(flock.position, k); forward.fromArray(flock.velocity, k).normalize();
       direction.lerp(forward, 1 - Math.exp(-dt * .95)).normalize();
@@ -176,7 +188,28 @@ export function createFlockScene(container, flock) {
       camera.up.lerp(up, 1 - Math.exp(-dt)); camera.lookAt(look);
       transition *= Math.exp(-dt * .9);
     }
-    sky.position.copy(camera.position);
+    if (mode === 'within') {
+      camera.position.fromArray(participant.position);
+      // Look into the local flow, with a slow, almost level horizon.
+      forward.fromArray(flock.velocity, selected * 3).normalize();
+      direction.lerp(forward, 1 - Math.exp(-dt * .85)).normalize();
+      desiredLook.copy(camera.position).addScaledVector(direction, 28);
+      look.lerp(desiredLook, 1 - Math.exp(-dt * 2));
+      camera.up.lerp(worldUp, 1 - Math.exp(-dt * 2)); camera.lookAt(look);
+    }
+    sky.position.copy(camera.position); horizon.position.set(camera.position.x, 0, camera.position.z);
+    if (showAir) {
+      for (let i = 0; i < 96; i++) {
+        // A world-anchored lattice drifts continuously; recycling happens at the edge.
+        const wrap = (x, c, span) => c + ((x - c + span * 1.5) % span + span) % span - span / 2;
+        const x = wrap((i * 37 % 96) / 96 * 180 + flock.time, flock.centre[0], 180);
+        const y = wrap((i * 17 % 96) / 96 * 55, flock.centre[1], 55);
+        const z = wrap((i * 53 % 96) / 96 * 180 + flock.time * .4, flock.centre[2], 180);
+        sampleAir(x, y, z, flock.time, breeze);
+        airPositions.set([x, y, z, x + breeze[0] * 2.5, y + breeze[1] * 2.5, z + breeze[2] * 2.5], i * 6);
+      }
+      airGeo.attributes.position.needsUpdate = true;
+    }
     for (let i = 0; i < flock.count; i++) {
       const k = i * 3;
       forward.fromArray(flock.velocity, k).normalize(); right.crossVectors(worldUp, forward).normalize(); up.crossVectors(forward, right);
@@ -207,6 +240,9 @@ export function createFlockScene(container, flock) {
     renderer.render(scene, camera);
   }
   return { canvas, render, setMode, nextBird, setPointer, threat, strike, get selected() { return selected; },
+    advanceParticipant(dt) { participant.step(dt, flock, selected); },
+    get participant() { return participant.active ? participant.position : null; },
+    setAir(value) { showAir = value; airLines.visible = value; },
     setTrails(value) { trails = value; lines.visible = value; },
     setReduced(value) { reduced = value; controls.enableDamping = !value; },
     dispose() { observer.disconnect(); controls.dispose(); scene.traverse(object => { object.geometry?.dispose(); object.material?.dispose(); }); renderer.dispose(); },

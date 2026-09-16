@@ -5,7 +5,7 @@ export const FLOCK_NOTES = [66, 69, 64, 71, 62, 74];
 export function createFlockSound({ createContext, notes = FLOCK_NOTES } = {}) {
   let context, master, delay, feedback, wet, enabled = true, disposed = false, pending = false, generation = 0, index = 0, last = -Infinity;
   const voices = new Set();
-  let score, scoreTimer, scoreGeneration = 0, agitation = 0;
+  let score, scoreTimer, scoreGeneration = 0, agitation = 0, flockState = {};
   function init() {
     context = createContext();
     master = context.createGain(); master.gain.value = .34;
@@ -38,11 +38,12 @@ export function createFlockSound({ createContext, notes = FLOCK_NOTES } = {}) {
       if (disposed || request !== scoreGeneration || context.state !== 'running') return false;
       score ??= createFlockScore(context);
       score.start(); clearInterval(scoreTimer);
-      scoreTimer = setInterval(() => score.tick(agitation), 100);
+      scoreTimer = setInterval(() => score.tick({ ...flockState, agitation }), 100);
       return true;
     },
     pauseScore,
     setAgitation(value) { agitation = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0; },
+    setState(value) { flockState = { readiness: value.readiness, coherence: value.coherence, alarm: value.alarm }; },
     async strike(pan = 0) {
       if (!enabled || disposed || pending) return null;
       pending = true; const request = generation;

@@ -14,13 +14,13 @@ $('flock-app').innerHTML = `
 <header><a class="identity" href="/">ZUGUNRUHE<span>MOTION STUDIES 006</span></a></header>
 <main id="flock-study" data-camera="watch">
   <div id="flock-world"></div>
-  <div class="flock-heading"><p class="eyebrow">A STUDY IN COLLECTIVE MOTION</p><h1>Of a feather.</h1><p>Each bird finds its way through the others.</p></div>
+  <div class="flock-heading"><p class="eyebrow">A STUDY IN COLLECTIVE MOTION</p><h1>Of a feather.</h1><p>Each bird finds its way through the others.</p><div class="flock-life"><span id="flock-episode">Gathering</span><span id="flock-intention">A place to find one another.</span><span class="readiness-track" aria-hidden="true"><i id="flock-readiness"></i></span></div></div>
   <div class="flock-caption"><span class="status-dot"></span><span>420 birds · simulated</span><button id="flock-listen" aria-label="Start responsive soundtrack" aria-pressed="false">Listen</button><button id="flock-sound" aria-label="Mute click notes" aria-pressed="true">Notes on</button><button id="flock-about" aria-label="About the flock">About this study ↗</button></div>
   <div class="flock-bottom">
     <div class="camera-story"><p class="eyebrow" id="camera-number">01 / AT A DISTANCE</p><h2 id="camera-title">Watch the flock.</h2><p id="camera-description">A shape made of individual decisions.</p></div>
     <div class="flock-toolbar">
       <div class="camera-modes" role="group" aria-label="Camera viewpoint"><button data-mode="watch" aria-pressed="true">Watch</button><button data-mode="follow" aria-pressed="false">Follow one</button><button data-mode="within" aria-pressed="false">Fly among</button></div>
-      <div class="flock-options"><button id="flock-next" hidden>Another bird</button><button id="flock-trails" aria-pressed="false">Traces</button><button id="flock-disturb" aria-pressed="false">Disturb</button><button id="flock-play" aria-label="Pause flock">Ⅱ</button></div>
+      <div class="flock-options"><button id="flock-next" hidden>Another bird</button><button id="flock-trails" aria-pressed="false">Traces</button><button id="flock-air" aria-pressed="false" aria-label="Show air currents">Air</button><button id="flock-disturb" aria-pressed="false">Disturb</button><button id="flock-play" aria-label="Pause flock">Ⅱ</button></div>
     </div>
     <div class="flock-foot"><span id="flock-hint">Drag to orbit · scroll to draw closer</span><span id="flock-state" role="status">Seven neighbours. One shared sky.</span></div>
   </div>
@@ -28,11 +28,12 @@ $('flock-app').innerHTML = `
 </main>
 <section id="flock-notes" hidden><button id="flock-close" aria-label="Close study notes">×</button><h2>Finding a way together.</h2>
   <p>This is a simulation of 420 individual birds, inspired by research on starling flocks. The setting and movements are imagined. They are not observed migration tracks.</p>
-  <p>Each bird aligns with and moves towards its seven nearest neighbours, while giving its closest neighbour space. Turns build and relax gradually. Speed varies slightly between individuals; wings alternate between flapping and gliding. A broad, soft boundary and a shared circling tendency keep the birds near an imaginary roost.</p>
-  <p><b>Watch</b> lets you orbit the flock. <b>Follow one</b> accompanies a bird marked in warm gold. <b>Fly among</b> brings you into the flock, looking along that bird’s direction of travel. Both travelling views ease into turns and keep the horizon almost level. Another bird changes your companion.</p>
+  <p>Each bird aligns with and moves towards its seven nearest neighbours, while giving its closest neighbour space. Turns build and relax gradually. Speed varies slightly between individuals; wings alternate between flapping and gliding. Individuals develop an urge to leave at different rates and take cues from their neighbours. When enough are ready, the flock leaves its gathering place; after a passage it circles and regroups further along. Alarm can delay departure. These short episodes are an artistic interpretation of migratory restlessness, not a biological timescale.</p>
+  <p><b>Watch</b> lets you orbit the flock. <b>Follow one</b> accompanies a bird marked in warm gold. <b>Fly among</b> gives the camera its own motion and personal space. It approaches a companion, aligns with its flight and eases around nearby birds; they gently make room for you. Both travelling views keep the horizon almost level. Another bird changes your companion.</p>
+  <p><b>Air</b> reveals faint threads of the breeze. Wind and broad columns of rising air carry the birds even when these threads are hidden. The air is an invented continuous field, not weather data or a full aerodynamic model.</p>
   <p><b>Traces</b> reveal the recent paths of eighteen birds. With <b>Disturb</b> enabled, move the pointer over the sky, or touch and drag. The small gold ring places a local disturbance at the flock’s depth; birds close to it turn away. It is an exploratory interaction, not a model of a particular predator.</p>
   <p><b>Click or tap the sky</b> to play a soft note and startle nearby birds. A gold ripple marks the source at the flock’s depth. Dragging the camera is silent. The provisional tones share Confluence’s D-major pentatonic vocabulary; the final flock soundtrack is still to come. Notes on/off controls the sound while leaving the ripple available.</p>
-  <p><b>Listen</b> starts a provisional responsive sound sketch: a quiet foundation with passing tones. When birds disagree with their neighbours’ direction or steer unevenly, notes draw closer together, brighten and move a little more across the stereo field. As the flock settles, the music relaxes slowly. Its harmony stays within the same pitch family.</p>
+  <p><b>Listen</b> starts a provisional responsive sound sketch: a quiet foundation with passing tones. Readiness adds a slow pulse and draws phrases closer together. Shared direction brings the foundation’s voices into the same breathing rhythm. Alarm gives the notes shorter, brighter entrances and fragments the melody; recovery gradually restores longer phrases. Local disorder still adds movement. The harmony stays within the same pitch family.</p>
   <p>The response comes from the birds’ movement, including their spontaneous changes. It is an artistic measure of agitation, not a claim about their emotions. The background music does not startle birds; only your clicks do. Pausing flight holds the musical state while the music continues. Listen stops the sketch; Notes on/off controls click notes separately.</p>
   <p>Space pauses flight. Keys 1, 2 and 3 change the viewpoint; N sounds a note at the centre of the view. Reduced-motion settings start the flock paused. While paused, notes can sound and the camera can be explored, but birds stay still; no startle is saved for later.</p>
   <details><summary>Research behind the rules</summary><p><a href="https://pubmed.ncbi.nlm.nih.gov/18227508/" target="_blank" rel="noreferrer">Ballerini et al. (2008)</a>: topological neighbourhoods. <a href="https://doi.org/10.1371/journal.pone.0126913" target="_blank" rel="noreferrer">Hemelrijk & Hildenbrandt (2015)</a>: distinct neighbourhoods for avoidance and social movement. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4173114/" target="_blank" rel="noreferrer">Attanasi et al. (2014)</a>: propagation of turns. <a href="https://arxiv.org/html/2404.17804v1" target="_blank" rel="noreferrer">Flock2 (2024)</a>: orientation and flight mechanics.</p><p>These papers inform the experiment. This implementation uses simplified steering and bank angles; it does not implement the inertial spin model or the full Flock2 aerodynamic model, and has not been fitted to measured trajectories.</p></details>
@@ -41,7 +42,7 @@ $('flock-app').innerHTML = `
 const flock = createFlock();
 // Settle the initial scatter before showing it.
 for (let i = 0; i < 120; i++) flock.step();
-let scene, mode = 'watch', playing = !reduced.matches, disturbed = false, traces = false, frame = null, previous = null, accumulator = 0, modal = false;
+let scene, mode = 'watch', playing = !reduced.matches, disturbed = false, traces = false, airVisible = false, frame = null, previous = null, accumulator = 0, modal = false;
 const startles = createStartles();
 const sound = createFlockSound({ createContext() {
   const Audio = window.AudioContext || window.webkitAudioContext;
@@ -98,6 +99,7 @@ try {
 for (const button of document.querySelectorAll('[data-mode]')) button.addEventListener('click', () => setMode(button.dataset.mode));
 $('flock-play').addEventListener('click', toggle);
 $('flock-next').addEventListener('click', () => { scene?.nextBird(); update(); });
+$('flock-air').addEventListener('click', () => { airVisible = !airVisible; scene?.setAir(airVisible); $('flock-air').setAttribute('aria-pressed', String(airVisible)); $('flock-air').setAttribute('aria-label', airVisible ? 'Hide air currents' : 'Show air currents'); });
 $('flock-trails').addEventListener('click', () => { traces = !traces; scene?.setTrails(traces); update(); });
 $('flock-disturb').addEventListener('click', () => { disturbed = !disturbed; scene?.setPointer(null); update(); });
 $('flock-listen').addEventListener('click', async () => {
@@ -164,11 +166,24 @@ function animate(now) {
   if (playing) {
     accumulator += dt;
     const threat = disturbed ? scene.threat() : null;
-    while (accumulator >= STEP) { flock.step(STEP, threat, startles.sample(flock.time)); accumulator -= STEP; }
+    while (accumulator >= STEP) { flock.step(STEP, threat, startles.sample(flock.time), scene.participant); scene.advanceParticipant(STEP); accumulator -= STEP; }
   }
   if (flock.time - measuredAt >= .1) {
     const agitation = measureAgitation(flock); measuredAt = flock.time;
-    sound.setAgitation(agitation); $('flock-study').dataset.agitation = agitation.toFixed(3);
+    sound.setAgitation(agitation); sound.setState(flock.life.state);
+    const state = flock.life.state, study = $('flock-study');
+    study.dataset.agitation = agitation.toFixed(3); study.dataset.episode = state.stage;
+    for (const key of ['readiness', 'coherence', 'alarm']) study.dataset[key] = state[key].toFixed(3);
+    const episodes = {
+      gathering: ['Gathering', 'A place to find one another.'],
+      stirring: ['Restlessness', 'A direction begins with a few.'],
+      departing: ['Departure', 'One intention passes between them.'],
+      passage: ['In passage', 'For a while, a shared direction.'],
+      regrouping: ['Regrouping', 'The journey opens into a circle.'],
+    };
+    $('flock-episode').textContent = episodes[state.stage][0];
+    $('flock-intention').textContent = state.alarm > .2 ? 'A disturbance travels between neighbours.' : episodes[state.stage][1];
+    $('flock-readiness').style.transform = `scaleX(${state.readiness})`;
   }
   $('flock-study').dataset.musicalActivity = sound.scoreActivity.toFixed(3);
   scene.render(dt); requestFrame();

@@ -1,3 +1,5 @@
+import { createFlockLife } from './flock-life.js';
+import { sampleAir } from './flock-air.js';
 // A starling-inspired experiment. Distances are metres, time is seconds.
 // This is an authored model, not a reconstruction or a calibrated flight model.
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
@@ -20,6 +22,8 @@ export function createFlock(count = 420, seed = 29) {
     velocity[i * 3] = preferredSpeed[i]; velocity[i * 3 + 1] = (random() - .5) * .6; velocity[i * 3 + 2] = (random() - .5) * 1.5;
     phase[i] = random() * Math.PI * 2;
   }
+  const life = createFlockLife(count, phase), air = new Float64Array(count * 3), breeze = [0, 0, 0];
+  const socialState = { position, velocity, neighbours, centre, heading };
   function measure() {
     centre.fill(0); heading.fill(0);
     for (let j = 0; j < count * 3; j++) { centre[j % 3] += position[j] / count; heading[j % 3] += velocity[j] / count; }
@@ -41,9 +45,10 @@ export function createFlock(count = 420, seed = 29) {
       neighbours.set(ids, i * 7);
     }
   }
-  function step(dt = STEP, threat = null, startles = []) {
+  function step(dt = STEP, threat = null, startles = [], participant = null) {
     // Refresh the social network at 20 Hz, integrate steering at 60 Hz.
     if (tick % 3 === 0) findNeighbours();
+    life.advance(dt, socialState, threat, startles);
     for (let i = 0; i < count; i++) {
       const k = i * 3, px = position[k], py = position[k + 1], pz = position[k + 2];
       const vx = velocity[k], vy = velocity[k + 1], vz = velocity[k + 2];
@@ -65,12 +70,24 @@ export function createFlock(count = 420, seed = 29) {
         const d = Math.hypot(dx, dy, dz), push = Math.max(0, 1 - d / 3.1) * 14 / Math.max(.15, d);
         ax += dx * push; ay += dy * push; az += dz * push;
       }
-      // A broad, soft roost boundary keeps the experiment in view without wrapping.
-      const radius = Math.hypot(px, pz), edge = Math.max(0, (radius - 40) / 30);
-      ax -= px / Math.max(1, radius) * edge * 4.5; az -= pz / Math.max(1, radius) * edge * 4.5;
-      // A shared circling bias avoids a symmetric head-on encounter with the boundary.
-      ax -= pz / Math.max(1, radius) * edge * 3; az += px / Math.max(1, radius) * edge * 3;
-      ay -= py * .065 + vy * .3;
+      // Each departure moves the gathering place through the landscape.
+      const commitment = life.commitment(i), anchor = life.anchor;
+      const rx = px - anchor[0], rz = pz - anchor[2];
+      const radius = Math.hypot(rx, rz), edge = Math.max(0, (radius - 40) / 30);
+      const roost = 1 - commitment;
+      ax -= rx / Math.max(1, radius) * edge * 4.5 * roost;
+      az -= rz / Math.max(1, radius) * edge * 4.5 * roost;
+      ax -= rz / Math.max(1, radius) * edge * 3 * roost;
+      az += rx / Math.max(1, radius) * edge * 3 * roost;
+      ax += (life.bearing[0] * preferredSpeed[i] - vx) * commitment * .6;
+      az += (life.bearing[2] * preferredSpeed[i] - vz) * commitment * .6;
+      ay -= (py - anchor[1]) * .065 + vy * .3;
+      // The viewer has a small personal space, only while flying among birds.
+      if (participant) {
+        const dx = px - participant[0], dy = py - participant[1], dz = pz - participant[2];
+        const d = Math.hypot(dx, dy, dz), push = Math.max(0, 1 - d / 4) ** 2 * 7 / Math.max(.3, d);
+        ax += dx * push; ay += dy * push; az += dz * push;
+      }
       // Smooth individual variation: no frame-to-frame random jitter.
       ax += Math.sin(time * .61 + phase[i] * 3) * .26;
       ay += Math.sin(time * .47 + phase[i] * 5) * .18;
@@ -103,7 +120,8 @@ export function createFlock(count = 420, seed = 29) {
       for (let j = 0; j < 3; j++) velocity[k + j] += acceleration[k + j] * dt;
       const speed = Math.hypot(velocity[k], velocity[k + 1], velocity[k + 2]);
       const bounded = clamp(speed, 8.5, 14);
-      for (let j = 0; j < 3; j++) { velocity[k + j] *= bounded / speed; position[k + j] += velocity[k + j] * dt; }
+      sampleAir(position[k], position[k + 1], position[k + 2], time, breeze); air.set(breeze, k);
+      for (let j = 0; j < 3; j++) { velocity[k + j] *= bounded / speed; position[k + j] += (velocity[k + j] + air[k + j]) * dt; }
       const horizontal = Math.hypot(velocity[k], velocity[k + 2]) || 1;
       const sideways = (velocity[k + 2] * acceleration[k] - velocity[k] * acceleration[k + 2]) / horizontal;
       const wantedBank = clamp(-Math.atan2(sideways, 9.81), -.8, .8);
@@ -112,5 +130,5 @@ export function createFlock(count = 420, seed = 29) {
     time += dt; tick++; measure();
   }
   measure(); findNeighbours();
-  return { count, position, velocity, acceleration, bank, phase, neighbours, centre, heading, step, get time() { return time; } };
+  return { count, position, velocity, acceleration, bank, phase, neighbours, centre, heading, air, life, step, get time() { return time; } };
 }

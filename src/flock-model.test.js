@@ -13,20 +13,24 @@ test('social neighbourhoods select the seven nearest distinct birds', () => {
   }
 });
 
-test('two minutes of flight remains finite, bounded and cohesive with limited speeds and banks', () => {
+test('two migrating passages stay cohesive with finite positions and limited airspeeds and banks', () => {
   const flock = createFlock();
-  for (let tick = 0; tick < 7200; tick++) {
-    flock.step();
+  const stages = new Set();
+  for (let tick = 0; tick < 9000; tick++) {
+    flock.step(); stages.add(flock.life.state.stage);
     if (tick % 60) continue;
     for (let i = 0; i < flock.count; i++) {
       const p = flock.position.subarray(i * 3, i * 3 + 3), velocity = flock.velocity.subarray(i * 3, i * 3 + 3);
       assert.ok([...p, ...velocity, flock.bank[i]].every(Number.isFinite));
       assert.ok(Math.hypot(...velocity) >= 8.499 && Math.hypot(...velocity) <= 14.001);
       assert.ok(Math.abs(flock.bank[i]) <= .8);
-      assert.ok(Math.hypot(...p) < 140);
-      assert.ok(Math.hypot(...p.map((v, axis) => v - flock.centre[axis])) < 65);
+      assert.ok(Math.hypot(...p.map((v, axis) => v - flock.life.anchor[axis])) < 155);
+      assert.ok(Math.hypot(...p.map((v, axis) => v - flock.centre[axis])) < 105);
     }
   }
+  assert.deepEqual([...stages], ['gathering', 'stirring', 'departing', 'passage', 'regrouping']);
+  assert.equal(flock.life.state.passages, 2);
+  assert.ok(Math.hypot(...flock.centre) > 200, 'passage leaves the original roost');
 });
 
 test('a disturbance affects nearby birds first and repeated inputs reproduce the same flight', () => {
