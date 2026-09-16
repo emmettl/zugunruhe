@@ -118,3 +118,11 @@ white storks from July to September 2018. Sparse glints reveal individual GPS
 observations. Hold a position, follow a bird, or unfold its geographic route into
 calendar time and latitude. This excerpt extends from Europe into Morocco;
 recording gaps remain open. [Data, interpretation and reproduction](docs/MIGRATION.md).
+
+## Soaring — Borrowed sky
+
+At `/soaring.html`, twenty simulated white storks climb in drifting thermals and
+make individual decisions to leave. Follow a bird, travel with the rising air,
+reveal lift and flight traces, or listen to a provisional score shaped by climbing
+and departure. This authored study is separate from the recorded migration data.
+[Flight rules, research and controls](docs/SOARING.md).

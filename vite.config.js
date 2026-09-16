@@ -7,6 +7,7 @@ export default defineConfig({base:'./',build:{rolldownOptions:{input:{
   'air-station':fileURLToPath(new URL('./air-station.html',import.meta.url)),
   air:fileURLToPath(new URL('./air.html',import.meta.url)),
   season:fileURLToPath(new URL('./season.html',import.meta.url)),
+  soaring:fileURLToPath(new URL('./soaring.html',import.meta.url)),
   flock:fileURLToPath(new URL('./flock.html',import.meta.url)),
   'season-data':fileURLToPath(new URL('./season-data.html',import.meta.url)),
   migration:fileURLToPath(new URL('./migration.html',import.meta.url)),
