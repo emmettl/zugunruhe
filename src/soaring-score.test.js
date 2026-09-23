@@ -6,14 +6,14 @@ function fixture() {
   const parameter = () => ({ value: 0, setValueAtTime() {}, setTargetAtTime(value) { this.value = value; }, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} });
   const node = () => ({ connect() {}, disconnect() {}, gain: parameter(), frequency: parameter(), pan: parameter() });
   const context = { state: 'suspended', currentTime: 0, destination: node(), oscillators: [], createGain: node, createStereoPanner: node,
-    createOscillator() { const o = { ...node(), stops: [], start() {}, stop(time) { this.stops.push(time); } }; this.oscillators.push(o); return o; },
+    createOscillator() { const o = { ...node(), stops: [], start(time) { this.startTime = time; }, stop(time) { this.stops.push(time); } }; this.oscillators.push(o); return o; },
     async resume() { this.state = 'running'; }, async close() { this.state = 'closed'; } };
   let timer, created = 0;
   const sound = createSoaringSound({ createContext() { created++; return context; }, schedule(fn) { timer = fn; return 1; }, unschedule() { timer = null; } });
   return { context, sound, get created() { return created; }, tick() { context.currentTime += .1; timer?.(); }, get scheduled() { return !!timer; } };
 }
 test('climb draws phrases together; height enriches tone; gliding opens the sound', () => {
-  const level = soaringMusic(), rise = soaringMusic({ height: 500, climb: 3, mode: 'climbing' }), glide = soaringMusic({ mode: 'gliding', climb: -1 });
+  const level = soaringMusic(), rise = soaringMusic({ height: 500, climb: 3, mode: 'climbing', company: 1 }), glide = soaringMusic({ mode: 'gliding', climb: -1 });
   assert.ok(rise.interval < level.interval); assert.ok(rise.brightness > level.brightness);
   assert.ok(glide.release > rise.release && glide.spread > rise.spread);
 });
@@ -46,4 +46,26 @@ test('uncertainty thins the foundation and leaves more silence at equal height a
   assert.ok(searching.foundation < following.foundation * .6);
   assert.ok(searching.brightness < following.brightness);
   assert.ok(soaringMusic({ readiness: 1 }).interval < soaringMusic({ readiness: 0 }).interval);
+});
+
+
+test('nearby companions add quiet delayed answers, without turning each arrival into a note', async () => {
+  const alone = fixture(), together = fixture();
+  for (const [f, company] of [[alone, 0], [together, 1]]) {
+    f.sound.setState({ bird: 0, height: 250, climb: 3, mode: 'climbing', certainty: 1, departures: 0, company });
+    await f.sound.start(); for (let i = 0; i < 400; i++) f.tick();
+  }
+  assert.ok(together.context.oscillators.length > alone.context.oscillators.length);
+  const starts = together.context.oscillators.slice(3).filter((_, i) => i % 2 === 0).map(o => o.startTime);
+  assert.ok(starts.some((t, i) => i > 0 && Math.abs(t - starts[i - 1] - 2.6) < .001));
+  const soloMusic = soaringMusic({ certainty: 1, company: 0 }), sharedMusic = soaringMusic({ certainty: 1, company: 1 });
+  assert.ok(sharedMusic.spread < soloMusic.spread);
+  alone.sound.dispose(); together.sound.dispose();
+});
+
+test('volume can be set silently before starting and does not change note timing', async () => {
+  const f = fixture(); f.sound.setVolume(0); assert.equal(f.created, 0);
+  await f.sound.start(); f.tick(); const notes = f.context.oscillators.length;
+  f.sound.setVolume(.4); assert.equal(f.context.oscillators.length, notes); assert.equal(f.sound.playing, true);
+  f.sound.stop(); f.sound.setVolume(1); assert.equal(f.sound.playing, false); f.sound.dispose();
 });

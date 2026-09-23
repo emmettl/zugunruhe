@@ -50,7 +50,12 @@ it is not evidence that the model predicts real flight.
 - **Follow one:** a close travelling view of the selected bird, tinted gold.
 - **With the air:** a camera with its own velocity and acceleration. It samples
   local lift, sinks between thermals and gently seeks a position beside its
-  companion, with soft avoidance of nearby birds. It does not affect the birds.
+  companion, with soft avoidance of nearby birds. The view eases back from 10 to
+  15 m as nearby companions thin out; its field of view opens by at most 5 degrees.
+  A discovered climber draws the look target at most 3 m away from the selected
+  bird, eased over three seconds. Follow uses the same framing with a slightly
+  greater following distance. Both views keep the selected bird as their subject
+  and do not affect flight.
 - **Another bird:** changes the companion and the bird described by the captions.
 - **Lift:** schematic helices mark three thermal columns. Their spirals are
   visual guides whose height and opacity follow thermal strength, not air-particle trajectories or measured weather.
@@ -64,14 +69,32 @@ Space toggles flight, 1/2/3 select views and N changes birds. Reduced motion beg
 paused; explicit Play starts flight. Notes and hidden tabs freeze simulation time
 without a catch-up jump. The native notes dialog restores focus when closed.
 
-## Provisional sound
+## Sound direction — air and answering voices
 
-Listen is opt-in, with a separate audio clock and a quiet D-major pentatonic
-foundation. The selected bird's climb rate draws ascending phrases together;
-height increases the upper harmonic. Departures sound a high note and gliding
-uses wider panning and longer releases. Searching leaves longer gaps and thins the upper foundation voices. Seeing a
-climber and finding lift gradually restores those voices; readiness slightly
-shortens phrase spacing. Changing companions does not invent a departure. This is a musical interpretation of flight, not a measure of emotion.
+The chosen direction is a quiet, sustained lower voice for the air, with rounded,
+sparse phrases above it. It keeps the D-major pentatonic vocabulary. The selected
+bird's climb rate draws ascending phrases together; height adds an upper harmonic.
+Departure closes a phrase softly on A, followed by longer releases and more space.
+Searching thins the upper foundation and leaves longer gaps.
+
+Nearby companions in confident flight allow a second voice to answer alternate
+phrases, 2.6 seconds later at less than half the lead amplitude. Stereo movement
+gently draws together. Proximity is measured continuously within a roughly 100 m
+neighbourhood and eased over four seconds, so individual arrivals do not each
+trigger a sound. Seeing a climber and finding lift gradually restores the upper
+voices. Readiness slightly shortens phrase spacing. Changing companions does not
+invent a departure. These are artistic mappings, not measures of emotion.
+
+Listen remains opt-in. A keyboard-accessible volume slider appears while listening;
+zero is silent and changing volume does not restart the composition. The default
+is 65%, with the same level used for the standalone listening render. The rendering
+uses the live Web Audio graph and the default flight, rather than a separate
+composition that only approximates the browser soundtrack.
+
+[Listen to the opening passage](../audio-studies/08-soaring/README.md): 132 seconds,
+including the first departure, search and reunion. The output has been checked for
+finite samples, headroom and silence after stopping. Those signal checks do not
+replace listening on headphones and speakers; the sample is provided for that review.
 
 Pausing holds the musical inputs while music continues. Stopping, opening notes,
 restarting or hiding the page fades the output and stops scheduling. A pending
@@ -100,7 +123,8 @@ Unit tests check a full climb/departure/glide/arrival, staggered departures,
 repeatability, drift, ten minutes of bounded flight, camera speed and acceleration,
 discovery and recruitment (including social cues disabled), rejection of sinking
 guides, truthful captions, state-to-music mapping, departure events and cancellation
-during audio resume.
+during audio resume, proximity framing, bounded attention shifts, quiet delayed
+answers and volume without restarting.
 Browser tests cover Chromium and mobile WebKit: rendering, views, held pause
 clicks, overlays, restart, notes/focus, opt-in audio, reduced motion, the recorded
 migration link, and layouts from 320 to 1280 px.

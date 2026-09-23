@@ -32,17 +32,23 @@ test('soaring supports viewpoints, held pause, restart, notes, sound and respons
   await expect(study).toHaveAttribute('data-score', 'off');
   await page.getByRole('button', { name: 'Start soaring soundtrack' }).click();
   await expect(study).toHaveAttribute('data-score', 'playing');
+  const volume = page.getByRole('slider', { name: 'Soundtrack volume' });
+  await expect(volume).toBeVisible(); await volume.fill('0'); await expect(volume).toHaveValue('0');
+  await volume.press('ArrowRight'); await expect(volume).toHaveValue('1');
   await expect(study).toHaveAttribute('data-playing', 'false');
   await page.getByRole('button', { name: 'About this study' }).click();
   await expect(page.getByRole('dialog')).toBeVisible(); await expect(study).toHaveAttribute('data-score', 'off');
+  await expect(volume).toBeHidden();
   await page.keyboard.press('Escape'); await expect(page.getByRole('dialog')).toBeHidden();
   await expect(page.locator('#soaring-about')).toBeFocused();
   await page.getByRole('button', { name: 'Restart', exact: true }).click();
   await expect(study).toHaveAttribute('data-time', '0.00'); await expect(study).toHaveAttribute('data-bird', '1');
   await expect(study).toHaveAttribute('data-camera', 'watch');
+  await page.getByRole('button', { name: 'Start soaring soundtrack' }).click();
   for (const width of [320, 390, 900, 1280]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const soundBox = await volume.boundingBox(); expect(soundBox.x + soundBox.width).toBeLessThanOrEqual(width);
     const heading = await page.locator('.soaring-heading').boundingBox(), caption = await page.locator('.soaring-caption').boundingBox();
     if (width <= 760) expect(heading.y + heading.height).toBeLessThanOrEqual(caption.y);
     for (const button of await page.locator('.soaring-toolbar button').all()) {

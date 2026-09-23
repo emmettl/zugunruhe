@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { thermalAt } from './soaring-model.js';
+import { createSoaringFraming } from './soaring-framing.js';
 import { createSoaringCamera } from './soaring-camera.js';
 
 const groundHeight = (x, z) => 12 + 13 * Math.sin(x / 310) * Math.cos(z / 260) + 6 * Math.sin(z / 95 + x / 420);
@@ -99,7 +100,7 @@ export function createSoaringScene(container, flock) {
     vertexShader:'attribute float vitality;varying float life;void main(){life=vitality;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
     fragmentShader:'varying float life;void main(){gl_FragColor=vec4(.67,.52,.31,.25*life);}',
   })); liftLines.visible=false; liftLines.frustumCulled=false; scene.add(liftLines);
-  const pilot=createSoaringCamera(), dummy=new THREE.Object3D(), forward=new THREE.Vector3(), right=new THREE.Vector3(), up=new THREE.Vector3();
+  const framing=createSoaringFraming(), pilot=createSoaringCamera(), dummy=new THREE.Object3D(), forward=new THREE.Vector3(), right=new THREE.Vector3(), up=new THREE.Vector3();
   const worldUp=new THREE.Vector3(0,1,0), matrix=new THREE.Matrix4(), roll=new THREE.Quaternion(), axis=new THREE.Vector3(0,0,1);
   const desired=new THREE.Vector3(), look=focus.clone(), direction=new THREE.Vector3(1,0,0), point=new THREE.Vector3();
   let mode='watch',selected=0,reduced=false,lost=false;
@@ -115,16 +116,17 @@ export function createSoaringScene(container, flock) {
   function render(dt) {
     if(lost)return; time.value=flock.time; updateGround();
     oldFocus.copy(focus);focus.lerp(point.fromArray(flock.centre),1-Math.exp(-dt*2));
-    camera.fov+=( (mode==='air'?66:mode==='follow'?53:48)+(camera.aspect<1?12:0)-camera.fov)*(1-Math.exp(-dt*2));camera.updateProjectionMatrix();
+    camera.fov+=( (mode==='air'?framing.fieldOfView:mode==='follow'?framing.fieldOfView-10:48)+(camera.aspect<1?12:0)-camera.fov)*(1-Math.exp(-dt*2));camera.updateProjectionMatrix();
     if(mode==='watch'){
       camera.position.add(point.copy(focus).sub(oldFocus));controls.target.copy(focus);controls.update();look.copy(focus);
     }else{
       const k=selected*3;forward.fromArray(flock.velocity,k).normalize();direction.lerp(forward,1-Math.exp(-dt*.95)).normalize();right.crossVectors(worldUp,direction).normalize();
       point.fromArray(flock.position,k);
-      desired.copy(point).addScaledVector(direction,-13).addScaledVector(right,5);desired.y+=4;
+      desired.copy(point).addScaledVector(direction,-framing.distance-3).addScaledVector(right,5);desired.y+=4;
       if(mode==='air')camera.position.fromArray(pilot.position);else camera.position.lerp(desired,reduced?1:1-Math.exp(-dt*1.5));
       // Keep the companion in view while the camera's own path catches up.
-      desired.copy(point).addScaledVector(direction,mode==='air'?5:3);
+      desired.copy(point).addScaledVector(direction,3);
+      desired.x+=framing.attention[0];desired.y+=framing.attention[1];desired.z+=framing.attention[2];
       look.lerp(desired,1-Math.exp(-dt*2));camera.up.lerp(worldUp,1-Math.exp(-dt*2));camera.lookAt(look);
     }
     for(let i=0;i<flock.count;i++){
@@ -147,7 +149,7 @@ export function createSoaringScene(container, flock) {
   }
   return {canvas,render,setMode,get selected(){return selected;},
     nextBird(){selected=(selected+1)%flock.count;setMode(mode);},
-    advance(dt){pilot.step(dt,flock,selected);},setLift(value){liftLines.visible=value;},setTraces(value){trails.visible=value;},
+    advance(dt){framing.advance(dt,flock,selected);pilot.step(dt,flock,selected,framing.distance);},setLift(value){liftLines.visible=value;},setTraces(value){trails.visible=value;},
     setReduced(value){reduced=value;controls.enableDamping=!value;},
     dispose(){observer.disconnect();controls.dispose();scene.traverse(object=>{object.geometry?.dispose();object.material?.dispose();});renderer.dispose();},
   };

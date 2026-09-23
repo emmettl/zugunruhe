@@ -1,0 +1,34 @@
+{
+  "rate": 24000,
+  "seconds": 132,
+  "peakDb": -16.23485573197061,
+  "rmsDb": -30.900234317964603,
+  "lastSecondPeak": 0,
+  "events": [
+    {
+      "at": 0,
+      "mode": "climbing",
+      "guide": 0
+    },
+    {
+      "at": 55.8,
+      "mode": "seeking",
+      "guide": 0
+    },
+    {
+      "at": 103.8,
+      "mode": "gliding",
+      "guide": 9
+    },
+    {
+      "at": 111.3,
+      "mode": "climbing",
+      "guide": 9
+    }
+  ],
+  "sources": {
+    "soaring-score.js": "ecade3f660144451de5a1021b9a894b8c7a82e425bc9f711f30720fdb5ad6336",
+    "soaring-model.js": "57f796d5265422932dd42e8d67f3b244c2217c34b6892eb0b8dd9f0eedc8f942",
+    "soaring-framing.js": "c2dc3071988ec61159ed9436ae0a27d294f4ffaded140edee0d1f52b34bf0b83"
+  }
+}

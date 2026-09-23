@@ -6,11 +6,11 @@ export function createSoaringCamera() {
   return { position, velocity,
     enter(point) { position.splice(0, 3, ...point); velocity.fill(0); active = true; },
     leave() { active = false; },
-    step(dt, flock, selected) {
+    step(dt, flock, selected, distance = 10) {
       if (!active) return;
       const k = selected * 3, angle = flock.heading[selected];
-      const target = [flock.position[k] - Math.cos(angle) * 8 + Math.sin(angle) * 5,
-        flock.position[k + 1] + 2, flock.position[k + 2] - Math.sin(angle) * 8 - Math.cos(angle) * 5];
+      const target = [flock.position[k] - Math.cos(angle) * distance + Math.sin(angle) * 5,
+        flock.position[k + 1] + 2, flock.position[k + 2] - Math.sin(angle) * distance - Math.cos(angle) * 5];
       const air = soaringAir(...position, flock.time);
       const desired = target.map((p, j) => (p - position[j]) * .7 + (j === 1 ? air[1] - .85 : flock.velocity[k + j]));
       desired[1] = clamp(desired[1], -5, 5);
