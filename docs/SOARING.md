@@ -65,6 +65,9 @@ it is not evidence that the model predicts real flight.
   state and overlay choices. It stops sound.
 
 Height is above the scene's reference plane, not clearance above the terrain.
+The landscape patch follows the camera in every view, including journeys with
+birds far from the group's centre. It extends beyond the radial haze and reuses
+the same mesh. Tile shifts preserve the world-space hills and field pattern.
 Space toggles flight, 1/2/3 select views and N changes birds. Reduced motion begins
 paused; explicit Play starts flight. Notes and hidden tabs freeze simulation time
 without a catch-up jump. The native notes dialog restores focus when closed.
@@ -125,6 +128,8 @@ discovery and recruitment (including social cues disabled), rejection of sinking
 guides, truthful captions, state-to-music mapping, departure events and cancellation
 during audio resume, proximity framing, bounded attention shifts, quiet delayed
 answers and volume without restarting.
+Terrain checks cover every selectable bird over three simulated hours, distant
+camera transfers, negative coordinates, and continuity across tile boundaries.
 Browser tests cover Chromium and mobile WebKit: rendering, views, held pause
 clicks, overlays, restart, notes/focus, opt-in audio, reduced motion, the recorded
 migration link, and layouts from 320 to 1280 px.

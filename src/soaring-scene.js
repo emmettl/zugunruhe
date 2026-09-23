@@ -3,8 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { thermalAt } from './soaring-model.js';
 import { createSoaringFraming } from './soaring-framing.js';
 import { createSoaringCamera } from './soaring-camera.js';
-
-const groundHeight = (x, z) => 12 + 13 * Math.sin(x / 310) * Math.cos(z / 260) + 6 * Math.sin(z / 95 + x / 420);
+import { createSoaringTerrain } from './soaring-terrain.js';
 
 function storkGeometry() {
   const vertices = [], colours = [];
@@ -52,27 +51,7 @@ export function createSoaringScene(container, flock) {
     fragmentShader:`varying vec3 d;void main(){vec3 v=normalize(d);vec3 colour=mix(vec3(.87,.87,.78),vec3(.51,.65,.69),smoothstep(-.04,.85,v.y));
       float sun=pow(max(0.,dot(v,normalize(vec3(-.7,.22,.4)))),55.);colour+=vec3(.13,.095,.025)*sun;gl_FragColor=vec4(colour,1.);}`,
   })); scene.add(sky);
-  const terrain = new THREE.PlaneGeometry(6500,6500,100,100); terrain.rotateX(-Math.PI/2);
-  const land = new THREE.Mesh(terrain,new THREE.ShaderMaterial({
-    uniforms: { fogColour:{value:new THREE.Color('#d5dfd8')} },
-    vertexShader:'varying vec3 world;varying float depth;void main(){world=(modelMatrix*vec4(position,1.)).xyz;vec4 p=modelViewMatrix*vec4(position,1.);depth=-p.z;gl_Position=projectionMatrix*p;}',
-    fragmentShader:`varying vec3 world;varying float depth;uniform vec3 fogColour;
-      float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-      void main(){vec2 p=world.xz;vec2 fields=vec2(p.x/125.+sin(p.y/600.)*.6,p.y/90.+sin(p.x/420.)*.4);float seed=hash(floor(fields));
-        vec3 colour=mix(vec3(.40,.49,.36),vec3(.66,.61,.40),seed);
-        vec2 edge=abs(fract(fields)-.5);float hedge=smoothstep(.478,.498,max(edge.x,edge.y));colour*=1.-hedge*.13;
-        float river=abs(p.y-210.-sin(p.x/420.)*115.-sin(p.x/170.)*24.);colour=mix(vec3(.44,.57,.55),colour,smoothstep(12.,20.,river));
-        colour*=.94+.06*sin(p.x/310.)*cos(p.y/260.);
-        colour=mix(colour,fogColour,smoothstep(350.,4100.,depth));gl_FragColor=vec4(colour,1.);}`,
-  })); scene.add(land);
-  let groundTile = null;
-  function updateGround() {
-    const x = Math.floor(flock.centre[0]/800)*800, z = Math.floor(flock.centre[2]/800)*800;
-    const tile = `${x}:${z}`; if (tile === groundTile) return; groundTile = tile; land.position.set(x,0,z);
-    const points = terrain.attributes.position;
-    for (let i = 0; i < points.count; i++) points.setY(i,groundHeight(points.getX(i)+x,points.getZ(i)+z));
-    points.needsUpdate = true; terrain.computeBoundingSphere();
-  }
+  const ground = createSoaringTerrain(); scene.add(ground.mesh);
   const geometry = storkGeometry();
   geometry.setAttribute('phase',new THREE.InstancedBufferAttribute(flock.phase,1));
   geometry.setAttribute('effort',new THREE.InstancedBufferAttribute(flock.effort,1).setUsage(THREE.DynamicDrawUsage));
@@ -114,7 +93,7 @@ export function createSoaringScene(container, flock) {
   const observer=new ResizeObserver(()=>{const {width,height}=container.getBoundingClientRect();renderer.setSize(width,height,false);camera.aspect=width/Math.max(1,height);camera.updateProjectionMatrix();});observer.observe(container);
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;container.dispatchEvent(new Event('graphics-lost'));});
   function render(dt) {
-    if(lost)return; time.value=flock.time; updateGround();
+    if(lost)return; time.value=flock.time;
     oldFocus.copy(focus);focus.lerp(point.fromArray(flock.centre),1-Math.exp(-dt*2));
     camera.fov+=( (mode==='air'?framing.fieldOfView:mode==='follow'?framing.fieldOfView-10:48)+(camera.aspect<1?12:0)-camera.fov)*(1-Math.exp(-dt*2));camera.updateProjectionMatrix();
     if(mode==='watch'){
@@ -145,6 +124,7 @@ export function createSoaringScene(container, flock) {
           liftPositions.set([column.x+Math.cos(angle)*column.radius*.72,80+t*470*column.life,column.z+Math.sin(angle)*column.radius*.72],out);liftVitality[out/3]=column.life;out+=3;}
       }}liftGeo.attributes.position.needsUpdate=true;liftGeo.attributes.vitality.needsUpdate=true;
     }
+    ground.update(camera.position);
     sky.position.copy(camera.position); renderer.render(scene,camera);
   }
   return {canvas,render,setMode,get selected(){return selected;},
