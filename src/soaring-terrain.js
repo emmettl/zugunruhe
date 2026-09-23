@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { soaringWeather, CLOUD_SHADOW_GLSL } from './soaring-weather.js';
 
 export const TERRAIN_SIZE = 10400;
 export const TERRAIN_SEGMENTS = 160;
@@ -11,16 +12,18 @@ export function createSoaringTerrain() {
   geometry.rotateX(-Math.PI / 2);
   const mesh = new THREE.Mesh(geometry, new THREE.ShaderMaterial({
     transparent: true,
-    uniforms: { fogColour: { value: new THREE.Color('#d5dfd8') }, fadeDistance: { value: TERRAIN_FADE } },
+    uniforms: { fogColour: { value: new THREE.Color('#d5dfd8') }, fadeDistance: { value: TERRAIN_FADE }, cloudOffset: { value: new THREE.Vector2() } },
     vertexShader: `varying vec3 world, viewPosition;
       void main(){world=(modelMatrix*vec4(position,1.)).xyz;vec4 p=modelViewMatrix*vec4(position,1.);viewPosition=p.xyz;gl_Position=projectionMatrix*p;}`,
-    fragmentShader: `varying vec3 world, viewPosition;uniform vec3 fogColour;uniform float fadeDistance;
+    fragmentShader: `varying vec3 world, viewPosition;uniform vec3 fogColour;uniform float fadeDistance;uniform vec2 cloudOffset;
+      ${CLOUD_SHADOW_GLSL}
       float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       void main(){vec2 p=world.xz;vec2 fields=vec2(p.x/125.+sin(p.y/600.)*.6,p.y/90.+sin(p.x/420.)*.4);float seed=hash(floor(fields));
         vec3 colour=mix(vec3(.40,.49,.36),vec3(.66,.61,.40),seed);
         vec2 edge=abs(fract(fields)-.5);float hedge=smoothstep(.478,.498,max(edge.x,edge.y));colour*=1.-hedge*.13;
         float river=abs(p.y-210.-sin(p.x/420.)*115.-sin(p.x/170.)*24.);colour=mix(vec3(.44,.57,.55),colour,smoothstep(12.,20.,river));
         colour*=.94+.06*sin(p.x/310.)*cos(p.y/260.);
+        colour*=1.-cloudShadow(p,cloudOffset)*.18;
         float distance=length(viewPosition);
         colour=mix(colour,fogColour,smoothstep(350.,fadeDistance,distance));
         gl_FragColor=vec4(colour,1.-smoothstep(fadeDistance-300.,fadeDistance,distance));}`,
@@ -29,7 +32,9 @@ export function createSoaringTerrain() {
   mesh.renderOrder = -1;
   let tileX, tileZ;
   return { mesh,
-    update(cameraPosition) {
+    update(cameraPosition, time = 0) {
+      const weather = soaringWeather(time);
+      mesh.material.uniforms.cloudOffset.value.set(weather.cloudX, weather.cloudZ);
       // Follow the actual eye in every view, including travel between distant birds.
       // The patch extends beyond the radial haze even just before a tile shift.
       const x = Math.floor(cameraPosition.x / TERRAIN_SHIFT) * TERRAIN_SHIFT;

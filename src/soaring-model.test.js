@@ -9,7 +9,7 @@ test('fading lift prompts staggered departure, a search, discovery and recruitme
   let departureHeight, arrivalHeight, descending = 0, departureCue;
   const arrivals = [], previousJoins = [...flock.joins], stories = new Set();
   for (let frame = 0; frame < 180 * 60; frame++) {
-    flock.step(); stories.add(soaringStory(flock, 0)[0]);
+    flock.step(); for (let bird = 0; bird < flock.count; bird++) stories.add(soaringStory(flock, bird)[0]);
     for (let i = 0; i < 20; i++) {
       if (flock.joins[i] > previousJoins[i] && flock.thermal[i] === 1) arrivals.push({ time: flock.time, cue: flock.cue[i], guide: flock.guide[i] });
       previousJoins[i] = flock.joins[i];
@@ -31,12 +31,13 @@ test('fading lift prompts staggered departure, a search, discovery and recruitme
 });
 
 test('ten minutes of successive thermals remain finite and above ground', () => {
-  const flock = createSoaringFlock(); let min = Infinity, max = -Infinity;
+  const flock = createSoaringFlock(); let min = Infinity, max = -Infinity; const kinds = new Set();
   for (let frame = 0; frame < 600 * 60; frame++) {
     flock.step();
-    for (let i = 0; i < 20; i++) { min = Math.min(min, flock.position[i * 3 + 1]); max = Math.max(max, flock.position[i * 3 + 1]); }
+    for (let i = 0; i < 20; i++) { min = Math.min(min, flock.position[i * 3 + 1]); max = Math.max(max, flock.position[i * 3 + 1]); if (flock.mode[i] === 'climbing') kinds.add(thermalAt(flock.thermal[i], flock.time).kind); }
   }
   assert.ok(min > 80 && max < 620);
+  assert.deepEqual([...kinds].sort(), ['broad', 'broken', 'narrow']);
   assert.ok([...flock.position, ...flock.velocity, ...flock.bank].every(Number.isFinite));
   assert.ok(flock.departures.every(n => n >= 4));
   assert.ok([...flock.reserve, ...flock.certainty, ...flock.readiness].every(n => n >= 0 && n <= 1));
@@ -49,7 +50,7 @@ test('restart recreates the same journey; drift carries the thermal and its lift
   assert.deepEqual(a.position, b.position); assert.deepEqual(a.mode, b.mode);
   const start = thermalAt(0, 0), end = thermalAt(0, 100);
   assert.ok(end.x > start.x && end.z > start.z);
-  assert.ok(soaringAir(start.x, 200, start.z, 0)[1] > 4);
+  assert.ok(soaringAir(start.x, 200, start.z, 0)[1] > 3);
   assert.ok(soaringAir(end.x, 200, end.z, 100)[1] < 0);
   const renewed = thermalAt(0, 240); assert.ok(renewed.strength > 4);
   assert.ok(soaringAir(350, 200, 0, 0)[1] < 0);

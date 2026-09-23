@@ -5,6 +5,7 @@ import { createSoaringScene } from './soaring-scene.js';
 import { soaringCompany } from './soaring-framing.js';
 import { soaringStory } from './soaring-story.js';
 import { createSoaringSound } from './soaring-score.js';
+import { soaringWeather, cloudShadow } from './soaring-weather.js';
 import { installStudyDialog } from './study-ui.js';
 
 const $ = id => document.getElementById(id);
@@ -13,7 +14,7 @@ $('soaring-app').innerHTML = `
 <header><a class="identity" href="/">ZUGUNRUHE<span>STUDIES IN MOTION</span></a></header>
 <main id="soaring-study" data-score="off">
   <div id="soaring-world"></div>
-  <div class="soaring-heading"><p class="eyebrow">TWENTY WHITE STORKS · A SIMULATION</p><h1>Borrowed sky.</h1><p>Leave the circle. Search for the next climb.</p></div>
+  <div class="soaring-heading"><p class="eyebrow">TWENTY WHITE STORKS · A SIMULATION</p><h1>Borrowed sky.</h1><p>Leave the circle. Search for the next climb.</p><p id="soaring-weather"></p></div>
   <div class="soaring-caption"><button id="soaring-listen" aria-label="Start soaring soundtrack" aria-pressed="false">Listen</button><label class="soaring-volume" hidden><span>Volume</span><input id="soaring-volume" aria-label="Soundtrack volume" type="range" min="0" max="100" value="65"></label><button id="soaring-about">About this study ↗</button></div>
   <div class="soaring-bottom">
     <div class="flight-story"><div><p class="eyebrow" id="soaring-bird">WITH BIRD 01</p><h2 id="soaring-stage">In the climb.</h2><p id="soaring-description">A circle becomes a little height.</p></div><div class="flight-measures"><span id="soaring-height"></span><span id="soaring-climb"></span></div></div>
@@ -24,7 +25,7 @@ $('soaring-app').innerHTML = `
 </main>
 <section id="soaring-notes" hidden><button id="soaring-close" aria-label="Close study notes">×</button><h2>A little height, borrowed.</h2>
 <p>Twenty imagined white storks circle in rising air, then spend that height gliding towards the next thermal. Each has a different climbing radius, glide efficiency and preferred departure height. The air strengthens, weakens and falls quiet. Birds search independently and can turn towards a visible companion that is gaining height. Departing companions can encourage an earlier departure.</p>
-<p>The birds gain height when lift exceeds their sinking speed. Banking costs a little more height. They usually wait for a turn towards their broad migration direction before leaving, and can flap if they get too low. Thermals drift, dissipate and reform over an invented landscape. The optional Lift guides fade and shrink with their strength. Birds remember the strongest lift they have encountered to estimate where to circle. A simplified effort reserve recovers in a climb and falls during searching and flapping; a tired bird seeks more height before leaving. Restlessness builds during waiting and weak lift.</p>
+<p>The birds gain height when lift exceeds their sinking speed. Banking costs a little more height. They usually wait for a turn towards their broad migration direction before leaving, and can flap if they get too low. Thermals drift, dissipate and reform over an invented landscape. Broad, gentler lift alternates with narrow, stronger cores and broken pairs of smaller pockets. Wind changes gradually over several minutes. Moving cloud shadows soften the lift beneath them; the same cloud pattern shades the fields below. These changes follow simulation time and pause with the birds. The optional Lift guides show the different widths and split pockets, fading with the local lift actually used by the birds. Birds remember the strongest lift they have encountered to estimate where to circle. A simplified effort reserve recovers in a climb and falls during searching and flapping; a tired bird seeks more height before leaving. Restlessness builds during waiting and weak lift.</p>
 <p>This is an authored simulation, not tracked birds, a weather forecast or a validated aerodynamic model. Birds have a broad eastward migration direction, but no map of future thermals. They can miss lift, lose sight of a companion and spend height searching. The opening bird has already found a thermal; subsequent discovery comes from local lift or visible climbing birds. The remembered lift, effort reserve and restlessness are authored behavioural rules, not measured physiology. The short distances, lift, flight rules, social cues and decision thresholds are chosen to make the movement legible. The white-stork form and soaring behaviour distinguish this study from the starling-inspired <a href="flock.html">Flock</a>.</p>
 <p><b>Watch</b> lets you orbit the group. <b>Follow one</b> travels beside the bird tinted gold. <b>With the air</b> gives the camera its own momentum and samples the same rising air, with a gentle pull towards your companion and space around nearby birds. The view eases back as nearby companions thin out, and glances gently towards a climber your bird has noticed. It stays with your selected bird throughout. The horizon stays level. The camera does not steer the birds.</p>
 <p><b>Lift</b> shows schematic spirals marking the rising columns; these are guides, not measured air trajectories. <b>Traces</b> reveal recent flight paths. Height is measured above the imagined reference plane, not the terrain below. The story and measurements always refer to the selected bird, including in Watch.</p>
@@ -48,6 +49,8 @@ function measure() {
   if (!scene) return;
   const i = scene.selected, k = i * 3, height = flock.position[k + 1], climb = flock.velocity[k + 1];
   const story = soaringStory(flock, i);
+  const weather = soaringWeather(flock.time), shade = cloudShadow(flock.position[k], flock.position[k + 2], weather);
+  text('soaring-weather', `Wind ${Math.hypot(weather.windX, weather.windZ).toFixed(1)} m/s · ${shade > .5 ? 'Passing shade' : 'Open sunlight'}`);
   text('soaring-bird', `BIRD ${String(i + 1).padStart(2, '0')} · ${playing ? 'IN FLIGHT' : 'FLIGHT PAUSED'}`);
   text('soaring-stage', story[0]); text('soaring-description', story[1]);
   text('soaring-height', `${Math.round(height)} m high`); text('soaring-climb', `${climb >= 0 ? '+' : '−'}${Math.abs(climb).toFixed(1)} m/s`);

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { thermalAt } from './soaring-model.js';
+import { thermalAt, thermalIndex, liftAt } from './soaring-model.js';
+import { soaringWeather, CLOUD_SHADOW_GLSL } from './soaring-weather.js';
 import { createSoaringFraming } from './soaring-framing.js';
 import { createSoaringCamera } from './soaring-camera.js';
 import { createSoaringTerrain } from './soaring-terrain.js';
@@ -47,10 +48,14 @@ export function createSoaringScene(container, flock) {
   scene.add(new THREE.HemisphereLight('#fff8e7','#67776c',2.4));
   const sun = new THREE.DirectionalLight('#fff0ca',2); sun.position.set(-300,600,200); scene.add(sun);
   const sky = new THREE.Mesh(new THREE.SphereGeometry(8000,24,12),new THREE.ShaderMaterial({
-    side:THREE.BackSide,depthWrite:false,
+    side:THREE.BackSide,depthWrite:false,uniforms:{cloudOffset:{value:new THREE.Vector2()}},
     vertexShader:'varying vec3 d;void main(){d=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader:`varying vec3 d;void main(){vec3 v=normalize(d);vec3 colour=mix(vec3(.87,.87,.78),vec3(.51,.65,.69),smoothstep(-.04,.85,v.y));
-      float sun=pow(max(0.,dot(v,normalize(vec3(-.7,.22,.4)))),55.);colour+=vec3(.13,.095,.025)*sun;gl_FragColor=vec4(colour,1.);}`,
+    fragmentShader:`varying vec3 d;uniform vec2 cloudOffset;${CLOUD_SHADOW_GLSL}
+      void main(){vec3 v=normalize(d);vec3 colour=mix(vec3(.87,.87,.78),vec3(.51,.65,.69),smoothstep(-.04,.85,v.y));
+      float sun=pow(max(0.,dot(v,normalize(vec3(-.7,.22,.4)))),55.);colour+=vec3(.13,.095,.025)*sun;
+      vec2 cloudPoint=cameraPosition.xz+v.xz*max(100.,1100.-cameraPosition.y)/max(.025,v.y);
+      float cloud=cloudShadow(cloudPoint,cloudOffset)*smoothstep(.03,.18,v.y);
+      colour=mix(colour,vec3(.88,.89,.83),cloud*.6);gl_FragColor=vec4(colour,1.);}`,
   })); scene.add(sky);
   const ground = createSoaringTerrain(); scene.add(ground.mesh);
   const geometry = storkGeometry();
@@ -72,8 +77,8 @@ export function createSoaringScene(container, flock) {
   const trailGeo = new THREE.BufferGeometry(); trailGeo.setAttribute('position',new THREE.BufferAttribute(trailPositions,3).setUsage(THREE.DynamicDrawUsage));
   const trails = new THREE.LineSegments(trailGeo,new THREE.LineBasicMaterial({color:'#c49c57',transparent:true,opacity:.27,depthWrite:false})); trails.visible=false; trails.frustumCulled=false; scene.add(trails);
   let head=0,samples=0,lastTrail=-1;
-  const liftVitality = new Float32Array(3*3*70*2);
-  const liftPositions = new Float32Array(3*3*70*6), liftGeo = new THREE.BufferGeometry();
+  const liftVitality = new Float32Array(3*2*3*70*2);
+  const liftPositions = new Float32Array(3*2*3*70*6), liftGeo = new THREE.BufferGeometry();
   liftGeo.setAttribute('position',new THREE.BufferAttribute(liftPositions,3).setUsage(THREE.DynamicDrawUsage));
   liftGeo.setAttribute('vitality',new THREE.BufferAttribute(liftVitality,1).setUsage(THREE.DynamicDrawUsage));
   const liftLines = new THREE.LineSegments(liftGeo,new THREE.ShaderMaterial({transparent:true,depthWrite:false,
@@ -120,13 +125,25 @@ export function createSoaringScene(container, flock) {
       const a=(i*trailLength+(head-j+trailLength)%trailLength)*3,b=(i*trailLength+(head-j-1+trailLength)%trailLength)*3;
       trailPositions.set(history.subarray(a,a+3),out);trailPositions.set(history.subarray(b,b+3),out+3);out+=6;
     }trailGeo.setDrawRange(0,out/3);trailGeo.attributes.position.needsUpdate=true;}
-    if(liftLines.visible){let out=0;const first=Math.max(0,Math.round((flock.position[selected*3]-flock.time*1.1)/700)-1);
-      for(let id=first;id<first+3;id++){const column=thermalAt(id,flock.time);for(let strand=0;strand<3;strand++)for(let j=0;j<70;j++){
-        for(const t of [j/70,(j+1)/70]){const angle=t*Math.PI*5+strand*Math.PI*2/3-flock.time*.1;
-          liftPositions.set([column.x+Math.cos(angle)*column.radius*.72,80+t*470*column.life,column.z+Math.sin(angle)*column.radius*.72],out);liftVitality[out/3]=column.life;out+=3;}
-      }}liftGeo.attributes.position.needsUpdate=true;liftGeo.attributes.vitality.needsUpdate=true;
+    if(liftLines.visible){let out=0;const first=thermalIndex(view.position[selected*3],view.time)-1;
+      for(let id=first;id<first+3;id++){
+        const column=thermalAt(id,view.time);
+        const pockets=column.kind==='broken'?[-1,1]:[0];
+        for(const pocket of pockets)for(let strand=0;strand<3;strand++)for(let j=0;j<70;j++){
+          for(const t of [j/70,(j+1)/70]){
+            const angle=t*Math.PI*5+strand*Math.PI*2/3-view.time*.1;
+            const x=column.x+pocket*column.radius*.48+Math.cos(angle)*column.radius*(pocket ? .43 : 1)*.72;
+            const z=column.z+pocket*column.radius*.18+Math.sin(angle)*column.radius*(pocket ? .55 : 1)*.72;
+            const y=80+t*470*column.life;
+            liftPositions.set([x,y,z],out);liftVitality[out/3]=Math.min(1,liftAt(x,y,z,column)/4);out+=3;
+          }
+        }
+      }
+      liftGeo.setDrawRange(0,out/3);liftGeo.attributes.position.needsUpdate=true;liftGeo.attributes.vitality.needsUpdate=true;
     }
-    ground.update(camera.position);
+    const weather=soaringWeather(view.time);
+    sky.material.uniforms.cloudOffset.value.set(weather.cloudX,weather.cloudZ);
+    ground.update(camera.position,view.time);
     sky.position.copy(camera.position); renderer.render(scene,camera);
   }
   return {canvas,render,setMode,get selected(){return selected;},

@@ -26,6 +26,15 @@ This develops the broader project's idea of two slowly moving musical voices.
 The separate bird/wind direction comparisons in study 07 have not been promoted
 into Air or incorporated as source audio. This score synthesises its own material.
 
+## Archived flight
+
+This sample captures the 22 September flight, before varied thermals and changing
+weather were added. The current score design is the same, but new weather changes
+the birds' decisions and therefore the timing of musical responses. The table and
+`render.json` describe this archived sample. Running the script now renders the
+current flight and replaces the sample and report; it does not reproduce this
+older flight. The original source is in commit `2da7fbe`.
+
 ## Render and checks
 
 `node scripts/render-soaring-listening.mjs` uses installed Playwright Chromium and

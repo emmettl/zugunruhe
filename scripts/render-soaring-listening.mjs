@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 const root = resolve(import.meta.dirname, '..'), out = resolve(root, 'audio-studies/08-soaring');
-const files = ['soaring-score.js', 'soaring-model.js', 'soaring-framing.js'];
+const files = ['soaring-score.js', 'soaring-model.js', 'soaring-framing.js', 'soaring-weather.js'];
 const modules = new Map(await Promise.all(files.map(async file => [file, await readFile(resolve(root, 'src', file), 'utf8')])));
 const browser = await chromium.launch({ headless: true });
 try {

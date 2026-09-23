@@ -1,21 +1,42 @@
+import { soaringWeather, cloudShadow } from './soaring-weather.js';
 // Authored metres/seconds model. Sensing, flight costs and weather are illustrative.
 export const SOARING_STEP = 1 / 60;
 export const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-export function thermalAt(id, time) {
+const thermalKinds = [
+  { kind: 'broad', radius: 82, strength: 4.4 },
+  { kind: 'narrow', radius: 48, strength: 6.4 },
+  { kind: 'broken', radius: 76, strength: 5.7 },
+];
+export function thermalIndex(x, time, weather = soaringWeather(time)) {
+  return Math.round((x - weather.driftX) / 700);
+}
+export function thermalAt(id, time, weather = soaringWeather(time)) {
   const age = ((time + 75 - id * 70) % 240 + 240) % 240;
   const life = smooth(0, 25, age) * (1 - smooth(100, 150, age));
-  return { id, x: id * 700 + time * 1.1, z: Math.sin(id * 1.8) * 95 + time * .3,
-    radius: 61 + Math.sin(id * 2.1) * 6, strength: (4.8 + Math.cos(id * 1.7) * .5) * life, life, top: 620 };
+  const profile = thermalKinds[((id % 3) + 3) % 3];
+  const x = id * 700 + weather.driftX, z = Math.sin(id * 1.8) * 95 + weather.driftZ;
+  const sunshine = 1 - .42 * cloudShadow(x, z, weather);
+  return { id, x, z, kind: profile.kind, radius: profile.radius + Math.sin(id * 2.1) * 4,
+    strength: profile.strength * life * sunshine, life, sunshine, top: 620,
+    pulse: .72 + .28 * Math.sin(time / 19 + id * 1.7) ** 2 };
 }
 export function liftAt(x, y, z, thermal) {
-  const radius = Math.hypot(x - thermal.x, z - thermal.z);
-  return thermal.strength * Math.exp(-((radius / thermal.radius) ** 2)) * clamp((thermal.top - y) / 130, 0, 1);
+  const dx = x - thermal.x, dz = z - thermal.z;
+  let shape;
+  if (thermal.kind === 'broken') {
+    // Two soft pockets with a weak saddle, rather than a noisy force each frame.
+    const r = thermal.radius;
+    shape = (Math.exp(-(((dx - r * .48) / (r * .43)) ** 2 + ((dz - r * .18) / (r * .55)) ** 2))
+      + .85 * Math.exp(-(((dx + r * .48) / (r * .43)) ** 2 + ((dz + r * .18) / (r * .55)) ** 2))) * thermal.pulse;
+  } else shape = Math.exp(-((Math.hypot(dx, dz) / thermal.radius) ** 2));
+  return thermal.strength * shape * clamp((thermal.top - y) / 130, 0, 1);
 }
-export function soaringAir(x, y, z, time, around = Math.round((x - time * 1.1) / 700)) {
+export function soaringAir(x, y, z, time, around, weather = soaringWeather(time)) {
+  around ??= thermalIndex(x, time, weather);
   let lift = -.14;
-  for (let id = around - 1; id <= around + 1; id++) lift += liftAt(x, y, z, thermalAt(id, time));
-  return [1.1, lift, .3];
+  for (let id = around - 1; id <= around + 1; id++) lift += liftAt(x, y, z, thermalAt(id, time, weather));
+  return [weather.windX, lift, weather.windZ];
 }
 const angleDifference = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 
@@ -62,11 +83,12 @@ export function createSoaringFlock(count = 20, seed = 73, { social = true } = {}
     state.meanHeight = centre[1];
   }
   function step(dt = SOARING_STEP) {
+    const weather = soaringWeather(time);
     const nextMode = [...mode], nextThermal = thermal.slice(), nextCue = [...cue], nextGuide = guide.slice();
     for (let i = 0; i < count; i++) {
       const k = i * 3, x = position[k], y = position[k + 1], z = position[k + 2];
       // Physical air acts everywhere; steering never asks for a future column.
-      const air = soaringAir(x, y, z, time), lift = air[1];
+      const air = soaringAir(x, y, z, time, undefined, weather), lift = air[1];
       let companion = -1, best = Infinity, leaving = 0, avoidX = 0, avoidZ = 0;
       for (let j = 0; j < count; j++) {
         if (i === j) continue;
@@ -89,7 +111,7 @@ export function createSoaringFlock(count = 20, seed = 73, { social = true } = {}
         if (guide[i] >= 0) recruited[i]++; else discovered[i]++;
         // This id is observational bookkeeping, used by overlays and to avoid
         // rejoining the just-abandoned column. It is never a navigation target.
-        nextThermal[i] = Math.round((x - time * 1.1) / 700);
+        nextThermal[i] = thermalIndex(x, time, weather);
         coreX[i] = x; coreZ[i] = z; bestLift[i] = lift;
         entered[i] = y; goal[i] = Math.min(520, Math.max(285 + patience[i] * 55, y + 80 + patience[i] * 40 + (1 - reserve[i]) * 25));
         joins[i]++; stateAge[i] = 0; weakTime[i] = 0; readiness[i] = 0;
@@ -128,7 +150,7 @@ export function createSoaringFlock(count = 20, seed = 73, { social = true } = {}
         // Broad eastward migration and individual sweeps, independent of the
         // hidden thermal locations. Birds can miss lift and spend height searching.
         const lane = Math.sin(phase[i]) * 70;
-        desired = clamp((lane - (z - time * .3)) / 160, -.6, .6) + Math.sin(time * .075 + phase[i]) * .32;
+        desired = clamp((lane - (z - weather.driftZ)) / 160, -.6, .6) + Math.sin(time * .075 + phase[i]) * .32;
         desired += Math.atan2(avoidZ, 14 + avoidX) * .3;
       }
       const targetSpeed = mode[i] === 'climbing' ? 11.7 + patience[i] * .8 : 14.2 + (efficiency[i] - .86) * 5;
@@ -146,8 +168,8 @@ export function createSoaringFlock(count = 20, seed = 73, { social = true } = {}
     for (let i = 0; i < count; i++) {
       const k = i * 3;
       heading[i] = nextHeading[i]; turn[i] = nextTurn[i]; mode[i] = nextMode[i]; thermal[i] = nextThermal[i]; cue[i] = nextCue[i]; guide[i] = nextGuide[i];
-      velocity[k] = Math.cos(heading[i]) * airspeed[i] + 1.1;
-      velocity[k + 1] = nextVertical[i]; velocity[k + 2] = Math.sin(heading[i]) * airspeed[i] + .3;
+      velocity[k] = Math.cos(heading[i]) * airspeed[i] + weather.windX;
+      velocity[k + 1] = nextVertical[i]; velocity[k + 2] = Math.sin(heading[i]) * airspeed[i] + weather.windZ;
       for (let j = 0; j < 3; j++) position[k + j] += velocity[k + j] * dt;
     }
     time += dt; measure();
