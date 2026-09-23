@@ -33,7 +33,7 @@ $('soaring-app').innerHTML = `
 <details><summary>Research and observations</summary><p><a href="https://doi.org/10.1016/j.jtbi.2010.10.038" target="_blank" rel="noreferrer">Van Loon et al. (2011), Simsoar</a> explores individual decisions in soaring migration. <a href="https://pubmed.ncbi.nlm.nih.gov/29798883/" target="_blank" rel="noreferrer">Flack et al. (2018)</a> studies social roles in migrating white storks. These inform the questions here; this study does not reproduce either paper’s model or data.</p><p>For a separate view of measured journeys, <a href="migration.html">follow fifteen recorded white storks</a>. Those migration tracks are not the source of these simulated flights.</p></details></section>`;
 
 let flock, scene, mode = 'watch', playing = !reduced.matches, lift = false, traces = false;
-let frame = null, previous = null, accumulator = 0, modal = false, listening = false, audioRequest = 0, lastUI = -Infinity;
+let frame = null, previous = null, accumulator = 0, renderAlpha = 1, modal = false, listening = false, audioRequest = 0, lastUI = -Infinity;
 const sound = createSoaringSound({ createContext() { const Audio = window.AudioContext || window.webkitAudioContext; if (!Audio) throw new Error('Web Audio unavailable'); return new Audio(); } });
 function text(id, value) { if ($(id).textContent !== value) $(id).textContent = value; }
 function update() {
@@ -70,10 +70,10 @@ function startScene() {
   scene?.dispose(); $('soaring-world').replaceChildren(); flock = createSoaringFlock();
   try { scene = createSoaringScene($('soaring-world'), flock); scene.setReduced(reduced.matches); scene.setLift(lift); scene.setTraces(traces); mode = 'watch'; $('soaring-error').hidden = true; }
   catch (cause) { scene = null; console.error(cause); error(); }
-  previous = null; accumulator = 0; lastUI = -Infinity; update();
+  previous = null; accumulator = 0; renderAlpha = 1; lastUI = -Infinity; update();
 }
 function setMode(value) { if (!scene) return; mode = value; scene.setMode(value); update(); }
-function toggle() { if (!scene) return; playing = !playing; accumulator = 0; update(); }
+function toggle() { if (!scene) return; playing = !playing; previous = null; update(); }
 for (const button of document.querySelectorAll('[data-mode]')) button.addEventListener('click', () => setMode(button.dataset.mode));
 $('soaring-volume').addEventListener('input', event => sound.setVolume(Number(event.target.value) / 100));
 $('soaring-play').addEventListener('click', toggle);
@@ -88,7 +88,7 @@ $('soaring-listen').addEventListener('click', async () => {
   catch { if (token !== audioRequest) return; stopSound(); text('soaring-status', 'Sound could not start. Try Listen again.'); }
 });
 const showNotes = installStudyDialog($('soaring-notes'), $('soaring-about'), $('soaring-close'));
-$('soaring-about').addEventListener('click', () => { modal = true; accumulator = 0; stopSound(); showNotes(true); });
+$('soaring-about').addEventListener('click', () => { modal = true; stopSound(); showNotes(true); });
 $('soaring-close').addEventListener('click', () => showNotes(false));
 $('soaring-notes').addEventListener('close', () => { modal = false; previous = null; requestFrame(); });
 document.addEventListener('keydown', event => {
@@ -100,14 +100,14 @@ document.addEventListener('keydown', event => {
 function requestFrame() { if (frame === null && !document.hidden && !modal && scene) frame = requestAnimationFrame(animate); }
 function animate(now) {
   frame = null; if (document.hidden || modal) { previous = null; return; }
-  const dt = previous === null ? SOARING_STEP : Math.min(.08, (now - previous) / 1000); previous = now;
-  if (playing) { accumulator += dt; while (accumulator >= SOARING_STEP) { flock.step(); scene.advance(SOARING_STEP); accumulator -= SOARING_STEP; } }
-  scene.render(dt);
+  const dt = previous === null ? 0 : Math.min(.08, (now - previous) / 1000); previous = now;
+  if (playing) { accumulator += dt; while (accumulator >= SOARING_STEP) { flock.step(); scene.advance(SOARING_STEP); accumulator -= SOARING_STEP; } renderAlpha = accumulator / SOARING_STEP; }
+  scene.render(dt, renderAlpha);
   if (now - lastUI >= 150) { measure(); lastUI = now; }
   requestFrame();
 }
-document.addEventListener('visibilitychange', () => { previous = null; accumulator = 0; if (document.hidden) { stopSound(); if (frame !== null) cancelAnimationFrame(frame); frame = null; } else requestFrame(); });
-reduced.addEventListener('change', () => { scene?.setReduced(reduced.matches); if (reduced.matches) { playing = false; accumulator = 0; } update(); });
+document.addEventListener('visibilitychange', () => { previous = null; if (document.hidden) { stopSound(); if (frame !== null) cancelAnimationFrame(frame); frame = null; } else requestFrame(); });
+reduced.addEventListener('change', () => { scene?.setReduced(reduced.matches); if (reduced.matches) { playing = false; previous = null; } update(); });
 $('soaring-world').addEventListener('graphics-lost', () => { error(); update(); if (frame !== null) cancelAnimationFrame(frame); frame = null; });
 window.addEventListener('pagehide', () => { stopSound(); if (frame !== null) cancelAnimationFrame(frame); frame = null; previous = null; });
 window.addEventListener('pageshow', () => requestFrame());

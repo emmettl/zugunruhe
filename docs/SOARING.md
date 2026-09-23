@@ -68,6 +68,10 @@ Height is above the scene's reference plane, not clearance above the terrain.
 The landscape patch follows the camera in every view, including journeys with
 birds far from the group's centre. It extends beyond the radial haze and reuses
 the same mesh. Tile shifts preserve the world-space hills and field pattern.
+Bird poses and the air camera interpolate between completed simulation steps,
+so faster or uneven display refresh rates do not show repeated 60 Hz poses.
+This adds one simulation step (about 17 ms) of visual delay. Pausing or hiding
+the page retains that intermediate pose; flight decisions still run at 60 Hz.
 Space toggles flight, 1/2/3 select views and N changes birds. Reduced motion begins
 paused; explicit Play starts flight. Notes and hidden tabs freeze simulation time
 without a catch-up jump. The native notes dialog restores focus when closed.
@@ -130,6 +134,8 @@ during audio resume, proximity framing, bounded attention shifts, quiet delayed
 answers and volume without restarting.
 Terrain checks cover every selectable bird over three simulated hours, distant
 camera transfers, negative coordinates, and continuity across tile boundaries.
+Motion tests cover 60, 90, 120 and 144 Hz displays, uneven frame timing, held
+intermediate poses and entering the air camera without a position jump.
 Browser tests cover Chromium and mobile WebKit: rendering, views, held pause
 clicks, overlays, restart, notes/focus, opt-in audio, reduced motion, the recorded
 migration link, and layouts from 320 to 1280 px.

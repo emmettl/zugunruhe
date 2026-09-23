@@ -4,6 +4,7 @@ import { thermalAt } from './soaring-model.js';
 import { createSoaringFraming } from './soaring-framing.js';
 import { createSoaringCamera } from './soaring-camera.js';
 import { createSoaringTerrain } from './soaring-terrain.js';
+import { createSoaringMotion } from './soaring-motion.js';
 
 function storkGeometry() {
   const vertices = [], colours = [];
@@ -54,7 +55,7 @@ export function createSoaringScene(container, flock) {
   const ground = createSoaringTerrain(); scene.add(ground.mesh);
   const geometry = storkGeometry();
   geometry.setAttribute('phase',new THREE.InstancedBufferAttribute(flock.phase,1));
-  geometry.setAttribute('effort',new THREE.InstancedBufferAttribute(flock.effort,1).setUsage(THREE.DynamicDrawUsage));
+  geometry.setAttribute('effort',new THREE.InstancedBufferAttribute(new Float32Array(flock.effort),1).setUsage(THREE.DynamicDrawUsage));
   const highlight = new Float32Array(flock.count); geometry.setAttribute('highlight',new THREE.InstancedBufferAttribute(highlight,1));
   const time = { value:0 };
   const material = new THREE.ShaderMaterial({side:THREE.DoubleSide,vertexColors:true,uniforms:{time},
@@ -80,11 +81,12 @@ export function createSoaringScene(container, flock) {
     fragmentShader:'varying float life;void main(){gl_FragColor=vec4(.67,.52,.31,.25*life);}',
   })); liftLines.visible=false; liftLines.frustumCulled=false; scene.add(liftLines);
   const framing=createSoaringFraming(), pilot=createSoaringCamera(), dummy=new THREE.Object3D(), forward=new THREE.Vector3(), right=new THREE.Vector3(), up=new THREE.Vector3();
+  const motion=createSoaringMotion(flock,pilot);
   const worldUp=new THREE.Vector3(0,1,0), matrix=new THREE.Matrix4(), roll=new THREE.Quaternion(), axis=new THREE.Vector3(0,0,1);
   const desired=new THREE.Vector3(), look=focus.clone(), direction=new THREE.Vector3(1,0,0), point=new THREE.Vector3();
   let mode='watch',selected=0,reduced=false,lost=false;
   function setMode(value) {
-    if (value==='air'&&mode!=='air') pilot.enter(camera.position.toArray());
+    if (value==='air'&&mode!=='air') { pilot.enter(camera.position.toArray()); motion.resetCamera(); }
     if (value!=='air') pilot.leave();
     mode=value; controls.enabled=mode==='watch';
     highlight.fill(0); if(mode!=='watch')highlight[selected]=1; geometry.attributes.highlight.needsUpdate=true;
@@ -92,27 +94,27 @@ export function createSoaringScene(container, flock) {
   }
   const observer=new ResizeObserver(()=>{const {width,height}=container.getBoundingClientRect();renderer.setSize(width,height,false);camera.aspect=width/Math.max(1,height);camera.updateProjectionMatrix();});observer.observe(container);
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;container.dispatchEvent(new Event('graphics-lost'));});
-  function render(dt) {
-    if(lost)return; time.value=flock.time;
-    oldFocus.copy(focus);focus.lerp(point.fromArray(flock.centre),1-Math.exp(-dt*2));
+  function render(dt, alpha = 1) {
+    if(lost)return; const view=motion.sample(alpha); time.value=view.time;
+    oldFocus.copy(focus);focus.lerp(point.fromArray(view.centre),1-Math.exp(-dt*2));
     camera.fov+=( (mode==='air'?framing.fieldOfView:mode==='follow'?framing.fieldOfView-10:48)+(camera.aspect<1?12:0)-camera.fov)*(1-Math.exp(-dt*2));camera.updateProjectionMatrix();
     if(mode==='watch'){
       camera.position.add(point.copy(focus).sub(oldFocus));controls.target.copy(focus);controls.update();look.copy(focus);
     }else{
-      const k=selected*3;forward.fromArray(flock.velocity,k).normalize();direction.lerp(forward,1-Math.exp(-dt*.95)).normalize();right.crossVectors(worldUp,direction).normalize();
-      point.fromArray(flock.position,k);
+      const k=selected*3;forward.fromArray(view.velocity,k).normalize();direction.lerp(forward,1-Math.exp(-dt*.95)).normalize();right.crossVectors(worldUp,direction).normalize();
+      point.fromArray(view.position,k);
       desired.copy(point).addScaledVector(direction,-framing.distance-3).addScaledVector(right,5);desired.y+=4;
-      if(mode==='air')camera.position.fromArray(pilot.position);else camera.position.lerp(desired,reduced?1:1-Math.exp(-dt*1.5));
+      if(mode==='air')camera.position.fromArray(view.camera);else camera.position.lerp(desired,reduced?1:1-Math.exp(-dt*1.5));
       // Keep the companion in view while the camera's own path catches up.
       desired.copy(point).addScaledVector(direction,3);
       desired.x+=framing.attention[0];desired.y+=framing.attention[1];desired.z+=framing.attention[2];
       look.lerp(desired,1-Math.exp(-dt*2));camera.up.lerp(worldUp,1-Math.exp(-dt*2));camera.lookAt(look);
     }
     for(let i=0;i<flock.count;i++){
-      forward.fromArray(flock.velocity,i*3).normalize();right.crossVectors(worldUp,forward).normalize();up.crossVectors(forward,right);matrix.makeBasis(right,up,forward);
-      dummy.quaternion.setFromRotationMatrix(matrix);roll.setFromAxisAngle(axis,flock.bank[i]);dummy.quaternion.multiply(roll);dummy.position.fromArray(flock.position,i*3);dummy.updateMatrix();birds.setMatrixAt(i,dummy.matrix);
+      forward.fromArray(view.velocity,i*3).normalize();right.crossVectors(worldUp,forward).normalize();up.crossVectors(forward,right);matrix.makeBasis(right,up,forward);
+      dummy.quaternion.setFromRotationMatrix(matrix);roll.setFromAxisAngle(axis,view.bank[i]);dummy.quaternion.multiply(roll);dummy.position.fromArray(view.position,i*3);dummy.updateMatrix();birds.setMatrixAt(i,dummy.matrix);
     }
-    birds.instanceMatrix.needsUpdate=true;geometry.attributes.effort.needsUpdate=true;
+    birds.instanceMatrix.needsUpdate=true;geometry.attributes.effort.array.set(view.effort);geometry.attributes.effort.needsUpdate=true;
     if(flock.time-lastTrail>=.16){for(let i=0;i<flock.count;i++)history.set(flock.position.subarray(i*3,i*3+3),(i*trailLength+head)*3);head=(head+1)%trailLength;samples=Math.min(trailLength,samples+1);lastTrail=flock.time;}
     if(trails.visible){let out=0;for(let i=0;i<flock.count;i++)for(let j=1;j<samples;j++){
       const a=(i*trailLength+(head-j+trailLength)%trailLength)*3,b=(i*trailLength+(head-j-1+trailLength)%trailLength)*3;
@@ -129,7 +131,7 @@ export function createSoaringScene(container, flock) {
   }
   return {canvas,render,setMode,get selected(){return selected;},
     nextBird(){selected=(selected+1)%flock.count;setMode(mode);},
-    advance(dt){framing.advance(dt,flock,selected);pilot.step(dt,flock,selected,framing.distance);},setLift(value){liftLines.visible=value;},setTraces(value){trails.visible=value;},
+    advance(dt){framing.advance(dt,flock,selected);pilot.step(dt,flock,selected,framing.distance);motion.capture();},setLift(value){liftLines.visible=value;},setTraces(value){trails.visible=value;},
     setReduced(value){reduced=value;controls.enableDamping=!value;},
     dispose(){observer.disconnect();controls.dispose();scene.traverse(object=>{object.geometry?.dispose();object.material?.dispose();});renderer.dispose();},
   };
