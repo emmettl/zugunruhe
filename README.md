@@ -47,7 +47,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. `npm run build` creates the static client.
+Use Node 24 (`nvm use`) and npm 11.21.1. Open the local URL printed by Vite. `npm run build` creates the static client. Run `npm test`, then the build and `npm run test:browser` (after `npx playwright install chromium webkit`). Shared dependencies pin published alpha.31.
 The current studies are published on both hosts linked below.
 
 [Data provenance and reproduction](docs/FIRST-STUDY.md) ·
