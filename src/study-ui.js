@@ -14,7 +14,19 @@ export function installStudyDialog(panel,opener,close){
     opener.setAttribute('aria-expanded',String(open));
   }
   dialog.addEventListener('cancel',event=>{event.preventDefault();setOpen(false);});
-  dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();setOpen(false);}});
+  dialog.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();setOpen(false);}
+    // Keep keyboard traversal inside the active modal, including WebKit's button-only tab mode.
+    if(event.key==='Tab'){
+      const controls=[...dialog.querySelectorAll('button,a[href],input,select,textarea,[tabindex]')]
+        .filter(element=>!element.disabled&&element.tabIndex>=0&&element.getClientRects().length);
+      if(controls.length){
+        event.preventDefault();
+        const index=controls.indexOf(document.activeElement);
+        controls[(index+(event.shiftKey?-1:1)+controls.length)%controls.length].focus();
+      }
+    }
+  });
   return setOpen;
 }
 

@@ -63,7 +63,7 @@ dialog::backdrop{background:#02040bb3}
   .mobile-settings .height-controls{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,1fr);justify-content:stretch;gap:12px}
   .mobile-settings label,.mobile-settings .inspection,.mobile-settings #reading p,.mobile-settings #reading small{font-size:14px!important;color:#b9bdcc}
   .mobile-settings .height-controls label{text-align:left;align-self:center}
-  .mobile-settings select{font-size:16px;min-height:44px;width:100%}
+  .mobile-settings select{font-size:16px;height:44px;min-height:44px;width:100%}
   .mobile-settings .palette-control{gap:16px}.mobile-settings .palette-control select{width:50%}
   .mobile-settings .inspection{min-height:44px;gap:12px;margin:8px 0!important}
   .inspection input[type=checkbox]{width:22px;height:22px;flex-shrink:0}

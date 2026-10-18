@@ -28,8 +28,13 @@ async function checkMobileAccess(page,cloud=false){
   const opener=page.locator(cloud?'#about':'#notes-button'),dialog=page.locator(cloud?'#source-notes':'#notes');
   await opener.click();await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('aria-labelledby',/.+-title/);
-  await page.keyboard.press('Tab');
-  expect(await dialog.evaluate(e=>e.contains(document.activeElement))).toBe(true);
+  const focusable=dialog.locator('button,a[href],input,select,textarea,[tabindex]');
+  for(const key of ['Tab','Shift+Tab']){
+    for(let step=0;step<=await focusable.count();step++){
+      await page.keyboard.press(key);
+      expect(await dialog.evaluate(e=>e.contains(document.activeElement))).toBe(true);
+    }
+  }
   await page.keyboard.press('Escape');await expect(dialog).toBeHidden();await expect(opener).toBeFocused();
   await page.getByRole('button',{name:'Back to scene',exact:true}).click();
   await expect(page.getByRole('button',{name:'Controls',exact:true})).toBeVisible();
