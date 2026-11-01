@@ -1,6 +1,7 @@
+import { createGridTexturePair } from '@motionstudies/three/weather-textures';
 import * as THREE from 'three';
 import weather from '../data/processed/cloud-night.json';
-import {cloudBracket,cloudVariables,cloudCoverMean} from './cloud-model.js';
+import {cloudVariables,cloudCoverMean} from './cloud-model.js';
 import {publishCloudSound} from './sound-scene.js';
 import {R} from './network-geo.js';
 
@@ -8,8 +9,12 @@ import {R} from './network-geo.js';
 export function createCloudCover(scene,landscape){
   const {west,south,step,width,height}=weather.grid;
   const geometry=landscape.geometry,bounds=landscape.bounds;
-  function texture(){const t=new THREE.DataTexture(new Float32Array(width*height*4),width,height,THREE.RGBAFormat,THREE.FloatType);t.minFilter=t.magFilter=THREE.LinearFilter;t.needsUpdate=true;return t;}
-  const uniforms={a:{value:texture()},b:{value:texture()},fraction:{value:0},relief:landscape.relief};
+  let mode='off',time=weather.times[0];
+  const pair=createGridTexturePair({width,height,times:weather.times,frame(index){
+    const values=weather.frames[index][cloudVariables[mode==='off'?'total':mode]],pixels=new Float32Array(width*height*4);
+    values.forEach((value,i)=>{pixels[i*4]=value===null?0:value/100;pixels[i*4+1]=pixels[i*4+3]=value===null?0:1;});return pixels;
+  }});
+  const uniforms={a:pair.uniforms.weatherA,b:pair.uniforms.weatherB,fraction:pair.uniforms.weatherBlend,relief:landscape.relief};
   const material=new THREE.ShaderMaterial({uniforms,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4,side:THREE.DoubleSide,
     vertexShader:`attribute float height;uniform float relief;varying vec2 vUv;
       void main(){vUv=vec2((${bounds.west}+uv.x*${bounds.lonSpan}-(${west}.))/${(width-1)*step}.,(${bounds.north}-(1.-uv.y)*${bounds.latSpan}-${south}.)/${(height-1)*step}.);vec3 e=vec3(0.,-${R},0.);vec3 p=e+normalize(position-e)*(${R}+height*relief+.0004);
@@ -28,18 +33,11 @@ export function createCloudCover(scene,landscape){
         gl_FragColor=vec4(vec3(.48,.55,.60),cover*.65*edge);
       }`});
   const mesh=new THREE.Mesh(geometry,material);mesh.visible=false;mesh.frustumCulled=false;mesh.renderOrder=1;scene.add(mesh);
-  let mode='off',time=weather.times[0],left=-1,right=-1;
-  function fill(texture,index){const values=weather.frames[index][cloudVariables[mode]],pixels=texture.image.data;
-    values.forEach((value,i)=>{pixels[i*4]=value===null?0:value/100;pixels[i*4+1]=value===null?0:1;});texture.needsUpdate=true;
-  }
   function setTime(value){
     time=value;
     publishCloudSound({mode,fraction:mode==='off'?null:cloudCoverMean(weather,mode,time)});
     if(mode==='off')return;
-    const bracket=cloudBracket(weather.times,time);mesh.visible=!!bracket;if(!bracket)return;
-    if(left!==bracket.a){fill(uniforms.a.value,bracket.a);left=bracket.a;}
-    if(right!==bracket.b){fill(uniforms.b.value,bracket.b);right=bracket.b;}
-    uniforms.fraction.value=bracket.fraction;
+    mesh.visible=pair.update(time);
   }
-  return {setTime,setMode(value){mode=Object.hasOwn(cloudVariables,value)?value:'off';left=right=-1;mesh.visible=mode!=='off';setTime(time);}};
+  return {setTime,setMode(value){mode=Object.hasOwn(cloudVariables,value)?value:'off';pair.invalidate();mesh.visible=mode!=='off';setTime(time);},dispose(){pair.dispose();material.dispose();scene.remove(mesh);}};
 }
