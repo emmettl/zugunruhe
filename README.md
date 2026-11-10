@@ -47,7 +47,7 @@ npm ci
 npm run dev
 ```
 
-Use Node 24 (`nvm use`) and npm 11.21.1. Open the local URL printed by Vite. `npm run build` creates the static client. Run `npm test`, then the build and `npm run test:browser` (after `npx playwright install chromium webkit`). Shared dependencies pin published alpha.31.
+Use Node 26 (`nvm use`) and npm 12.2.2. Open the local URL printed by Vite. `npm run build` creates the static client. Run `npm test`, then the build and `npm run test:browser` (after `npx playwright install chromium webkit`). Shared dependencies pin published alpha.31.
 The current studies are published on both hosts linked below.
 
 [Data provenance and reproduction](docs/FIRST-STUDY.md) ·
@@ -127,3 +127,5 @@ map and can follow companions that find rising air. Follow a bird, travel with t
 reveal lift and flight traces, or listen to a provisional score shaped by climbing
 and departure. This authored study is separate from the recorded migration data.
 [Flight rules, research and controls](docs/SOARING.md).
+
+Development targets Node 26 and npm 12.2.2. Shared Motion Studies packages are pinned to 1.0.0; `npm run check:stack` validates the adopted baseline through `@motionstudies/tooling`. Edition-specific data, boundary and publication checks remain local.
